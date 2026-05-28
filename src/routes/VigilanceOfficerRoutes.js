@@ -4,7 +4,7 @@ import {
   getAllVigilanceOfficers,
   updateVigilanceOfficer,
   updateVigilanceOfficerStatus,getVigilanceOfficersByType
-} from "../controllers/vigilanceOfficerController.js";
+} from "../controllers/VigilanceOfficerController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
 import uploadSingleImage from "../middleware/uploadHandler.js"; // multer setup for single image

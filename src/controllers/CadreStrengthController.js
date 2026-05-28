@@ -1,4 +1,4 @@
-import CadreStrength from "../models/cadreStrengthSchema.js";
+import CadreStrength from "../models/CadreStrengthSchema.js";
 
 export const createCadreStrength = async (req, res) => {
   try {

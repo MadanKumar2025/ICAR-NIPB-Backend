@@ -4,7 +4,7 @@ import {
   getAboutCentre,
   updateAboutCentre,
   getAllAboutCentreWeb,
-} from "../controllers/aboutCentreController.js";
+} from "../controllers/AboutCentreController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
 import uploadSingleImage from "../middleware/uploadHandler.js";

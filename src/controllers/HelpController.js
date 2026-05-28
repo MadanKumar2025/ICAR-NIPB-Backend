@@ -1,4 +1,4 @@
-import Help from "../models/helpSchema.js";
+import Help from "../models/HelpSchema.js";
 import mongoose from "mongoose";
 
 export const createHelp = async (req, res) => {

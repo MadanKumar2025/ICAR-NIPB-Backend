@@ -1,7 +1,7 @@
 import express from "express";
 import {
   createCommittee,getAllCommittees,updateCommittee
-} from "../controllers/committeesController.js";
+} from "../controllers/CommitteesController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
 

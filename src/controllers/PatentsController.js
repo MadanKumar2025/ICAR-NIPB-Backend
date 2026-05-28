@@ -1,4 +1,4 @@
-import Patents from "../models/patentsSchema.js";
+import Patents from "../models/PatentsSchema.js";
 
 export const createPatents = async (req, res) => {
   try {

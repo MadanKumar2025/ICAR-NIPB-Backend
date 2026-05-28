@@ -1,4 +1,4 @@
-import Disclaimer from "../models/disclaimerSchema.js";
+import Disclaimer from "../models/DisclaimerSchema.js";
 
 export const createDisclaimer = async (req, res) => {
   try {

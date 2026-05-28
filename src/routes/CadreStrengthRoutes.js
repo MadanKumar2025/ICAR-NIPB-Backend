@@ -5,7 +5,7 @@ import {
   updateCadreStatus,
   updateCadreStrength,
   getAllCadreStrengthWeb,
-} from "../controllers/cadreStrengthController.js";
+} from "../controllers/CadreStrengthController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
 

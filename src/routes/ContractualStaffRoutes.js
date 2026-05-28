@@ -1,5 +1,10 @@
 import express from "express";
-import { createContractualStaff, getContractualStaff, updateContractualStaff,updateContractualStaffStatus } from "../controllers/ContractualStaffController.js";
+import {
+  createContractualStaff,
+  getContractualStaff,
+  updateContractualStaff,
+  updateContractualStaffStatus,
+} from "../controllers/ContractualStaffController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
 import uploadSingleImage from "../middleware/uploadHandler.js";
@@ -10,25 +15,20 @@ router.post(
   "/create",
   authMiddleware,
   uploadSingleImage,
-  createContractualStaff
+  createContractualStaff,
 );
-router.get(
-  "/GetAll",
-  authMiddleware,
-  getContractualStaff
-);
+router.get("/GetAll", authMiddleware, getContractualStaff);
 router.put(
   "/update/:id",
   authMiddleware,
   uploadSingleImage,
-  updateContractualStaff
+  updateContractualStaff,
 );
 router.put(
   "/updateStatus/:id",
   authMiddleware,
   uploadSingleImage,
-  updateContractualStaffStatus
+  updateContractualStaffStatus,
 );
-
 
 export default router;

@@ -6,7 +6,7 @@ import {
   updateAssociatedOrganization,
   updateAssociatedOrganizationStatus,
   getAllAssociatedOrganizationsWeb,
-} from "../controllers/associatedOrganizationController.js";
+} from "../controllers/AssociatedOrganizationController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
 import uploadSingleImage from "../middleware/uploadHandler.js";

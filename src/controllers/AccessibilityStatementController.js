@@ -1,4 +1,4 @@
-import AccessibilityStatement from "../models/accessibilityStatementSchema.js";
+import AccessibilityStatement from "../models/AccessibilityStatementSchema.js";
 
 export const createAccessibilityStatement = async (req, res) => {
   try {

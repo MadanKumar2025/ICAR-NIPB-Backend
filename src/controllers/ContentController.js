@@ -1,4 +1,4 @@
-import Content from "../models/contentSchema.js";
+import Content from "../models/ContentSchema.js";
 import mongoose from "mongoose";
 
 export const createContent = async (req, res) => {

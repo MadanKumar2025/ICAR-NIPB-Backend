@@ -5,7 +5,7 @@ import {
   updateBannerStatus,
   updateBanner,
   getAllBannerWeb,
-} from "../controllers/bannerController.js";
+} from "../controllers/BannerController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
 import uploadSingleImage from "../middleware/uploadHandler.js";
