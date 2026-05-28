@@ -7,7 +7,7 @@ import {
   getAllpioneer,
   updatepioneer,
   updatepioneerStatus,
-} from "../controllers/pioneerController.js";
+} from "../controllers/PioneerController.js";
 
 const router = express.Router();
 
