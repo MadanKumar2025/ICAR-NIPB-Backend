@@ -1,0 +1,72 @@
+
+### Header Menu
+
+1. Home
+
+2. About NIPB
+	1. About Center
+	2. Mandate
+	3. Director
+		1. Current Director
+		2. Formar Director
+	4. Cadre Strenght
+	5. Organogram
+		
+3. Our Team
+	1. Scientists
+	2. Technical Staff
+	3. Honorary Scientists
+	4. Administrative Staff
+	
+4. Research
+    1. Research Projects
+	    1. Inhouse
+		2. Externally funded
+	2. Patents
+	3. Collaborations
+	4. Technologies developed
+	
+5. Publication
+    1. Research Publications
+	2. Annual Report
+	3. Newsletter
+	4. Others
+	
+6. Academic
+    1. PG School
+	2. Professor
+	3. Faculty
+	4. Admission and Academic programme
+	5. Students
+	
+7. Payment
+
+8. Contact Us
+
+
+### Footer Menu
+
+1.  Disclaimer
+2.  Feedback
+3.  Accessibility Statement
+4.  Archive
+5.  Website Policies
+6.  Terms & Conditions
+7.  Member Login
+8.  NIPB Mail
+9.  Vigilance Officer
+20. Transparency officer
+21. Related Links
+22. Help
+ 
+ 
+### Important Links
+1. Home
+2. About NIPB
+3. Our Team
+4. Research
+5. Publication
+6. Academics
+7. Contact Us
+ 
+ 
