@@ -1,4 +1,4 @@
-import Pioneer from "../models/PioneerSchema.js";
+import Pioneer from "../models/pioneerSchema.js";
 import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
