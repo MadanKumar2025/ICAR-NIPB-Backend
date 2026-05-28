@@ -4,7 +4,7 @@ import {
   getAllRelatedLinks,
   updateRelatedLinks,
   getAllRelatedLinksWeb,
-} from "../controllers/RelatedLinksController.js";
+} from "../controllers/RelatedLinkscontroller.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
 
