@@ -1,4 +1,4 @@
-import UserPermissions from "../models/UserPermissionsSchema.js";
+import UserPermissions from "../models/userPermissionsSchema.js";
 import mongoose from "mongoose";
 
 export const createUserPermission = async (req, res) => {
