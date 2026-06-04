@@ -24,6 +24,10 @@ const staffSchema = new mongoose.Schema({
     required: true,
     match: [/^\S+@\S+\.\S+$/, "Please use a valid email address"],
   },
+  displayOrder: {
+    type: Number,
+    required: true,
+  },
   education: {
     en: { type: String },
     hi: { type: String },

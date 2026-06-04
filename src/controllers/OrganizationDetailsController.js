@@ -68,10 +68,15 @@ export const createOrganization = async (req, res) => {
         .status(400)
         .json({ success: false, message: "PIN code must be exactly 6 digits" });
 
-    if (!contactNumber || !/^[0-9]{10}$/.test(contactNumber))
+    // if (!contactNumber || !/^[0-9]{10}$/.test(contactNumber))
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Contact number must be exactly 10 digits",
+    //   });
+    if (!contactNumber)
       return res.status(400).json({
         success: false,
-        message: "Contact number must be exactly 10 digits",
+        message: "Primary email is required",
       });
 
     if (!email1)

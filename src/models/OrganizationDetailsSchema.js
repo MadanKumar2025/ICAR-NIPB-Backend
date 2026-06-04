@@ -57,7 +57,7 @@ const organizationSchema = new mongoose.Schema({
   contactNumber: {
     type: String,
     required: true,
-    match: [/^[0-9]{10}$/, "Contact number must be exactly 10 digits"],
+    // match: [/^[0-9]{10}$/, "Contact number must be exactly 10 digits"],
   },
 
   faxNumber: {

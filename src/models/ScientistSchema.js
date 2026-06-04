@@ -107,6 +107,11 @@ const scientistSchema = new mongoose.Schema({
     },
   ],
 
+  displayOrder: {
+    type: Number,
+    required: true,
+  },
+
   createby: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

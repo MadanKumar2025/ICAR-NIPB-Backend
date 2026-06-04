@@ -63,7 +63,7 @@ app.use(express.json());
 app.use(
   cors({
     // origin: "http://localhost:3000",
-    origin: ["http://localhost:3000", "http://localhost:3001",],
+    origin: ["http://localhost:3000", "http://localhost:3001","http://172.16.100.149"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   }),
 );

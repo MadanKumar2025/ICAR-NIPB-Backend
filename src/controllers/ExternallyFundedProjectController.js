@@ -90,37 +90,76 @@ export const createExternallyFundedProject = async (req, res) => {
   }
 };
 
+// export const getExternallyFundedProjects = async (req, res) => {
+//   try {
+//     const isAll = req.query.all === "true";
+
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = 10;
+//     const skip = (page - 1) * limit;
+
+//     let query = ExternallyFundedProject.find();
+
+//     const totalProjects = await ExternallyFundedProject.countDocuments();
+
+//     let projects;
+//     if (isAll) {
+//       projects = await query;
+//     } else {
+//       projects = await query.skip(skip).limit(limit);
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       count: projects.length,
+//       total: totalProjects,
+//       page: isAll ? null : page,
+//       totalPages: isAll ? 1 : Math.ceil(totalProjects / limit),
+//       data: projects,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: error.message || "Something went wrong",
+//     });
+//   }
+// };
+
 export const getExternallyFundedProjects = async (req, res) => {
   try {
-    const isAll = req.query.all === "true";
+    const projectList = await ExternallyFundedProject.find()
+      .populate("createdBy", "name email")
+      .populate("updatedBy", "name email")
+      .sort({ createdDate: -1 });
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const skip = (page - 1) * limit;
+    const data = projectList.map((project) => ({
+      id: project._id,
+      title: project.title || { en: "", hi: "" },
+      fundingAgency: project.fundingAgency || { en: "", hi: "" },
+      sanctionedBudget: project.sanctionedBudget || { en: "", hi: "" },
+      principalInvestigator: project.principalInvestigator || {
+        en: "",
+        hi: "",
+      },
 
-    let query = ExternallyFundedProject.find();
+      isActive: project.isActive,
 
-    const totalProjects = await ExternallyFundedProject.countDocuments();
-
-    let projects;
-    if (isAll) {
-      projects = await query;
-    } else {
-      projects = await query.skip(skip).limit(limit);
-    }
+      createdBy: project.createdBy || null,
+      updatedBy: project.updatedBy || null,
+      createdAt: project.createdDate,
+      updatedAt: project.updatedDate || null,
+    }));
 
     res.status(200).json({
       success: true,
-      count: projects.length,
-      total: totalProjects,
-      page: isAll ? null : page,
-      totalPages: isAll ? 1 : Math.ceil(totalProjects / limit),
-      data: projects,
+      count: data.length,
+      data,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       success: false,
-      message: error.message || "Something went wrong",
+      message: "Error fetching funded projects",
     });
   }
 };
@@ -251,7 +290,7 @@ export const updateExternallyFundedProjectStatus = async (req, res) => {
         updatedBy: req.user?.id,
         updatedDate: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     if (!project) {
@@ -276,7 +315,6 @@ export const updateExternallyFundedProjectStatus = async (req, res) => {
   }
 };
 
-
 // this is use for web
 export const getAllExternallyFundedProjectsWeb = async (req, res) => {
   try {
@@ -290,8 +328,10 @@ export const getAllExternallyFundedProjectsWeb = async (req, res) => {
       title: project.title || { en: "", hi: "" },
       fundingAgency: project.fundingAgency || { en: "", hi: "" },
       sanctionedBudget: project.sanctionedBudget || { en: "", hi: "" },
-      principalInvestigator:
-        project.principalInvestigator || { en: "", hi: "" },
+      principalInvestigator: project.principalInvestigator || {
+        en: "",
+        hi: "",
+      },
 
       isActive: project.isActive,
 
