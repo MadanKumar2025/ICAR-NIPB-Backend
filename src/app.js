@@ -68,6 +68,7 @@ app.use(
       "http://localhost:3000",
       "http://localhost:3001",
       "http://172.16.100.149",
+      "http://40.139.229.204",
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   }),
