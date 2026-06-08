@@ -73,50 +73,12 @@ export const createDesignation = async (req, res) => {
   }
 };
 
-
-// export const getDesignations = async (req, res) => {
-//   try {
-//     const isAll = req.query.all === "true";
-
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = 10;
-//     const skip = (page - 1) * limit;
-
-//     let query = Designation.find();
-
-//     const totalRecords = await Designation.countDocuments();
-
-//     let records;
-//     if (isAll) {
-//       records = await query;
-//     } else {
-//       records = await query.skip(skip).limit(limit);
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       count: records.length,
-//       total: totalRecords,
-//       page: isAll ? null : page,
-//       totalPages: isAll ? 1 : Math.ceil(totalRecords / limit),
-//       data: records,
-//     });
-//   } catch (error) {
-//     console.error("ERROR =>", error);
-
-//     res.status(500).json({
-//       success: false,
-//       message: error.message || "Something went wrong",
-//     });
-//   }
-// };
-
 export const getDesignations = async (req, res) => {
   try {
     const designationList = await Designation.find()
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email")
-      .sort({ createdDate: -1 }); // latest first
+      .sort({ createdDate: -1 });  
 
     const data = designationList.map((designation) => ({
       id: designation._id,

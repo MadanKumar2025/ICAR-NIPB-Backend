@@ -52,6 +52,7 @@ import AssociatedOrganizationRoutes from "./routes/AssociatedOrganizationRoutes.
 import OrganogramRoutes from "./routes/OrganogramRoutes.js";
 import PaymentRoutes from "./routes/PaymentRoutes.js";
 import PopupRoutes from "./routes/PopupRoutes.js";
+import TrainingProgramRoutes from "./routes/TrainingProgramRoutes.js";
 import cors from "cors";
 import path from "path";
 
@@ -63,10 +64,16 @@ app.use(express.json());
 app.use(
   cors({
     // origin: "http://localhost:3000",
-    origin: ["http://localhost:3000", "http://localhost:3001","http://172.16.100.149"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://172.16.100.149",
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   }),
 );
+
+
 
 // static uploads
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
@@ -128,5 +135,6 @@ app.use("/api/AssociatedOrganizationRoutes", AssociatedOrganizationRoutes);
 app.use("/api/OrganogramRoutes", OrganogramRoutes);
 app.use("/api/PaymentRoutes", PaymentRoutes);
 app.use("/api/PopupRoutes", PopupRoutes);
+app.use("/api/TrainingProgramRoutes", TrainingProgramRoutes);
 
 export default app;

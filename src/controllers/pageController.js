@@ -171,44 +171,6 @@ export const getAllPages = async (req, res) => {
   }
 };
 
-// export const getPageById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-
-//     // validate ObjectId
-//     if (!mongoose.Types.ObjectId.isValid(id)) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Invalid page ID",
-//       });
-//     }
-
-//     const page = await Page.findById(id)
-//       .populate("designTemplate", "name")
-//       .populate("createby", "username")
-//       .populate("updateby", "username");
-
-//     if (!page) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Page not found",
-//       });
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       data: page,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
-
-
-
 export const updatePageStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -456,56 +418,6 @@ export const getPageById = async (req, res) => {
   }
 };
 
-// export const getPageBySlug = async (req, res) => {
-//   try {
-//     const { slug } = req.params;
-
-//     const page = await Page.findOne({ slug })
-//       .populate("designTemplate", "name")
-//       .populate("createby", "username")
-//       .populate("updateby", "username");
-
-//     if (!page) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Page not found",
-//       });
-//     }
-
-//     const data = {
-//       id: page._id,
-//       pageTitle: page.pageTitle || { en: "", hi: "" },
-//       slug: page.slug,
-//       subtitle: page.subtitle || { en: "", hi: "" },
-//       metaDescription: page.metaDescription || "",
-//       designTemplate: page.designTemplate || null,
-//       keyword: page.keyword || [],
-//       seoPageType: page.seoPageType || "",
-//       photo: page.photo,
-//       imageTitle: page.imageTitle || "",
-//       apiName: page?.apiName || "",
-//       isActive: page.isActive,
-//       createdBy: page.createby || null,
-//       updatedBy: page.updateby || null,
-//       createdAt: page.createdate,
-//       updatedAt: page.updatedate || null,
-//     };
-
-//     return res.status(200).json({
-//       success: true,
-//       data,
-//     });
-
-//   } catch (error) {
-//     console.error(error);
-
-//     return res.status(500).json({
-//       success: false,
-//       message: "Error fetching page",
-//     });
-//   }
-// };
-
 export const getPageBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
@@ -513,7 +425,8 @@ export const getPageBySlug = async (req, res) => {
     const page = await Page.findOne({ slug })
       .populate({
         path: "designTemplate",
-        select: "templateName htmlDescription createby updateby createdAt updatedAt",
+        select:
+          "templateName htmlDescription createby updateby createdAt updatedAt",
         populate: [
           { path: "createby", select: "username" },
           { path: "updateby", select: "username" },
@@ -552,7 +465,6 @@ export const getPageBySlug = async (req, res) => {
       success: true,
       data,
     });
-
   } catch (error) {
     console.error(error);
 
