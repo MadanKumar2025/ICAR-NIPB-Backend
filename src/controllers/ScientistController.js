@@ -554,53 +554,53 @@ export const getAllScientistsWeb = async (req, res) => {
         ? {
             id: scientist.designationId._id,
             name: scientist.designationId.name,
-            isActive: scientist.designationId.isActive,
-            createdDate: scientist.designationId.createdDate,
-            updatedDate: scientist.designationId.updatedDate,
-            createdBy: scientist.designationId.createdBy,
-            updatedBy: scientist.designationId.updatedBy,
+            // isActive: scientist.designationId.isActive,
+            // createdDate: scientist.designationId.createdDate,
+            // updatedDate: scientist.designationId.updatedDate,
+            // createdBy: scientist.designationId.createdBy,
+            // updatedBy: scientist.designationId.updatedBy,
           }
         : null,
 
-      phone1: scientist.phone1 || "",
-      phone2: scientist.phone2 || "",
+      // phone1: scientist.phone1 || "",
+      // phone2: scientist.phone2 || "",
 
-      email1: scientist.email1 || "",
-      email2: scientist.email2 || "",
+      // email1: scientist.email1 || "",
+      // email2: scientist.email2 || "",
 
-      education: scientist.education || { en: "", hi: "" },
-      majorCourses: scientist.majorCourses || { en: "", hi: "" },
+      // education: scientist.education || { en: "", hi: "" },
+      // majorCourses: scientist.majorCourses || { en: "", hi: "" },
 
       photoTitle: scientist.photoTitle || "",
       photo: scientist?.photo || null,
 
       isActive: scientist.isActive,
 
-      researchInterest: scientist.researchInterest || { en: "", hi: "" },
-      publications: scientist.publications || { en: "", hi: "" },
-      IPR: scientist.IPR || { en: "", hi: "" },
-      awards: scientist.awards || { en: "", hi: "" },
+      // researchInterest: scientist.researchInterest || { en: "", hi: "" },
+      // publications: scientist.publications || { en: "", hi: "" },
+      // IPR: scientist.IPR || { en: "", hi: "" },
+      // awards: scientist.awards || { en: "", hi: "" },
 
-      externallyFundedProjects: scientist.externallyFundedProjects || {
-        en: "",
-        hi: "",
-      },
+      // externallyFundedProjects: scientist.externallyFundedProjects || {
+      //   en: "",
+      //   hi: "",
+      // },
 
-      labProfile:
-        scientist.labProfile?.map((lab) => ({
-          name: lab.name || { en: "", hi: "" },
-          position: lab.position || { en: "", hi: "" },
-          project: lab.project || { en: "", hi: "" },
-          duration: lab.duration || { en: "", hi: "" },
-          ImageTitle: lab.ImageTitle || "",
-          photo1: lab.photo1 || "",
-        })) || [],
+      // labProfile:
+      //   scientist.labProfile?.map((lab) => ({
+      //     name: lab.name || { en: "", hi: "" },
+      //     position: lab.position || { en: "", hi: "" },
+      //     project: lab.project || { en: "", hi: "" },
+      //     duration: lab.duration || { en: "", hi: "" },
+      //     ImageTitle: lab.ImageTitle || "",
+      //     photo1: lab.photo1 || "",
+      //   })) || [],
 
-      createdBy: scientist.createby || null,
-      updatedBy: scientist.updateby || null,
+      // createdBy: scientist.createby || null,
+      // updatedBy: scientist.updateby || null,
 
-      createdAt: scientist.createdate,
-      updatedAt: scientist.updatedate || null,
+      // createdAt: scientist.createdate,
+      // updatedAt: scientist.updatedate || null,
     }));
 
     return res.status(200).json({
