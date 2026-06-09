@@ -59,40 +59,27 @@ import path from "path";
 const app = express();
 
 // middleware
-// app.use(express.json());
-
-// app.use(
-//   cors({
-//     // origin: "http://localhost:3000",
-//     origin: [
-//       "http://localhost:3000",
-//       "http://localhost:3001",
-//       "http://172.16.100.149",
-//       "http://40.139.229.204",
-//       "http://14.139.229.204",
-//       "http://test.nipb.res.in",
-//     ],
-//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-//   }),
-// );
+app.use(express.json());
 
 app.use(
   cors({
-    origin: true,
+    // origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://172.16.100.149",
+      "http://40.139.229.204",
+      "http://14.139.229.204",
+      "http://test.nipb.res.in",
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  })
+  }),
 );
 
-app.use(express.json({ limit: "100mb" }));
-app.use(express.urlencoded({ extended: true, limit: "100mb" }));
+
 
 // static uploads
-// app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
-
-app.use(
-  "/uploads",
-  express.static(path.join(process.cwd(), "uploads"))
-);
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // routes
 app.use("/api", userRoutes);

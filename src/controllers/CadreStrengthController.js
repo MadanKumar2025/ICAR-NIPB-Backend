@@ -229,8 +229,8 @@ export const getAllCadreStrengthWeb = async (req, res) => {
   try {
     const cadreList = await CadreStrength.find()
       .populate("createby", "name email")
-      .populate("updateby", "name email")
-      .sort({ createdate: -1 });
+      .populate("updateby", "name email");
+      // .sort({ createdate: -1 });
 
     const data = cadreList.map((item) => ({
       id: item._id,
