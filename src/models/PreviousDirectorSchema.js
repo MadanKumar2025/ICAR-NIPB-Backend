@@ -24,6 +24,11 @@ const PreviousDirectorSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  displayOrderNumber: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
   createby: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

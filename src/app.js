@@ -69,6 +69,8 @@ app.use(
       "http://localhost:3001",
       "http://172.16.100.149",
       "http://40.139.229.204",
+      "http://14.139.229.204",
+      "http://test.nipb.res.in",
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   }),
