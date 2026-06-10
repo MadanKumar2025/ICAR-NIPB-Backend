@@ -148,6 +148,9 @@ export const getAllPublications = async (req, res) => {
 
 export const updatePublication = async (req, res) => {
   try {
+       console.log("Controller Hit");
+    console.log("File:", req.file);
+    
     const { id } = req.params;
     let { year, title_en, title_hi, category, isActive } = req.body;
 
