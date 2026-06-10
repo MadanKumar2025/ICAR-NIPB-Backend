@@ -272,9 +272,39 @@ export const updateAboutCentre = async (req, res) => {
 };
 
 
+//ip 
+export const getPublicIP = async (req) => {
+  let clientIP =
+    req.headers["x-forwarded-for"]?.split(",")[0].trim() ||
+    req.ip ||
+    req.socket.remoteAddress;
+
+  if (clientIP?.startsWith("::ffff:")) {
+    clientIP = clientIP.replace("::ffff:", "");
+  }
+
+  if (clientIP === "::1") {
+    clientIP = "127.0.0.1";
+  }
+
+  const response = await fetch(`http://ip-api.com/json/${clientIP}`);
+  const ipData = await response.json();
+
+  return {
+    clientIP,
+    publicIP: ipData.query,
+    isp: ipData.isp,
+    city: ipData.city,
+    country: ipData.country,
+  };
+};
+
 // this is use for web
 export const getAllAboutCentreWeb = async (req, res) => {
   try {
+
+     const ipInfo = await getPublicIP(req);
+
     const list = await AboutCentre.find({ isActive: true })
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email")
@@ -302,6 +332,7 @@ export const getAllAboutCentreWeb = async (req, res) => {
     res.status(200).json({
       success: true,
       count: data.length,
+      ipInfo,
       data,
     });
   } catch (error) {
