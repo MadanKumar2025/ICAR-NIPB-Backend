@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import AboutCentre from "../models/AboutCentreSchema.js";
 import fs from "fs";
-import path from "path"; 
+import path from "path";
 
 export const createAboutCentre = async (req, res) => {
   try {
@@ -137,12 +137,10 @@ export const getAboutCentre = async (req, res) => {
   }
 };
 
-
 export const updateAboutCentre = async (req, res) => {
   try {
     const { id } = req.params;
 
-  
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -176,7 +174,6 @@ export const updateAboutCentre = async (req, res) => {
       });
     }
 
-     
     if (
       (topSection_en && topSection_en.trim() === "") ||
       (topSection_hi && topSection_hi.trim() === "")
@@ -186,7 +183,7 @@ export const updateAboutCentre = async (req, res) => {
         message: "Top Section cannot be empty",
       });
     }
- 
+
     if (req.file) {
       if (data.topImage) {
         const oldPath = path.join(process.cwd(), "uploads", data.topImage);
@@ -198,7 +195,7 @@ export const updateAboutCentre = async (req, res) => {
 
       data.topImage = req.file.filename;
     }
- 
+
     if (topSection_en || topSection_hi) {
       data.topSection = {
         en: topSection_en ? topSection_en.trim() : data.topSection?.en,
@@ -241,16 +238,11 @@ export const updateAboutCentre = async (req, res) => {
 
     if (BotemSection_en || BotemSection_hi) {
       data.BotemSection = {
-        en: BotemSection_en
-          ? BotemSection_en.trim()
-          : data.BotemSection?.en,
-        hi: BotemSection_hi
-          ? BotemSection_hi.trim()
-          : data.BotemSection?.hi,
+        en: BotemSection_en ? BotemSection_en.trim() : data.BotemSection?.en,
+        hi: BotemSection_hi ? BotemSection_hi.trim() : data.BotemSection?.hi,
       };
     }
 
-  
     data.updatedBy = req.user?.id;
     data.updatedAt = new Date();
 
@@ -271,8 +263,7 @@ export const updateAboutCentre = async (req, res) => {
   }
 };
 
-
-//ip 
+//ip
 export const getPublicIP = async (req) => {
   let clientIP =
     req.headers["x-forwarded-for"]?.split(",")[0].trim() ||
@@ -302,8 +293,15 @@ export const getPublicIP = async (req) => {
 // this is use for web
 export const getAllAboutCentreWeb = async (req, res) => {
   try {
+    const ipInfo = await getPublicIP(req);
 
-     const ipInfo = await getPublicIP(req);
+    const ipInfo = {
+      clientIP: ipInfoRaw.clientIP || null,
+      publicIP: ipInfoRaw.publicIP || null,
+      isp: ipInfoRaw.isp || null,
+      city: ipInfoRaw.city || null,
+      country: ipInfoRaw.country || null,
+    };
 
     const list = await AboutCentre.find({ isActive: true })
       .populate("createdBy", "name email")
