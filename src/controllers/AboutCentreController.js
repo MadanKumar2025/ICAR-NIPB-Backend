@@ -295,13 +295,13 @@ export const getAllAboutCentreWeb = async (req, res) => {
   try {
     const ipInfo = await getPublicIP(req);
 
-    const ipInfo = {
-      clientIP: ipInfoRaw.clientIP || null,
-      publicIP: ipInfoRaw.publicIP || null,
-      isp: ipInfoRaw.isp || null,
-      city: ipInfoRaw.city || null,
-      country: ipInfoRaw.country || null,
-    };
+ const ipInfoData = {
+  clientIP: ipInfo.clientIP || null,
+  publicIP: ipInfo.publicIP || null,
+  isp: ipInfo.isp || null,
+  city: ipInfo.city || null,
+  country: ipInfo.country || null,
+};
 
     const list = await AboutCentre.find({ isActive: true })
       .populate("createdBy", "name email")
@@ -330,7 +330,7 @@ export const getAllAboutCentreWeb = async (req, res) => {
     res.status(200).json({
       success: true,
       count: data.length,
-      ipInfo,
+       ipInfo: ipInfoData,
       data,
     });
   } catch (error) {
