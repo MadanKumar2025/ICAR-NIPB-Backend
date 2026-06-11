@@ -6,6 +6,7 @@ import {
   updatePublicationStatus,
   getAllPublicationsWeb,
   getPublicationsByCategory,
+  getPublicationByIdWeb
 } from "../controllers/PublicationsControllers.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -26,4 +27,5 @@ router.put("/updateStatus/:id", authMiddleware, updatePublicationStatus);
 // this is use for web
 router.get("/get/web", getAllPublicationsWeb);
 router.get("/get/web/:category", getPublicationsByCategory);
+router.get("/get/webByID/:id", getPublicationByIdWeb);
 export default router;

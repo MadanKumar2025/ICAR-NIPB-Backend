@@ -395,3 +395,63 @@ export const getPublicationsByCategory = async (req, res) => {
     });
   }
 };
+
+
+export const getPublicationByIdWeb = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // validate MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid publication ID",
+      });
+    }
+
+    const publication = await PublicationsSchema.findById(id)
+      .populate("createdBy", "name email")
+      .populate("updatedBy", "name email");
+
+    if (!publication) {
+      return res.status(404).json({
+        success: false,
+        message: "Publication not found",
+      });
+    }
+
+    const data = {
+      id: publication._id,
+      year: publication.year || null,
+
+      title: publication.title || {
+        en: "",
+        hi: "",
+      },
+
+      category: publication.category || "",
+
+      file: publication.file || null,
+
+      isActive: publication.isActive ?? true,
+
+      createdBy: publication.createdBy || null,
+      updatedBy: publication.updatedBy || null,
+
+      createdAt: publication.createdAt || null,
+      updatedAt: publication.updatedAt || null,
+    };
+
+    return res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    console.error("ERROR =>", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching publication",
+    });
+  }
+};
