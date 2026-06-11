@@ -115,8 +115,14 @@ export const updateCommittee = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { content_en, content_hi, type_en, type_hi, displayOrder, isActive } =
-      req.body;
+    const {
+      content_en,
+      content_hi,
+      type_en,
+      type_hi,
+      displayOrder,
+      isActive,
+    } = req.body;
 
     const data = await Committees.findById(id);
 
@@ -180,12 +186,16 @@ export const updateCommittee = async (req, res) => {
       data.displayOrder = Number(displayOrder);
     }
 
-    // Update isActive
+    // ACTIVE LOGIC (ONLY ONE ACTIVE AT A TIME)
     if (isActive !== undefined) {
-      const activeValue = isActive === "true" || isActive === true;
+      const activeValue =
+        isActive === "true" || isActive === true;
 
       if (activeValue) {
-        await Committees.updateMany({}, { isActive: false });
+        await Committees.updateMany(
+          { _id: { $ne: id } },
+          { $set: { isActive: false } }
+        );
       }
 
       data.isActive = activeValue;
