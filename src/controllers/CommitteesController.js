@@ -53,7 +53,7 @@ export const createCommittee = async (req, res) => {
         en: type_en.trim(),
         hi: type_hi.trim(),
       },
-      displayOrder: Number(displayOrder),
+      displayOrder,
       createdBy,
       isActive: true,
     });
