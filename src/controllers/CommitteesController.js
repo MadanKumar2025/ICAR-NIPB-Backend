@@ -186,19 +186,10 @@ export const updateCommittee = async (req, res) => {
       data.displayOrder = Number(displayOrder);
     }
 
-    // ACTIVE LOGIC (ONLY ONE ACTIVE AT A TIME)
+ 
     if (isActive !== undefined) {
-      const activeValue =
+      data.isActive =
         isActive === "true" || isActive === true;
-
-      if (activeValue) {
-        await Committees.updateMany(
-          { _id: { $ne: id } },
-          { $set: { isActive: false } }
-        );
-      }
-
-      data.isActive = activeValue;
     }
 
     data.updatedBy = req.user?.id;
