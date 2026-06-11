@@ -1,78 +1,73 @@
 import Committees from "../models/CommitteesSchema.js";
 
-export const createCommittee = async (req, res) => {
-  try {
-    const { content_en, content_hi, type_en, type_hi, displayOrder } = req.body;
+// export const createCommittee = async (req, res) => {
+//   try {
+//     const { content_en, content_hi, type_en, type_hi, displayOrder } = req.body;
 
-    if (!content_en || content_en.trim() === "") {
-      return res.status(400).json({
-        success: false,
-        message: "English content is required",
-      });
-    }
+//     if (!content_en || content_en.trim() === "") {
+//       return res.status(400).json({
+//         success: false,
+//         message: "English content is required",
+//       });
+//     }
 
-    if (!content_hi || content_hi.trim() === "") {
-      return res.status(400).json({
-        success: false,
-        message: "Hindi content is required",
-      });
-    }
+//     if (!content_hi || content_hi.trim() === "") {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Hindi content is required",
+//       });
+//     }
 
-    // Type Validation
-    if (!type_en || type_en.trim() === "") {
-      return res.status(400).json({
-        success: false,
-        message: "English type is required",
-      });
-    }
+//     // Type Validation
+//     if (!type_en || type_en.trim() === "") {
+//       return res.status(400).json({
+//         success: false,
+//         message: "English type is required",
+//       });
+//     }
 
-    if (!type_hi || type_hi.trim() === "") {
-      return res.status(400).json({
-        success: false,
-        message: "Hindi type is required",
-      });
-    }
+//     if (!type_hi || type_hi.trim() === "") {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Hindi type is required",
+//       });
+//     }
 
-    // if (isNaN(displayOrder)) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "Display order must be a number",
-    //   });
-    // }
+ 
 
-    const createdBy = req.user?.id;
+//     const createdBy = req.user?.id;
 
-    await Committees.updateMany({}, { isActive: false });
+//     await Committees.updateMany({}, { isActive: false });
 
-    const newCommittee = new Committees({
-      content: {
-        en: content_en.trim(),
-        hi: content_hi.trim(),
-      },
-      type: {
-        en: type_en.trim(),
-        hi: type_hi.trim(),
-      },
-      displayOrder,
-      createdBy,
-      isActive: true,
-    });
+//     const newCommittee = new Committees({
+//       content: {
+//         en: content_en.trim(),
+//         hi: content_hi.trim(),
+//       },
+//       type: {
+//         en: type_en.trim(),
+//         hi: type_hi.trim(),
+//       },
+//       displayOrder,
+//       createdBy,
+//       isActive: true,
+//     });
 
-    const saved = await newCommittee.save();
+//     const saved = await newCommittee.save();
 
-    return res.status(201).json({
-      success: true,
-      message: "Committee created successfully",
-      data: saved,
-    });
-  } catch (error) {
-    console.error("Create Committee Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
+//     return res.status(201).json({
+//       success: true,
+//       message: "Committee created successfully",
+//       data: saved,
+//     });
+//   } catch (error) {
+//     console.error("Create Committee Error:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Server error",
+//     });
+//   }
+// };
 
 // export const getAllCommittees = async (req, res) => {
 //   try {
@@ -127,6 +122,66 @@ export const createCommittee = async (req, res) => {
 //     });
 //   }
 // };
+
+export const createCommittee = async (req, res) => {
+  try {
+    const {
+      content_en,
+      content_hi,
+      type_en,
+      type_hi,
+      createdBy,
+    } = req.body;
+
+    // Validation
+    const missingFields = [];
+
+    if (!content_en) missingFields.push("Content (English)");
+    if (!content_hi) missingFields.push("Content (Hindi)");
+    if (!type_en) missingFields.push("Type (English)");
+    if (!type_hi) missingFields.push("Type (Hindi)");
+
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Missing required fields: ${missingFields.join(", ")}`,
+      });
+    }
+
+    // Agar sirf ek committee active rakhni hai
+    await Committees.updateMany({}, { isActive: false });
+
+    const committee = new Committees({
+      content: {
+        en: content_en.trim(),
+        hi: content_hi.trim(),
+      },
+
+      type: {
+        en: type_en.trim(),
+        hi: type_hi.trim(),
+      },
+
+      createdBy,
+      isActive: true,
+    });
+
+    const savedCommittee = await committee.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Committee created successfully",
+      data: savedCommittee,
+    });
+  } catch (error) {
+    console.error("Create Committee Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
 
 export const getAllCommittees = async (req, res) => {
   try {
@@ -242,19 +297,12 @@ export const getAllCommittees = async (req, res) => {
 //   }
 // };
 
-
 export const updateCommittee = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const {
-      content_en,
-      content_hi,
-      type_en,
-      type_hi,
-      displayOrder,
-      isActive,
-    } = req.body;
+    const { content_en, content_hi, type_en, type_hi, displayOrder, isActive } =
+      req.body;
 
     const data = await Committees.findById(id);
 
@@ -349,7 +397,6 @@ export const updateCommittee = async (req, res) => {
   }
 };
 
-
 export const updateCommitteeStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -390,7 +437,6 @@ export const updateCommitteeStatus = async (req, res) => {
     });
   }
 };
-
 
 // this is use for web
 
