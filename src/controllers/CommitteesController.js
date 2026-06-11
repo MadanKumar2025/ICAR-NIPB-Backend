@@ -33,12 +33,12 @@ export const createCommittee = async (req, res) => {
       });
     }
 
-    if (isNaN(displayOrder)) {
-      return res.status(400).json({
-        success: false,
-        message: "Display order must be a number",
-      });
-    }
+    // if (isNaN(displayOrder)) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Display order must be a number",
+    //   });
+    // }
 
     const createdBy = req.user?.id;
 
