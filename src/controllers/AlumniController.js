@@ -584,7 +584,7 @@ export const createAlumniWeb = async (req, res) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const urlRegex =
       /^https?:\/\/([\w\d-]+\.)+[\w-]+(\/[\w\d\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
-    const mobileRegex = /^[6-9]\d{9}$/;
+    // const mobileRegex = /^[6-9]\d{9}$/;
 
     const validateUrl = (url) => {
       return !url || urlRegex.test(url);
@@ -603,12 +603,12 @@ export const createAlumniWeb = async (req, res) => {
         message: "Invalid email format",
       });
     }
-    if (cleanMobile && !mobileRegex.test(cleanMobile)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid mobile number",
-      });
-    }
+    // if (cleanMobile && !mobileRegex.test(cleanMobile)) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Invalid mobile number",
+    //   });
+    // }
     if (passOutYear) {
       const year = Number(passOutYear);
       if (isNaN(year) || year < 1900 || year > new Date().getFullYear() + 10) {
