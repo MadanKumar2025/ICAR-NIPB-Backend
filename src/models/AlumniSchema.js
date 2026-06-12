@@ -32,7 +32,17 @@ const AlumniSchema = new mongoose.Schema(
       en: { type: String, trim: true },
       hi: { type: String, trim: true },
     },
-
+    mobile: {
+      type: String,
+      trim: true,
+    },
+    passOutYear: {
+      type: Number,
+    },
+    designation: {
+      en: { type: String, trim: true },
+      hi: { type: String, trim: true },
+    },
     email: {
       type: String,
       required: true,

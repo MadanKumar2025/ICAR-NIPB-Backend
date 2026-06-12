@@ -3,91 +3,6 @@ import fs from "fs";
 import path from "path";
 import mongoose from "mongoose";
 
-// export const createAlumni = async (req, res) => {
-//   try {
-//     const {
-//       name_en,
-//       name_hi,
-//       batch_en,
-//       batch_hi,
-//       degree_en,
-//       degree_hi,
-//       email,
-//       profileLink,
-//       facebook,
-//       twitter,
-//       youtube,
-//       linkedin,
-//       instagram,
-//       photoTitle,
-//     } = req.body || {};
-
-//     const cleanNameEn = name_en?.trim();
-//     const cleanNameHi = name_hi?.trim();
-//     const cleanEmail = email?.trim().toLowerCase();
-
-//     if (!cleanNameEn || !cleanNameHi || !cleanEmail) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Name & Email are required",
-//       });
-//     }
-
-//     if (!req.file) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Photo is required",
-//       });
-//     }
-
-//     const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
-//     if (!allowedTypes.includes(req.file.mimetype)) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Invalid image type",
-//       });
-//     }
-
-//     const existing = await Alumni.findOne({ email: cleanEmail });
-//     if (existing) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Email already exists",
-//       });
-//     }
-
-//     const alumni = new Alumni({
-//       name: { en: cleanNameEn, hi: cleanNameHi },
-//       batch: { en: batch_en || "", hi: batch_hi || "" },
-//       degree: { en: degree_en || "", hi: degree_hi || "" },
-//       email: cleanEmail,
-//       profileLink,
-//       facebook,
-//       twitter,
-//       youtube,
-//       linkedin,
-//       instagram,
-//       photo: req.file.filename,
-//       photoTitle: photoTitle || "",
-
-//       isApproved: false,
-//       approvedBy: null,
-//       approvedDate: null,
-//     });
-
-//     const saved = await alumni.save();
-
-//     res.status(201).json({
-//       success: true,
-//       message: "Alumni created (Pending Approval)",
-//       data: saved,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ success: false, message: "Server Error" });
-//   }
-// };
-
 export const createAlumni = async (req, res) => {
   try {
     const {
@@ -105,11 +20,23 @@ export const createAlumni = async (req, res) => {
       linkedin,
       instagram,
       photoTitle,
+      mobile,
+      passOutYear,
+      designation_en,
+      designation_hi,
     } = req.body || {};
 
     const cleanNameEn = name_en?.trim();
     const cleanNameHi = name_hi?.trim();
     const cleanEmail = email?.trim().toLowerCase();
+    const cleanMobile = mobile?.trim();
+    const cleanDesignationEn = designation_en?.trim();
+    const cleanDesignationHi = designation_hi?.trim();
+    const cleanBatchEn = batch_en?.trim();
+    const cleanBatchHi = batch_hi?.trim();
+    const cleanDegreeEn = degree_en?.trim();
+    const cleanDegreeHi = degree_hi?.trim();
+    const cleanPhotoTitle = photoTitle?.trim() || "";
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const urlRegex =
@@ -132,7 +59,23 @@ export const createAlumni = async (req, res) => {
         message: "Invalid email format",
       });
     }
-
+    if (cleanMobile && !mobileRegex.test(cleanMobile)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid mobile number",
+      });
+    }
+    if (
+      passOutYear &&
+      (isNaN(passOutYear) ||
+        passOutYear < 1900 ||
+        passOutYear > new Date().getFullYear() + 10)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Pass Out Year",
+      });
+    }
     if (!req.file) {
       return res.status(400).json({
         success: false,
@@ -178,6 +121,12 @@ export const createAlumni = async (req, res) => {
       name: { en: cleanNameEn, hi: cleanNameHi },
       batch: { en: batch_en?.trim() || "", hi: batch_hi?.trim() || "" },
       degree: { en: degree_en?.trim() || "", hi: degree_hi?.trim() || "" },
+      designation: {
+        en: cleanDesignationEn || "",
+        hi: cleanDesignationHi || "",
+      },
+      mobile: cleanMobile || "",
+      passOutYear: passOutYear ? Number(passOutYear) : null,
       email: cleanEmail,
 
       profileLink,
@@ -211,38 +160,82 @@ export const createAlumni = async (req, res) => {
   }
 };
 
+// export const getAlumni = async (req, res) => {
+//   try {
+//     const isAll = req.query.all === "true";
+
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = 10;
+//     const skip = (page - 1) * limit;
+
+//     let query = Alumni.find().sort({ createdAt: -1 });
+
+//     let alumni;
+//     const total = await Alumni.countDocuments();
+
+//     if (isAll) {
+//       alumni = await query;
+//     } else {
+//       alumni = await query.skip(skip).limit(limit);
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       count: alumni.length,
+//       total: total,
+//       page: isAll ? null : page,
+//       totalPages: isAll ? 1 : Math.ceil(total / limit),
+//       data: alumni,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       success: false,
+//       message: error.message || "Internal server error",
+//     });
+//   }
+// };
+
 export const getAlumni = async (req, res) => {
   try {
-    const isAll = req.query.all === "true";
+    const alumniList = await Alumni.find()
+      .populate("approvedBy", "name email")
+      .sort({ createdAt: -1 });
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const skip = (page - 1) * limit;
-
-    let query = Alumni.find().sort({ createdAt: -1 });
-
-    let alumni;
-    const total = await Alumni.countDocuments();
-
-    if (isAll) {
-      alumni = await query;
-    } else {
-      alumni = await query.skip(skip).limit(limit);
-    }
+    const data = alumniList.map((alumni) => ({
+      id: alumni._id,
+      name: alumni.name || { en: "", hi: "" },
+      batch: alumni.batch || { en: "", hi: "" },
+      degree: alumni.degree || { en: "", hi: "" },
+      mobile: alumni.mobile || "",
+      passOutYear: alumni.passOutYear || null,
+      designation: alumni.designation || { en: "", hi: "" },
+      email: alumni.email,
+      profileLink: alumni.profileLink || "",
+      facebook: alumni.facebook || "",
+      twitter: alumni.twitter || "",
+      youtube: alumni.youtube || "",
+      linkedin: alumni.linkedin || "",
+      instagram: alumni.instagram || "",
+      photo: alumni.photo,
+      photoTitle: alumni.photoTitle || "",
+      isApproved: alumni.isApproved,
+      approvedBy: alumni.approvedBy || null,
+      approvedDate: alumni.approvedDate || null,
+      createdAt: alumni.createdAt,
+      updatedAt: alumni.updatedAt || null,
+    }));
 
     res.status(200).json({
       success: true,
-      count: alumni.length,
-      total: total,
-      page: isAll ? null : page,
-      totalPages: isAll ? 1 : Math.ceil(total / limit),
-      data: alumni,
+      count: data.length,
+      data,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: error.message || "Internal server error",
+      message: "Error fetching alumni",
     });
   }
 };
@@ -308,6 +301,10 @@ export const updateAlumni = async (req, res) => {
       batch_hi,
       degree_en,
       degree_hi,
+      designation_en,
+      designation_hi,
+      mobile,
+      passOutYear,
       email,
       profileLink,
       facebook,
@@ -330,7 +327,7 @@ export const updateAlumni = async (req, res) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const urlRegex =
       /^https?:\/\/([\w\d-]+\.)+[\w-]+(\/[\w\d\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
-
+    const mobileRegex = /^[6-9]\d{9}$/;
     const validateUrl = (url) => !url || urlRegex.test(url);
 
     if (email && !emailRegex.test(email.trim().toLowerCase())) {
@@ -339,7 +336,15 @@ export const updateAlumni = async (req, res) => {
         message: "Invalid email format",
       });
     }
-
+    if (mobile !== undefined) {
+      if (mobile && !mobileRegex.test(mobile.trim())) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid mobile number",
+        });
+      }
+      alumni.mobile = mobile ? mobile.trim() : "";
+    }
     const urls = {
       profileLink,
       facebook,
@@ -397,7 +402,19 @@ export const updateAlumni = async (req, res) => {
         hi: degree_hi ? degree_hi.trim() : alumni.degree?.hi,
       };
     }
-
+    if (designation_en || designation_hi) {
+      alumni.designation = {
+        en: designation_en ? designation_en.trim() : alumni.designation?.en,
+        hi: designation_hi ? designation_hi.trim() : alumni.designation?.hi,
+      };
+    }
+    // MOBILE (NEW)
+    if (mobile !== undefined) {
+      alumni.mobile = mobile ? mobile.trim() : "";
+    }
+    if (passOutYear !== undefined) {
+      alumni.passOutYear = passOutYear ? Number(passOutYear) : null;
+    }
     if (email) alumni.email = email.trim().toLowerCase();
 
     if (profileLink !== undefined) alumni.profileLink = profileLink || null;
@@ -446,6 +463,9 @@ export const getAllAlumni = async (req, res) => {
       name: alumni.name || { en: "", hi: "" },
       batch: alumni.batch || { en: "", hi: "" },
       degree: alumni.degree || { en: "", hi: "" },
+      mobile: alumni.mobile || "",
+      passOutYear: alumni.passOutYear || null,
+      designation: alumni.designation || { en: "", hi: "" },
       email: alumni.email,
       profileLink: alumni.profileLink || "",
       facebook: alumni.facebook || "",
@@ -497,6 +517,9 @@ export const getAlumniByIdWeb = async (req, res) => {
       name: alumni.name || { en: "", hi: "" },
       batch: alumni.batch || { en: "", hi: "" },
       degree: alumni.degree || { en: "", hi: "" },
+      mobile: alumni.mobile || "",
+      passOutYear: alumni.passOutYear || null,
+      designation: alumni.designation || { en: "", hi: "" },
       email: alumni.email,
       profileLink: alumni.profileLink || "",
       facebook: alumni.facebook || "",
@@ -526,7 +549,6 @@ export const getAlumniByIdWeb = async (req, res) => {
   }
 };
 
-
 export const createAlumniWeb = async (req, res) => {
   try {
     const {
@@ -536,6 +558,12 @@ export const createAlumniWeb = async (req, res) => {
       batch_hi,
       degree_en,
       degree_hi,
+
+      designation_en,
+      designation_hi,
+      mobile,
+      passOutYear,
+
       email,
       profileLink,
       facebook,
@@ -549,10 +577,14 @@ export const createAlumniWeb = async (req, res) => {
     const cleanNameEn = name_en?.trim();
     const cleanNameHi = name_hi?.trim();
     const cleanEmail = email?.trim().toLowerCase();
+    const cleanMobile = mobile?.trim();
+    const cleanDesignationEn = designation_en?.trim();
+    const cleanDesignationHi = designation_hi?.trim();
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const urlRegex =
       /^https?:\/\/([\w\d-]+\.)+[\w-]+(\/[\w\d\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
+    const mobileRegex = /^[6-9]\d{9}$/;
 
     const validateUrl = (url) => {
       return !url || urlRegex.test(url);
@@ -571,7 +603,21 @@ export const createAlumniWeb = async (req, res) => {
         message: "Invalid email format",
       });
     }
-
+    if (cleanMobile && !mobileRegex.test(cleanMobile)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid mobile number",
+      });
+    }
+    if (passOutYear) {
+      const year = Number(passOutYear);
+      if (isNaN(year) || year < 1900 || year > new Date().getFullYear() + 10) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid Pass Out Year",
+        });
+      }
+    }
     if (!req.file) {
       return res.status(400).json({
         success: false,
@@ -618,7 +664,12 @@ export const createAlumniWeb = async (req, res) => {
       batch: { en: batch_en?.trim() || "", hi: batch_hi?.trim() || "" },
       degree: { en: degree_en?.trim() || "", hi: degree_hi?.trim() || "" },
       email: cleanEmail,
-
+      designation: {
+        en: cleanDesignationEn || "",
+        hi: cleanDesignationHi || "",
+      },
+      mobile: cleanMobile || "",
+      passOutYear: passOutYear ? Number(passOutYear) : null,
       profileLink,
       facebook,
       twitter,
