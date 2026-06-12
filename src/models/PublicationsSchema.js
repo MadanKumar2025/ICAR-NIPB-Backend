@@ -10,6 +10,10 @@ const PublicationsSchema = new mongoose.Schema(
       en: { type: String, required: true },
       hi: { type: String, required: true },
     },
+    articleType: {
+      en: { type: String },
+      hi: { type: String },
+    },
     category: {
       type: String,
       required: true,

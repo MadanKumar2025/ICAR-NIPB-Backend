@@ -6,7 +6,7 @@ import {
   updatePublicationStatus,
   getAllPublicationsWeb,
   getPublicationsByCategory,
-  getPublicationByIdWeb
+  getPublicationByIdWeb,
 } from "../controllers/PublicationsControllers.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -21,7 +21,12 @@ router.post(
   createPublication,
 );
 router.get("/getAll", authMiddleware, getAllPublications);
-router.put("/update/:id", authMiddleware,uploadAll.single("file"), updatePublication);
+router.put(
+  "/update/:id",
+  authMiddleware,
+  uploadAll.single("file"),
+  updatePublication,
+);
 router.put("/updateStatus/:id", authMiddleware, updatePublicationStatus);
 
 // this is use for web

@@ -4,14 +4,23 @@ import mongoose from "mongoose";
 
 export const createPublication = async (req, res) => {
   try {
-    let { year, title_en, title_hi, category, isActive } = req.body;
+    let {
+      year,
+      title_en,
+      title_hi,
+      category,
+      articleType_en,
+      articleType_hi,
+      isActive,
+    } = req.body;
 
     // Trim values
     year = year?.trim();
     title_en = title_en?.trim();
     title_hi = title_hi?.trim();
     category = category?.trim();
-
+    articleType_en = articleType_en?.trim();
+    articleType_hi = articleType_hi?.trim();
     // Validation
     // if (!year) {
     //   return res.status(400).json({
@@ -55,7 +64,10 @@ export const createPublication = async (req, res) => {
         en: title_en,
         hi: title_hi,
       },
-
+      articleType: {
+        en: articleType_en,
+        hi: articleType_hi,
+      },
       category,
 
       file,
@@ -123,6 +135,8 @@ export const getAllPublications = async (req, res) => {
       id: pub._id,
       year: pub.year,
       title: pub.title || { en: "", hi: "" },
+      articleType: pub.articleType || { en: "", hi: "" },
+
       category: pub.category || "",
       file: pub.file || null,
       isActive: pub.isActive,
@@ -148,11 +162,19 @@ export const getAllPublications = async (req, res) => {
 
 export const updatePublication = async (req, res) => {
   try {
-       console.log("Controller Hit");
+    console.log("Controller Hit");
     console.log("File:", req.file);
-    
+
     const { id } = req.params;
-    let { year, title_en, title_hi, category, isActive } = req.body;
+    let {
+      year,
+      title_en,
+      title_hi,
+      category,
+      articleType_en,
+      articleType_hi,
+      isActive,
+    } = req.body;
 
     // Validate ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -185,7 +207,7 @@ export const updatePublication = async (req, res) => {
     title_en = title_en?.trim();
     title_hi = title_hi?.trim();
     category = category?.trim();
-
+    articleType_hi = articleType_hi?.trim();
     // Update fields only if provided
     if (year !== undefined) {
       publication.year = year;
@@ -201,7 +223,12 @@ export const updatePublication = async (req, res) => {
     if (category) {
       publication.category = category;
     }
-
+    if (articleType_en || articleType_hi) {
+      publication.articleType = {
+        en: articleType_en || publication.articleType?.en || "",
+        hi: articleType_hi || publication.articleType?.hi || "",
+      };
+    }
     if (isActive !== undefined) {
       publication.isActive = isActive;
     }
@@ -311,7 +338,10 @@ export const getAllPublicationsWeb = async (req, res) => {
         en: "",
         hi: "",
       },
-
+      articleType: publication.articleType || {
+        en: "",
+        hi: "",
+      },
       category: publication.category || "",
 
       file: publication.file ? publication.file : null,
@@ -367,6 +397,10 @@ export const getPublicationsByCategory = async (req, res) => {
         en: "",
         hi: "",
       },
+      articleType: item.articleType || {
+        en: "",
+        hi: "",
+      },
 
       category: item.category || "",
 
@@ -396,7 +430,6 @@ export const getPublicationsByCategory = async (req, res) => {
   }
 };
 
-
 export const getPublicationByIdWeb = async (req, res) => {
   try {
     const { id } = req.params;
@@ -425,6 +458,10 @@ export const getPublicationByIdWeb = async (req, res) => {
       year: publication.year || null,
 
       title: publication.title || {
+        en: "",
+        hi: "",
+      },
+      articleType: item.articleType || {
         en: "",
         hi: "",
       },
