@@ -39,7 +39,7 @@ export const createStaff = async (req, res) => {
     if (!designation_hi) missingFields.push("Designation (Hindi)");
 
     if (!phone) missingFields.push("Phone");
-    if (!email) missingFields.push("Email");
+    // if (!email) missingFields.push("Email");
 
     if (
       displayOrder === undefined ||
