@@ -23,12 +23,12 @@ export const createGallery = async (req, res) => {
     }
 
     // Validate titles (at least one required)
-    if (!title_en && !title_hi) {
-      return res.status(400).json({
-        success: false,
-        message: "Gallery title in English or Hindi is required",
-      });
-    }
+    // if (!title_en && !title_hi) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Gallery title in English or Hindi is required",
+    //   });
+    // }
 
     // Validate type
     if (!type) {
@@ -196,12 +196,12 @@ export const updateGallery = async (req, res) => {
     }
 
     // Validate title (at least one required if updating)
-    if (title_en === "" && title_hi === "") {
-      return res.status(400).json({
-        success: false,
-        message: "At least one title (English or Hindi) is required",
-      });
-    }
+    // if (title_en === "" && title_hi === "") {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "At least one title (English or Hindi) is required",
+    //   });
+    // }
 
     // URL validation
     const isValidUrl = (url) => {
