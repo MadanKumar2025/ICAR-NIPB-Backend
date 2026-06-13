@@ -174,8 +174,8 @@ export const updateGallery = async (req, res) => {
     let { title_en, title_hi, type, videoUrl, isActive } = req.body;
 
     // Trim values
-    title_en = title_en?.trim();
-    title_hi = title_hi?.trim();
+    // title_en = title_en?.trim();
+    // title_hi = title_hi?.trim();
     type = type?.trim();
     videoUrl = videoUrl?.trim();
 
