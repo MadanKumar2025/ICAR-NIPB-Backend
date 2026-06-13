@@ -31,8 +31,8 @@ router.get("/get/:id", authMiddleware, getScientistById);
 router.put(
   "/update/:id",
   authMiddleware,
-  //  upload.any(),
-  uploadSingleImage,
+   upload.any(),
+  // uploadSingleImage,
   updateScientist,
 );
 router.put("/updateStatus/:id", authMiddleware, updateScientistStatus);
