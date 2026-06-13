@@ -244,8 +244,8 @@ export const getAllPatentsWeb = async (req, res) => {
   try {
     const patentsList = await Patents.find()
       .populate("createby", "name email")
-      .populate("updateby", "name email")
-      .sort({ createdate: -1 });
+      .populate("updateby", "name email");
+      // .sort({ createdate: -1 });
 
     const data = patentsList.map((patent) => ({
       id: patent._id,
