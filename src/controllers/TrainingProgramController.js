@@ -245,8 +245,8 @@ export const getTrainingProgramsWeb = async (req, res) => {
   try {
     const trainingProgramList = await TrainingProgram.find()
       .populate("createdBy", "name email")
-      .populate("updatedBy", "name email")
-      .sort({ createdDate: -1 });
+      .populate("updatedBy", "name email");
+      // .sort({ createdDate: -1 });
 
     const data = trainingProgramList.map((program) => ({
       id: program._id,
