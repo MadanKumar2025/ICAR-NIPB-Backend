@@ -10,7 +10,6 @@ import {
 
 import authMiddleware from "../middleware/authMiddleware.js";
 import upload from "../middleware/upload.js";
-import uploadSingleImage from "../middleware/uploadHandler.js";
 
 const router = express.Router();
 
@@ -21,8 +20,7 @@ router.get("/get/web/:id", getScientistByIdWeb);
 router.post(
   "/create",
   authMiddleware,
-  //  upload.any(),
-  uploadSingleImage,
+   upload.any(),
   createScientist,
 );
 router.get("/getAll", authMiddleware, getScientist);
@@ -32,7 +30,6 @@ router.put(
   "/update/:id",
   authMiddleware,
    upload.any(),
-  // uploadSingleImage,
   updateScientist,
 );
 router.put("/updateStatus/:id", authMiddleware, updateScientistStatus);

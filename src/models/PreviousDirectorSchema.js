@@ -9,6 +9,10 @@ const PreviousDirectorSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  webAddress: {
+    type: String,
+    default: null,
+  },
   photoTitle: {
     type: String,
   },
