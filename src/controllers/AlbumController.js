@@ -19,8 +19,8 @@ export const createAlbum = async (req, res) => {
     type_hi = type_hi?.trim();
     title_en = title_en?.trim();
     title_hi = title_hi?.trim();
-    venue_en = venue_en?.trim();
-    venue_hi = venue_hi?.trim();
+    // venue_en = venue_en?.trim();
+    // venue_hi = venue_hi?.trim();
 
     if (!type_en) {
       return res.status(400).json({
