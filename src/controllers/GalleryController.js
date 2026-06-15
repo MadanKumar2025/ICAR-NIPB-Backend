@@ -453,7 +453,7 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
 
     const galleryList = await Gallery?.find({
       albumId: albumId,
-      // isActive: true,
+      isActive: { $ne: false },
     })
       .populate("albumId", "title")
       .populate("createdBy", "name email")
@@ -488,5 +488,3 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
     });
   }
 };
-
- 
