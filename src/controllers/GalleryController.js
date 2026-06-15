@@ -447,19 +447,79 @@ export const getAllGalleryWeb = async (req, res) => {
   }
 };
 // this is use for web
+// export const getGalleryByAlbumIdWeb = async (req, res) => {
+//   try {
+//     const { albumId } = req.params;
+
+//     const galleryList = await Gallery?.find({
+//       albumId: albumId,
+//       isActive: true,
+//     })
+//       .populate("albumId", "title")
+//       .populate("createdBy", "name email")
+//       .sort({ createdDate: -1 });
+
+//     const data = galleryList.map((gallery) => ({
+//       id: gallery._id,
+//       albumId: gallery.albumId?._id || null,
+//       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
+
+//       title: gallery.title || { en: "", hi: "" },
+//       type: gallery.type || "",
+//       photo: gallery.photo || null,
+//       videoUrl: gallery.videoUrl || null,
+//       isActive: gallery.isActive,
+
+//       createdBy: gallery.createdBy || null,
+//       createdAt: gallery.createdDate,
+//       updatedAt: gallery.updatedDate || null,
+//     }));
+
+//     res.status(200).json({
+//       success: true,
+//       count: data.length,
+//       data,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error fetching gallery by albumId",
+//     });
+//   }
+// };
+
 export const getGalleryByAlbumIdWeb = async (req, res) => {
   try {
     const { albumId } = req.params;
 
-    const galleryList = await Gallery?.find({
-      albumId: albumId,
-      isActive: { $ne: false },
-    })
+    const isAll = req.query.all === "true";
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    // ✅ base filter (ONLY active data)
+    const filter = {
+      albumId,
+      isActive: true,
+    };
+
+    // ✅ base query with populate + sorting
+    let query = Gallery.find(filter)
       .populate("albumId", "title")
       .populate("createdBy", "name email")
       .sort({ createdDate: -1 });
 
-    const data = galleryList.map((gallery) => ({
+    // ✅ total count
+    const total = await Gallery.countDocuments(filter);
+
+    // ✅ pagination or full data
+    const galleryItems = isAll
+      ? await query
+      : await query.skip(skip).limit(limit);
+
+    // ✅ clean response mapping
+    const data = galleryItems.map((gallery) => ({
       id: gallery._id,
       albumId: gallery.albumId?._id || null,
       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
@@ -475,16 +535,21 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
       updatedAt: gallery.updatedDate || null,
     }));
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       count: data.length,
+      total,
+      page: isAll ? null : page,
+      totalPages: isAll ? 1 : Math.ceil(total / limit),
       data,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
+    console.error("Gallery API Error:", error);
+
+    return res.status(500).json({
       success: false,
-      message: "Error fetching gallery by albumId",
+      message: error.message || "Error fetching gallery by albumId",
     });
   }
 };
+ 
