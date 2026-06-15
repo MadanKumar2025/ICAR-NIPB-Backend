@@ -498,70 +498,30 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
     const limit = 10;
     const skip = (page - 1) * limit;
 
-    if (!mongoose.Types.ObjectId.isValid(albumId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid albumId",
-      });
-    }
+    let query = Gallery.find({ albumId }).sort({ createdDate: -1 });
 
-    let query = Gallery.find({
-      albumId: new mongoose.Types.ObjectId(albumId),
-      isActive: true,
-    })
-      .populate("albumId", "title")
-      .populate("createdBy", "name email")
-      .sort({ createdDate: -1 });
-
-    let galleryList;
-
-    const total = await Gallery.countDocuments({
-      albumId: new mongoose.Types.ObjectId(albumId),
-      isActive: true,
-    });
+    let galleryItems;
+    const totalGallery = await Gallery.countDocuments({ albumId });
 
     if (isAll) {
-      galleryList = await query;
+      galleryItems = await query;
     } else {
-      galleryList = await query.skip(skip).limit(limit);
+      galleryItems = await query.skip(skip).limit(limit);
     }
 
-    const data = galleryList.map((gallery) => ({
-      id: gallery._id,
-      albumId: gallery.albumId?._id || null,
-      albumTitle: gallery.albumId?.title || { en: "", hi: "" },
-
-      title: gallery.title || { en: "", hi: "" },
-      type: gallery.type || "",
-      photo: gallery.photo || null,
-      videoUrl: gallery.videoUrl || null,
-      isActive: gallery.isActive,
-
-      createdBy: gallery.createdBy
-        ? {
-            id: gallery.createdBy._id,
-            name: gallery.createdBy.name,
-            email: gallery.createdBy.email,
-          }
-        : null,
-
-      createdAt: gallery.createdDate,
-      updatedAt: gallery.updatedDate || null,
-    }));
-
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
-      count: data.length,
-      total,
+      count: galleryItems.length,
+      total: totalGallery,
       page: isAll ? null : page,
-      totalPages: isAll ? 1 : Math.ceil(total / limit),
-      data,
+      totalPages: isAll ? 1 : Math.ceil(totalGallery / limit),
+      data: galleryItems,
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      message: error.message || "Error fetching gallery by albumId",
+      message: error.message || "Internal server error",
     });
   }
 };
