@@ -447,17 +447,84 @@ export const getAllGalleryWeb = async (req, res) => {
   }
 };
 // this is use for web
+// export const getGalleryByAlbumIdWeb = async (req, res) => {
+//   try {
+//     const { albumId } = req.params;
+
+//     const galleryList = await Gallery.find({
+//       albumId: albumId,
+//       isActive: true,
+//     })
+//       .populate("albumId", "title")
+//       .populate("createdBy", "name email")
+//       .sort({ createdDate: -1 });
+
+//     const data = galleryList.map((gallery) => ({
+//       id: gallery._id,
+//       albumId: gallery.albumId?._id || null,
+//       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
+
+//       title: gallery.title || { en: "", hi: "" },
+//       type: gallery.type || "",
+//       photo: gallery.photo || null,
+//       videoUrl: gallery.videoUrl || null,
+//       isActive: gallery.isActive,
+
+//       createdBy: gallery.createdBy || null,
+//       createdAt: gallery.createdDate,
+//       updatedAt: gallery.updatedDate || null,
+//     }));
+
+//     res.status(200).json({
+//       success: true,
+//       count: data.length,
+//       data,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error fetching gallery by albumId",
+//     });
+//   }
+// };
+
 export const getGalleryByAlbumIdWeb = async (req, res) => {
   try {
     const { albumId } = req.params;
 
-    const galleryList = await Gallery.find({
-      albumId: albumId,
+    const isAll = req.query.all === "true";
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    if (!mongoose.Types.ObjectId.isValid(albumId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid albumId",
+      });
+    }
+
+    let query = Gallery.find({
+      albumId: new mongoose.Types.ObjectId(albumId),
       isActive: true,
     })
       .populate("albumId", "title")
       .populate("createdBy", "name email")
       .sort({ createdDate: -1 });
+
+    let galleryList;
+
+    const total = await Gallery.countDocuments({
+      albumId: new mongoose.Types.ObjectId(albumId),
+      isActive: true,
+    });
+
+    if (isAll) {
+      galleryList = await query;
+    } else {
+      galleryList = await query.skip(skip).limit(limit);
+    }
 
     const data = galleryList.map((gallery) => ({
       id: gallery._id,
@@ -470,21 +537,31 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
       videoUrl: gallery.videoUrl || null,
       isActive: gallery.isActive,
 
-      createdBy: gallery.createdBy || null,
+      createdBy: gallery.createdBy
+        ? {
+            id: gallery.createdBy._id,
+            name: gallery.createdBy.name,
+            email: gallery.createdBy.email,
+          }
+        : null,
+
       createdAt: gallery.createdDate,
       updatedAt: gallery.updatedDate || null,
     }));
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       count: data.length,
+      total,
+      page: isAll ? null : page,
+      totalPages: isAll ? 1 : Math.ceil(total / limit),
       data,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "Error fetching gallery by albumId",
+      message: error.message || "Error fetching gallery by albumId",
     });
   }
 };
