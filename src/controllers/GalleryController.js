@@ -548,7 +548,7 @@ export const getAllGalleryWeb = async (req, res) => {
 //   }
 // };
  
-
+ 
 export const getGalleryByAlbumIdWeb = async (req, res) => {
   try {
     const { albumId } = req.params;
@@ -558,9 +558,22 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
     const limit = 10;
     const skip = (page - 1) * limit;
 
+    // ✅ ensure valid ObjectId
+    const albumObjectId = mongoose.Types.ObjectId.isValid(albumId)
+      ? new mongoose.Types.ObjectId(albumId)
+      : null;
+
+    if (!albumObjectId) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid albumId",
+      });
+    }
+
+    // ✅ STRICT FILTER
     const filter = {
-      albumId,
-      isActive: true,
+      albumId: albumObjectId,
+      isActive: true, // must be boolean true in DB
     };
 
     let query = Gallery.find(filter)
