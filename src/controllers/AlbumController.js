@@ -216,8 +216,8 @@ export const updateAlbum = async (req, res) => {
     const trimmedTypeHi = type_hi?.trim();
     const trimmedTitleEn = title_en?.trim();
     const trimmedTitleHi = title_hi?.trim();
-    const trimmedVenueEn = venue_en?.trim();
-    const trimmedVenueHi = venue_hi?.trim();
+    // const trimmedVenueEn = venue_en?.trim();
+    // const trimmedVenueHi = venue_hi?.trim();
 
     // Validate required fields
     if (trimmedTypeEn === "" || trimmedTypeHi === "") {
