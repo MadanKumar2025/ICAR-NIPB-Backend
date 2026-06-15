@@ -145,44 +145,39 @@ export const createAlbum = async (req, res) => {
 };
 
 export const getAlbums = async (req, res) => {
-  try {
-    const isAll = req.query.all === "true";
+ try {
+    // Fetch all albums with creator/updater info
+    const albumList = await Album.find()
+      .populate("createdBy", "name email")
+      .populate("updatedBy", "name email")
+      .sort({ createdDate: -1 });
 
-    // Pagination setup
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const skip = (page - 1) * limit;
-
-    // Base query
-    const query = Album.find().sort({ createdDate: -1 });
-
-    let albums;
-    let totalAlbums;
-
-    if (isAll) {
-      // Fetch all albums
-      albums = await query;
-      totalAlbums = albums.length;
-    } else {
-      // Count total albums for pagination
-      totalAlbums = await Album.countDocuments();
-      // Fetch paginated albums
-      albums = await query.skip(skip).limit(limit);
-    }
+    // Map albums into clean response format
+    const data = albumList.map((album) => ({
+      id: album._id,
+      type: album.type || { en: "", hi: "" },
+      title: album.title || { en: "", hi: "" },
+      venue: album.venue || { en: "", hi: "" },
+      publishDate: album.publishDate || null,
+      expiryDate: album.expiryDate || null,
+      coverPic: album.coverPic || null,
+      isActive: album.isActive ?? true,
+      createdBy: album.createdBy || null,
+      updatedBy: album.updatedBy || null,
+      createdAt: album.createdDate || null,
+      updatedAt: album.updatedDate || null,
+    }));
 
     res.status(200).json({
       success: true,
-      count: albums.length,
-      total: totalAlbums,
-      page: isAll ? null : page,
-      totalPages: isAll ? 1 : Math.ceil(totalAlbums / limit),
-      data: albums,
+      count: data.length,
+      data,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Error fetching album data",
     });
   }
 };
