@@ -145,43 +145,41 @@ export const createAlbum = async (req, res) => {
 };
 
 export const getAlbums = async (req, res) => {
-  export const getAlbums = async (req, res) => {
-    try {
-      // Fetch all albums with creator/updater info
-      const albumList = await Album.find()
-        .populate("createdBy", "name email")
-        .populate("updatedBy", "name email")
-        .sort({ createdDate: -1 });
+  try {
+    // Fetch all albums with creator/updater info
+    const albumList = await Album.find()
+      .populate("createdBy", "name email")
+      .populate("updatedBy", "name email")
+      .sort({ createdDate: -1 });
 
-      // Map albums into clean response format
-      const data = albumList.map((album) => ({
-        id: album._id,
-        type: album.type || { en: "", hi: "" },
-        title: album.title || { en: "", hi: "" },
-        venue: album.venue || { en: "", hi: "" },
-        publishDate: album.publishDate || null,
-        expiryDate: album.expiryDate || null,
-        coverPic: album.coverPic || null,
-        isActive: album.isActive ?? true,
-        createdBy: album.createdBy || null,
-        updatedBy: album.updatedBy || null,
-        createdAt: album.createdDate || null,
-        updatedAt: album.updatedDate || null,
-      }));
+    // Map albums into clean response format
+    const data = albumList.map((album) => ({
+      id: album._id,
+      type: album.type || { en: "", hi: "" },
+      title: album.title || { en: "", hi: "" },
+      venue: album.venue || { en: "", hi: "" },
+      publishDate: album.publishDate || null,
+      expiryDate: album.expiryDate || null,
+      coverPic: album.coverPic || null,
+      isActive: album.isActive ?? true,
+      createdBy: album.createdBy || null,
+      updatedBy: album.updatedBy || null,
+      createdAt: album.createdDate || null,
+      updatedAt: album.updatedDate || null,
+    }));
 
-      res.status(200).json({
-        success: true,
-        count: data.length,
-        data,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        success: false,
-        message: "Error fetching album data",
-      });
-    }
-  };
+    res.status(200).json({
+      success: true,
+      count: data.length,
+      data,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching album data",
+    });
+  }
 };
 
 export const updateAlbum = async (req, res) => {
