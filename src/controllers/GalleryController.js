@@ -488,45 +488,87 @@ export const getAllGalleryWeb = async (req, res) => {
 //   }
 // };
 
+// export const getGalleryByAlbumIdWeb = async (req, res) => {
+//   try {
+//     const { albumId } = req.params;
+
+//     const isAll = req.query.all === "true";
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = 10;
+//     const skip = (page - 1) * limit;
+
+//     let query = Gallery.find({ albumId })
+//       .populate("albumId", "title")
+//       .populate("createdBy", "name email")
+//       .populate("updatedBy", "name email")
+//       .sort({ createdDate: -1 });
+
+//     let galleryItems;
+//     const totalGallery = await Gallery.countDocuments({ albumId });
+
+//     if (isAll) {
+//       galleryItems = await query;
+//     } else {
+//       galleryItems = await query.skip(skip).limit(limit);
+//     }
+
+//     const formattedData = galleryItems.map((gallery) => ({
+//       id: gallery._id,
+
+//       albumId: gallery.albumId?._id || null,
+//       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
+
+//       title: gallery.title || { en: "", hi: "" },
+//       type: gallery.type || "",
+//       photo: gallery.photo || null,
+//       videoUrl: gallery.videoUrl || null,
+//       isActive: gallery.isActive,
+
+//       createdBy: gallery.createdBy || null,
+//       updatedBy: gallery.updatedBy || null,
+
+//       createdAt: gallery.createdDate,
+//       updatedAt: gallery.updatedDate || null,
+//     }));
+
+//     res.status(200).json({
+//       success: true,
+//       count: formattedData.length,
+//       total: totalGallery,
+//       page: isAll ? null : page,
+//       totalPages: isAll ? 1 : Math.ceil(totalGallery / limit),
+//       data: formattedData,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       success: false,
+//       message: error.message || "Internal server error",
+//     });
+//   }
+// };
+
 export const getGalleryByAlbumIdWeb = async (req, res) => {
   try {
     const { albumId } = req.params;
 
-    // const isAll = req.query.all === "true";
-    // const page = parseInt(req.query.page) || 1;
-    // const limit = 10;
-    // const skip = (page - 1) * limit;
-
-    let query = Gallery.find({ albumId })
+    const galleryItems = await Gallery.find({ albumId })
       .populate("albumId", "title")
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email")
       .sort({ createdDate: -1 });
 
-    let galleryItems;
-    const totalGallery = await Gallery.countDocuments({ albumId });
-
-    if (isAll) {
-      galleryItems = await query;
-    } else {
-      galleryItems = await query.skip(skip).limit(limit);
-    }
-
     const formattedData = galleryItems.map((gallery) => ({
       id: gallery._id,
-
       albumId: gallery.albumId?._id || null,
       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
-
       title: gallery.title || { en: "", hi: "" },
       type: gallery.type || "",
       photo: gallery.photo || null,
       videoUrl: gallery.videoUrl || null,
       isActive: gallery.isActive,
-
       createdBy: gallery.createdBy || null,
       updatedBy: gallery.updatedBy || null,
-
       createdAt: gallery.createdDate,
       updatedAt: gallery.updatedDate || null,
     }));
@@ -534,16 +576,12 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
     res.status(200).json({
       success: true,
       count: formattedData.length,
-      total: totalGallery,
-      page: isAll ? null : page,
-      totalPages: isAll ? 1 : Math.ceil(totalGallery / limit),
       data: formattedData,
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({
       success: false,
-      message: error.message || "Internal server error",
+      message: error.message,
     });
   }
 };
