@@ -447,105 +447,44 @@ export const getAllGalleryWeb = async (req, res) => {
   }
 };
 // this is use for web
-// export const getGalleryByAlbumIdWeb = async (req, res) => {
-//   try {
-//     const { albumId } = req.params;
-
-//     const galleryList = await Gallery?.find({
-//       albumId: albumId,
-//       isActive: true,
-//     })
-//       .populate("albumId", "title")
-//       .populate("createdBy", "name email")
-//       .sort({ createdDate: -1 });
-
-//     const data = galleryList?.map((gallery) => ({
-//       id: gallery._id,
-//       albumId: gallery.albumId?._id || null,
-//       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
-
-//       title: gallery.title || { en: "", hi: "" },
-//       type: gallery.type || "",
-//       photo: gallery.photo || null,
-//       videoUrl: gallery.videoUrl || null,
-//       isActive: gallery.isActive,
-
-//       createdBy: gallery.createdBy || null,
-//       createdAt: gallery.createdDate,
-//       updatedAt: gallery.updatedDate || null,
-//     }));
-
-//     res.status(200).json({
-//       success: true,
-//       count: data.length,
-//       data,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Error fetching gallery by albumId",
-//     });
-//   }
-// };
-
- export const getGalleryByAlbumIdWeb = async (req, res) => {
+export const getGalleryByAlbumIdWeb = async (req, res) => {
   try {
     const { albumId } = req.params;
 
-    if (!albumId) {
-      return res.status(400).json({
-        success: false,
-        message: "albumId is required",
-      });
-    }
-
     const galleryList = await Gallery.find({
-      albumId,
+      albumId: albumId,
       isActive: true,
     })
       .populate("albumId", "title")
       .populate("createdBy", "name email")
       .sort({ createdDate: -1 });
 
-    const data = (galleryList || []).map((gallery) => ({
+    const data = galleryList.map((gallery) => ({
       id: gallery._id,
-
       albumId: gallery.albumId?._id || null,
       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
 
       title: gallery.title || { en: "", hi: "" },
       type: gallery.type || "",
-
       photo: gallery.photo || null,
       videoUrl: gallery.videoUrl || null,
+      isActive: gallery.isActive,
 
-      isActive: gallery.isActive ?? false,
-
-      createdBy: gallery.createdBy
-        ? {
-            id: gallery.createdBy._id,
-            name: gallery.createdBy.name,
-            email: gallery.createdBy.email,
-          }
-        : null,
-
-      createdAt: gallery.createdDate || null,
+      createdBy: gallery.createdBy || null,
+      createdAt: gallery.createdDate,
       updatedAt: gallery.updatedDate || null,
     }));
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       count: data.length,
       data,
     });
   } catch (error) {
-    console.error("getGalleryByAlbumIdWeb error:", error);
-
-    return res.status(500).json({
+    console.error(error);
+    res.status(500).json({
       success: false,
       message: "Error fetching gallery by albumId",
-      error: error.message,
     });
   }
 };
