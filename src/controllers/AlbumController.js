@@ -232,15 +232,15 @@ export const updateAlbum = async (req, res) => {
         message: "Album title in both languages cannot be empty",
       });
     }
-    if (
-      (venue_en && trimmedVenueEn === "") ||
-      (venue_hi && trimmedVenueHi === "")
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Venue in both languages cannot be empty",
-      });
-    }
+    // if (
+    //   (venue_en && trimmedVenueEn === "") ||
+    //   (venue_hi && trimmedVenueHi === "")
+    // ) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Venue in both languages cannot be empty",
+    //   });
+    // }
 
     // Update multilingual fields
     album.type = {
@@ -251,10 +251,10 @@ export const updateAlbum = async (req, res) => {
       en: trimmedTitleEn || album.title?.en,
       hi: trimmedTitleHi || album.title?.hi,
     };
-    if (trimmedVenueEn || trimmedVenueHi) {
+    if (venue_en || venue_hi) {
       album.venue = {
-        en: trimmedVenueEn || album.venue?.en,
-        hi: trimmedVenueHi || album.venue?.hi,
+        en: venue_en || album.venue?.en,
+        hi: venue_hi || album.venue?.hi,
       };
     }
 
