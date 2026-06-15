@@ -333,7 +333,8 @@ export const getGalleryByAlbumId = async (req, res) => {
 
     const isAll = req.query.all === "true";
     const page = parseInt(req.query.page) || 1;
-     const skip = (page - 1) * limit;
+    const limit = 10;
+    const skip = (page - 1) * limit;
 
     let query = Gallery.find({ albumId }).sort({ createdDate: -1 });
 
@@ -491,9 +492,10 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
   try {
     const { albumId } = req.params;
 
-    const isAll = req.query.all === "true";
-    const page = parseInt(req.query.page) || 1;
-     const skip = (page - 1) * limit;
+    // const isAll = req.query.all === "true";
+    // const page = parseInt(req.query.page) || 1;
+    // const limit = 10;
+    // const skip = (page - 1) * limit;
 
     let query = Gallery.find({ albumId })
       .populate("albumId", "title")
