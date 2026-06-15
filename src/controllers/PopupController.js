@@ -20,12 +20,12 @@ export const createPopup = async (req, res) => {
       });
     }
 
-    // if (!url) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "URL is required",
-    //   });
-    // }
+    if (!url) {
+      return res.status(400).json({
+        success: false,
+        message: "URL is required",
+      });
+    }
 
     // if (!startTime) {
     //   return res.status(400).json({
@@ -189,12 +189,12 @@ export const updatePopup = async (req, res) => {
       });
     }
 
-    if (url && url.trim() === "") {
-      return res.status(400).json({
-        success: false,
-        message: "URL cannot be empty",
-      });
-    }
+    // if (url && url.trim() === "") {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "URL cannot be empty",
+    //   });
+    // }
 
     // Update image
     if (req.file) {
