@@ -13,6 +13,8 @@ import upload from "../middleware/upload.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+// this is use for web
+router.get("/getGalleryByAlbumId/web/:albumId", getGalleryByAlbumIdWeb);
 
 router.post("/create", authMiddleware, upload.single("photo"), createGallery);
 router.get("/allgallery", authMiddleware, getGallery);
@@ -31,7 +33,5 @@ router.put("/updateGalleryStatus/:id", authMiddleware, updateGalleryStatus);
 
 // this is use for web
 router.get("/get/web", getAllGalleryWeb);
-// this is use for web
-router.get("/getGalleryByAlbumId/web/:albumId", getGalleryByAlbumIdWeb);
 
 export default router;
