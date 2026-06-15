@@ -150,8 +150,8 @@ export const getAlbums = async (req, res) => {
       // Fetch all albums with creator/updater info
       const albumList = await Album.find()
         .populate("createdBy", "name email")
-        .populate("updatedBy", "name email");
-        // .sort({ createdDate: -1 });
+        .populate("updatedBy", "name email")
+        .sort({ createdDate: -1 });
 
       // Map albums into clean response format
       const data = albumList.map((album) => ({
