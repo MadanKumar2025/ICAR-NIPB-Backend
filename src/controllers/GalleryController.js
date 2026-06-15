@@ -451,15 +451,14 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
   try {
     const { albumId } = req.params;
 
-    const galleryList = await Gallery.find({
-      albumId: albumId,
-      isActive: true,
+    const galleryList = await Gallery?.find({
+      albumId: albumId
     })
       .populate("albumId", "title")
       .populate("createdBy", "name email")
       .sort({ createdDate: -1 });
 
-    const data = galleryList.map((gallery) => ({
+    const data = galleryList?.map((gallery) => ({
       id: gallery._id,
       albumId: gallery.albumId?._id || null,
       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
@@ -468,7 +467,7 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
       type: gallery.type || "",
       photo: gallery.photo || null,
       videoUrl: gallery.videoUrl || null,
-      isActive: gallery.isActive,
+      isActive: gallery?.isActive,
 
       createdBy: gallery.createdBy || null,
       createdAt: gallery.createdDate,
