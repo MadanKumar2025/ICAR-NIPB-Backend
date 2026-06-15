@@ -451,15 +451,15 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
   try {
     const { albumId } = req.params;
 
-    const galleryList = await Gallery.find({
+    const galleryList = await Gallery?.find({
       albumId: albumId,
-      isActive: true,
+      // isActive: true,
     })
       .populate("albumId", "title")
       .populate("createdBy", "name email")
       .sort({ createdDate: -1 });
 
-    const data = galleryList.map((Gallery) => ({
+    const data = galleryList.map((gallery) => ({
       id: gallery._id,
       albumId: gallery.albumId?._id || null,
       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
