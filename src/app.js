@@ -142,6 +142,6 @@ app.use("/api/PopupRoutes", PopupRoutes);
 app.use("/api/TrainingProgramRoutes", TrainingProgramRoutes);
 
 // This is use for SearchIng
-app.use("/api/search", SearchRoutes); 
+// app.use("/api/search", SearchRoutes); 
 
 export default app;
