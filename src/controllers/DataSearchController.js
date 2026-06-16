@@ -686,7 +686,7 @@ export const globalSearch = async (req, res) => {
           const fallback = pages.find(
             (p) => p.apiName === "/TrainingProgramRoutes/get/web",
           );
-          return fallback ? `/${fallback.slug}` : "/patents";
+          return fallback ? `/${fallback.slug}` : "/        111training-program";
         })();
 
     trainingProgramRoutes.forEach((s) => {
