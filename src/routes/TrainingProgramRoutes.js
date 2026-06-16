@@ -18,7 +18,7 @@ router.put("/update/:id", authMiddleware, updateTrainingProgram);
  
 router.put("/updateStatus/:id", authMiddleware, updateTrainingProgramStatus);
 
- 
+ // this is use for web
 router.get("/get/web", getTrainingProgramsWeb);
 
 export default router;

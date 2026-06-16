@@ -15,6 +15,8 @@ import TechnologiesDeveloped from "../models/TechnologiesDevelopedSchema.js";
 import StudentCourse from "../models/StudentCourseSchema.js";
 import Student from "../models/StudentSchema.js";
 import Payment from "../models/PaymentSchema.js";
+import TrainingProgram from "../models/TrainingProgramSchema.js";
+
 
 export const globalSearch = async (req, res) => {
   try {
@@ -227,6 +229,16 @@ export const globalSearch = async (req, res) => {
       ],
     });
 
+    // Search TrainingProgramRoutes
+    const trainingProgramRoutes = await TrainingProgram.find({
+      $or: [
+        { "title.en": { $regex: keyword, $options: "i" } },
+        { "title.hi": { $regex: keyword, $options: "i" } },
+        { "description.en": { $regex: keyword, $options: "i" } },
+        { "description.hi": { $regex: keyword, $options: "i" } },
+      ],
+    });
+
     const results = [];
 
     //////////////////////////
@@ -401,7 +413,7 @@ export const globalSearch = async (req, res) => {
       if (!page?.slug) return;
 
   const contentUrl = `/${page.slug}`;
-  
+
       results.push({
         title: c.content?.en || c.content?.hi || "Untitled Content",
 
@@ -661,6 +673,28 @@ export const globalSearch = async (req, res) => {
         type: "paymentPage ",
         url: paymentUrl,
         apiName: "PaymentRoutes/get/web",
+      });
+    });
+   
+    //trainingProgramRoutes
+    const trainingProgramRoutesPage = pages.find(
+      (p) => p.apiName === "TrainingProgramRoutes/get/web",
+    );
+    const trainingProgramRoutesUrl = trainingProgramRoutesPage
+      ? `/${trainingProgramRoutesPage.slug}`
+      : (() => {
+          const fallback = pages.find(
+            (p) => p.apiName === "/TrainingProgramRoutes/get/web",
+          );
+          return fallback ? `/${fallback.slug}` : "/patents";
+        })();
+
+    trainingProgramRoutes.forEach((s) => {
+      results.push({
+        title: s.title?.en || s.title?.hi,
+        type: "trainingProgramRoutes  ",
+        url: trainingProgramRoutesUrl,
+        apiName: "TrainingProgramRoutes/get/web",
       });
     });
 
