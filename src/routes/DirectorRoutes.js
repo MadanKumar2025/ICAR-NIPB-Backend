@@ -3,7 +3,8 @@ import {
   createDirector,
   getDirectors,
   updateDirectorStatus,
-updateDirector,getAllDirectorWeb
+  updateDirector,
+  getAllDirectorWeb,
 } from "../controllers/DirectorController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import uploadSingleImage from "../middleware/uploadHandler.js";
@@ -16,12 +17,7 @@ router.get("/getAll", authMiddleware, getDirectors);
 
 router.put("/updateStatus/:id", authMiddleware, updateDirectorStatus);
 
-router.put(
-  "/update/:id",
-  authMiddleware,
-  uploadSingleImage,
-  updateDirector
-);
+router.put("/update/:id", authMiddleware, uploadSingleImage, updateDirector);
 
 // this is use for web
 router.get("/get/web", getAllDirectorWeb);
