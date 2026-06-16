@@ -1,5 +1,5 @@
 import express from "express";
- import { globalSearch } from "../controllers/searchController.js";
+ import { globalSearch } from "../controllers/DataSearchController.js";
 
 const router = express.Router();
 
