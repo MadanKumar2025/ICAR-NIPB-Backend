@@ -369,21 +369,35 @@ export const globalSearch = async (req, res) => {
     });
 
     // content
-    const ContentPage = pages.find(
-      (p) => p.apiName === "ContentRoutes/get/web",
-    );
+    // const ContentPage = pages.find(
+    //   (p) => p.apiName === "ContentRoutes/get/web",
+    // );
+
+    // content.forEach((c) => {
+    //   const contentUrl = ContentPage
+    //     ? `/${ContentPage.slug}/${c.pageId}`
+    //     : `/content/${c.pageId}`;
+
+    //   results.push({
+    //     title: c.content?.en || c.content?.hi || "Untitled Content",
+    //     type: "content",
+    //     url: contentUrl,
+    //     pageId: c.pageId,
+    //     apiName: "ContentRoutes/get/web",
+    //   });
+    // });
 
     content.forEach((c) => {
-      const contentUrl = ContentPage
-        ? `/${ContentPage.slug}/${c.pageId}`
-        : `/content/${c.pageId}`;
+      const contentUrl = c.pageId?.slug
+        ? `/${c.pageId.slug}`
+        : `/content/${c._id}`;
 
       results.push({
         title: c.content?.en || c.content?.hi || "Untitled Content",
         type: "content",
         url: contentUrl,
-        pageId: c.pageId,
-        apiName: "ContentRoutes/get/web",
+        pageId: c.pageId?._id,
+        apiName: c.pageId?.apiName,
       });
     });
 
@@ -624,7 +638,7 @@ export const globalSearch = async (req, res) => {
           const fallback = pages.find(
             (p) => p.apiName === "/PaymentRoutes/get/web",
           );
-          return fallback ? `/${fallback.slug}` : "/1patents";
+          return fallback ? `/${fallback.slug}` : "/patents";
         })();
 
     payment.forEach((s) => {
