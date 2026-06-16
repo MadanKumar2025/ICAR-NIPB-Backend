@@ -100,12 +100,18 @@ export const globalSearch = async (req, res) => {
     });
 
     // Search Content
+    // const content = await Content.find({
+    //   $or: [
+    //     { "content.en": { $regex: keyword, $options: "i" } },
+    //     { "content.hi": { $regex: keyword, $options: "i" } },
+    //   ],
+    // });
     const content = await Content.find({
       $or: [
         { "content.en": { $regex: keyword, $options: "i" } },
         { "content.hi": { $regex: keyword, $options: "i" } },
       ],
-    });
+    }).populate("pageId", "slug apiName pageTitle");
 
     // Search PreviousDirector
     const previousDirector = await PreviousDirector.find({
@@ -388,16 +394,20 @@ export const globalSearch = async (req, res) => {
     // });
 
     content.forEach((c) => {
-      const contentUrl = c.pageId?.slug
-        ? `/${c.pageId.slug}`
-        : `/content/${c._id}`;
+      const page = c.pageId;  
+
+      const contentUrl = page?.slug ? `/${page.slug}` : `/content/${c._id}`;
 
       results.push({
         title: c.content?.en || c.content?.hi || "Untitled Content",
+
         type: "content",
+
         url: contentUrl,
-        pageId: c.pageId?._id,
-        apiName: c.pageId?.apiName,
+
+        pageId: page?._id || c.pageId,
+
+        apiName: page?.apiName || "ContentRoutes/get/web",
       });
     });
 
