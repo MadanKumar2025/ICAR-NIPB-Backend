@@ -244,9 +244,21 @@ export const globalSearch = async (req, res) => {
       $or: [
         { "title.en": { $regex: keyword, $options: "i" } },
         { "title.hi": { $regex: keyword, $options: "i" } },
-        { year: { $regex: keyword, $options: "i" } },
+
+        // year number search
+        ...(isNaN(keyword)
+          ? []
+          : [
+              {
+                year: Number(keyword),
+              },
+            ]),
+
         { "articleType.en": { $regex: keyword, $options: "i" } },
         { "articleType.hi": { $regex: keyword, $options: "i" } },
+
+        // category search
+        { category: { $regex: keyword, $options: "i" } },
       ],
     });
 
@@ -743,9 +755,6 @@ export const globalSearch = async (req, res) => {
       });
     });
 
-
-
-    
     // return res.json(results);
     return res.status(200).json({
       success: true,
