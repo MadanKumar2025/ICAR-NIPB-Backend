@@ -16,7 +16,7 @@ import StudentCourse from "../models/StudentCourseSchema.js";
 import Student from "../models/StudentSchema.js";
 import Payment from "../models/PaymentSchema.js";
 import TrainingProgram from "../models/TrainingProgramSchema.js";
-
+import Publications from "../models/PublicationsSchema.js";
 
 export const globalSearch = async (req, res) => {
   try {
@@ -239,6 +239,17 @@ export const globalSearch = async (req, res) => {
       ],
     });
 
+    // Search PublicationsRoutes
+    const publicationsRoutes = await Publications.find({
+      $or: [
+        { "title.en": { $regex: keyword, $options: "i" } },
+        { "title.hi": { $regex: keyword, $options: "i" } },
+        { year: { $regex: keyword, $options: "i" } },
+        { "articleType.en": { $regex: keyword, $options: "i" } },
+        { "articleType.hi": { $regex: keyword, $options: "i" } },
+      ],
+    });
+
     const results = [];
 
     //////////////////////////
@@ -406,13 +417,13 @@ export const globalSearch = async (req, res) => {
     // });
 
     content.forEach((c) => {
-      const page = c.pageId;  
+      const page = c.pageId;
 
-    //   const contentUrl = page?.slug ? `/${page.slug}` : `/content/${c._id}`;
+      //   const contentUrl = page?.slug ? `/${page.slug}` : `/content/${c._id}`;
 
       if (!page?.slug) return;
 
-  const contentUrl = `/${page.slug}`;
+      const contentUrl = `/${page.slug}`;
 
       results.push({
         title: c.content?.en || c.content?.hi || "Untitled Content",
@@ -675,7 +686,7 @@ export const globalSearch = async (req, res) => {
         apiName: "PaymentRoutes/get/web",
       });
     });
-   
+
     //trainingProgramRoutes
     const trainingProgramRoutesPage = pages.find(
       (p) => p.apiName === "TrainingProgramRoutes/get/web",
@@ -686,7 +697,7 @@ export const globalSearch = async (req, res) => {
           const fallback = pages.find(
             (p) => p.apiName === "/TrainingProgramRoutes/get/web",
           );
-          return fallback ? `/${fallback.slug}` : "/        111training-program";
+          return fallback ? `/${fallback.slug}` : "/training-program";
         })();
 
     trainingProgramRoutes.forEach((s) => {
@@ -698,6 +709,43 @@ export const globalSearch = async (req, res) => {
       });
     });
 
+    //publicationsRoutes
+    const publicationsPageMap = {};
+
+    pages.forEach((p) => {
+      if (!p.apiName) return;
+
+      const parts = p.apiName.split("/");
+
+      const categoryName = parts[parts.length - 1]
+        ?.replace(":category", "")
+        ?.trim()
+        ?.toLowerCase();
+
+      if (categoryName) {
+        publicationsPageMap[categoryName] = p.slug;
+      }
+    });
+
+    publicationsRoutes.forEach((s) => {
+      const categoryName = (s.category || "").trim().toLowerCase();
+
+      const slug = publicationsPageMap[categoryName];
+
+      results.push({
+        title: s.title?.en || s.title?.hi,
+
+        type: "publications",
+
+        url: slug ? `/${slug}` : "/research-publications",
+
+        apiName: `PublicationsRoutes/get/web/${s.category || ""}`,
+      });
+    });
+
+
+
+    
     // return res.json(results);
     return res.status(200).json({
       success: true,
