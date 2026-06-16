@@ -4,7 +4,7 @@ import { globalSearch } from "../controllers/searchController.js";
 
 const router = express.Router();
 
-// Global search (secured route like your other APIs)
+// matches: /api/search/get?keyword=259
 router.get("/get", authMiddleware, globalSearch);
 
 export default router;
