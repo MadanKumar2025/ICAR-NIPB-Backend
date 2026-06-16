@@ -478,7 +478,7 @@ if (!keyword) {
           const fallback = pages.find(
             (p) => p.apiName === "/externallyFundedProject/get/web",
           );
-          return fallback ? `/${fallback.slug}` : "/externally-funded";
+          return fallback ? `/${fallback.slug}` : "/externally-1funded";
         })();
 
     externallyFundedProject.forEach((s) => {
