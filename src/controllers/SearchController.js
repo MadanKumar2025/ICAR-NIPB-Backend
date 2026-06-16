@@ -598,10 +598,17 @@ export const globalSearch = async (req, res) => {
       });
     });
 
-    return res.json(results);
-  } catch (err) {
-    res.status(500).json({
-      message: err.message,
+    // return res.json(results);
+       return res.status(200).json({
+      success: true,
+      data: results,
+    });
+
+   } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message || "Server Error",
+      data: [],
     });
   }
 };

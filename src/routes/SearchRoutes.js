@@ -5,6 +5,6 @@ import { globalSearch } from "../controllers/searchController.js";
 const router = express.Router();
 
 // matches: /api/search/get?keyword=259
-router.get("/get", authMiddleware, globalSearch);
+router.get("/get", globalSearch);
 
 export default router;
