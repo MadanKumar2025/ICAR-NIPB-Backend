@@ -749,7 +749,7 @@ export const globalSearch = async (req, res) => {
 
         type: "publications",
 
-        url: slug ? `/${slug}` : "/research-publications",
+        url: slug ? `/${slug}` : "/111research-publications",
 
         apiName: `PublicationsRoutes/get/web/${s.category || ""}`,
       });
