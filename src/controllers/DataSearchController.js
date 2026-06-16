@@ -396,8 +396,12 @@ export const globalSearch = async (req, res) => {
     content.forEach((c) => {
       const page = c.pageId;  
 
-      const contentUrl = page?.slug ? `/${page.slug}` : `/content/${c._id}`;
+    //   const contentUrl = page?.slug ? `/${page.slug}` : `/content/${c._id}`;
 
+      if (!page?.slug) return;
+
+  const contentUrl = `/${page.slug}`;
+  
       results.push({
         title: c.content?.en || c.content?.hi || "Untitled Content",
 
