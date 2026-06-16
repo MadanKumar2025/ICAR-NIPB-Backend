@@ -23,7 +23,13 @@ export const globalSearch = async (req, res) => {
     if (!keyword) {
       return res.json([]);
     }
-
+if (!keyword) {
+  return res.status(400).json({
+    success: false,
+    message: "Keyword is required",
+    data: [],
+  });
+}
     const lowerKeyword = keyword.toLowerCase();
 
     const pages = await Page.find({});
