@@ -2,6 +2,7 @@ import Page from "../models/pageSchema.js";
 import News from "../models/NewsSchema.js";
 import Event from "../models/EventSchema.js";
 import Staff from "../models/StaffSchema.js";
+import Scientist from "../models/ScientistSchema.js";
 import AboutCentre from "../models/AboutCentreSchema.js";
 import Content from "../models/ContentSchema.js";
 import PreviousDirector from "../models/PreviousDirectorSchema.js";
@@ -13,8 +14,7 @@ import Patents from "../models/PatentsSchema.js";
 import TechnologiesDeveloped from "../models/TechnologiesDevelopedSchema.js";
 import StudentCourse from "../models/StudentCourseSchema.js";
 import Student from "../models/StudentSchema.js";
-
-import Scientist from "../models/ScientistSchema.js";
+import Payment from "../models/PaymentSchema.js";
 
 export const globalSearch = async (req, res) => {
   try {
@@ -23,13 +23,13 @@ export const globalSearch = async (req, res) => {
     if (!keyword) {
       return res.json([]);
     }
-if (!keyword) {
-  return res.status(400).json({
-    success: false,
-    message: "Keyword is required",
-    data: [],
-  });
-}
+    if (!keyword) {
+      return res.status(400).json({
+        success: false,
+        message: "Keyword is required",
+        data: [],
+      });
+    }
     const lowerKeyword = keyword.toLowerCase();
 
     const pages = await Page.find({});
@@ -213,6 +213,13 @@ if (!keyword) {
         { rollNo: { $regex: keyword, $options: "i" } },
       ],
     });
+    // Search Payment
+    const payment = await Payment.find({
+      $or: [
+        { "bankDetails.en": { $regex: keyword, $options: "i" } },
+        { "bankDetails.hi": { $regex: keyword, $options: "i" } },
+      ],
+    });
 
     const results = [];
 
@@ -337,7 +344,7 @@ if (!keyword) {
     });
 
     // AboutCentres
-    
+
     const AboutCentrePage = pages.find(
       (p) => p.apiName === "AboutCentreRoutes/get/web",
     );
@@ -347,8 +354,8 @@ if (!keyword) {
           const fallback = pages.find(
             (p) => p.apiName === "AboutCentreRoutes/get/web",
           );
-          console.log("fallback",fallback);
-          
+          console.log("fallback", fallback);
+
           return fallback ? `/${fallback.slug}` : "/AboutCentreRoutes";
         })();
 
@@ -478,7 +485,7 @@ if (!keyword) {
           const fallback = pages.find(
             (p) => p.apiName === "/externallyFundedProject/get/web",
           );
-          return fallback ? `/${fallback.slug}` : "/externally-1funded";
+          return fallback ? `/${fallback.slug}` : "/externally-funded";
         })();
 
     externallyFundedProject.forEach((s) => {
@@ -604,6 +611,28 @@ if (!keyword) {
         type: "student",
         url: commonStudentUrl,
         apiName: "Student/get/web",
+      });
+    });
+
+    //payment
+    const paymentPage = pages.find(
+      (p) => p.apiName === "PaymentRoutes/get/web",
+    );
+    const paymentUrl = paymentPage
+      ? `/${paymentPage.slug}`
+      : (() => {
+          const fallback = pages.find(
+            (p) => p.apiName === "/PaymentRoutes/get/web",
+          );
+          return fallback ? `/${fallback.slug}` : "/1patents";
+        })();
+
+    payment.forEach((s) => {
+      results.push({
+        title: s.bankDetails?.en || s.bankDetails?.hi,
+        type: "paymentPage ",
+        url: paymentUrl,
+        apiName: "PaymentRoutes/get/web",
       });
     });
 
