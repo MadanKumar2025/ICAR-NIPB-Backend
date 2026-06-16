@@ -337,6 +337,7 @@ if (!keyword) {
     });
 
     // AboutCentres
+    
     const AboutCentrePage = pages.find(
       (p) => p.apiName === "AboutCentreRoutes/get/web",
     );
@@ -346,6 +347,8 @@ if (!keyword) {
           const fallback = pages.find(
             (p) => p.apiName === "AboutCentreRoutes/get/web",
           );
+          console.log("fallback",fallback);
+          
           return fallback ? `/${fallback.slug}` : "/AboutCentreRoutes";
         })();
 
@@ -453,7 +456,7 @@ if (!keyword) {
           const fallback = pages.find(
             (p) => p.apiName === "InstitutionalProjectsRoutes/get/web",
           );
-          return fallback ? `/${fallback.slug}` : "/institutional-projects";
+          return fallback ? `/${fallback.slug}` : "/institutional-1projects";
         })();
 
     institutionalProject.forEach((s) => {
