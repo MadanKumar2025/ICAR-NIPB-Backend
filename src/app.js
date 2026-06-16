@@ -53,7 +53,7 @@ import OrganogramRoutes from "./routes/OrganogramRoutes.js";
 import PaymentRoutes from "./routes/PaymentRoutes.js";
 import PopupRoutes from "./routes/PopupRoutes.js";
 import TrainingProgramRoutes from "./routes/TrainingProgramRoutes.js";
-import SearchRoutes from "./routes/SearchRoutes.js";
+// import SearchRoutes from "./routes/SearchRoutes.js";
 import cors from "cors";
 import path from "path";
 
