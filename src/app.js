@@ -53,7 +53,7 @@ import OrganogramRoutes from "./routes/OrganogramRoutes.js";
 import PaymentRoutes from "./routes/PaymentRoutes.js";
 import PopupRoutes from "./routes/PopupRoutes.js";
 import TrainingProgramRoutes from "./routes/TrainingProgramRoutes.js";
-import SearchRoutes from "./routes/SearchRoutes.js";
+// import SearchRoutes from "./routes/SearchRoutes.js";
 import cors from "cors";
 import path from "path";
 
@@ -141,7 +141,7 @@ app.use("/api/PaymentRoutes", PaymentRoutes);
 app.use("/api/PopupRoutes", PopupRoutes);
 app.use("/api/TrainingProgramRoutes", TrainingProgramRoutes);
 
+// app.use("/api/search", SearchRoutes); 
 // This is use for SearchIng
-app.use("/api/search", SearchRoutes); 
 
 export default app;
