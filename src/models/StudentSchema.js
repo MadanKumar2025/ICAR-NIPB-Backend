@@ -1,10 +1,9 @@
-
 import mongoose from "mongoose";
 
 const StudentSchema = new mongoose.Schema({
   studentName: {
     en: { type: String, required: true },
-    hi: { type: String ,required: true },
+    hi: { type: String, required: true },
   },
   rollNo: {
     type: String,
@@ -15,7 +14,9 @@ const StudentSchema = new mongoose.Schema({
     en: { type: String },
     hi: { type: String },
   },
-
+  yearOfJoining: {
+    type: Number,
+  },
   isActive: {
     type: Boolean,
     default: true,

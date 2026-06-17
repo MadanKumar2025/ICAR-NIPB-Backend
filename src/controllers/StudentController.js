@@ -1,6 +1,5 @@
 import Student from "../models/StudentSchema.js";
 
-
 export const createStudent = async (req, res) => {
   try {
     const {
@@ -10,6 +9,7 @@ export const createStudent = async (req, res) => {
       guideName_en,
       guideName_hi,
       studentCourseId,
+      yearOfJoining,
     } = req.body;
 
     // Required fields validation
@@ -41,6 +41,7 @@ export const createStudent = async (req, res) => {
         hi: guideName_hi || "",
       },
       studentCourseId,
+      yearOfJoining,
       createdBy: req.user.id,
       updatedBy: req.user.id,
     });
@@ -85,14 +86,14 @@ export const createStudent = async (req, res) => {
   }
 };
 
-
 export const getStudentsByCourseId = async (req, res) => {
   try {
     const { courseId } = req.params;
 
     // Directly fetch all students without pagination
-    const students = await Student.find({ studentCourseId: courseId })
-      .sort({ createdDate: -1 });
+    const students = await Student.find({ studentCourseId: courseId }).sort({
+      createdDate: -1,
+    });
 
     const totalStudents = await Student.countDocuments({
       studentCourseId: courseId,
@@ -123,6 +124,7 @@ export const updateStudent = async (req, res) => {
       guideName_en,
       guideName_hi,
       studentCourseId,
+      yearOfJoining,
       isActive,
     } = req.body;
 
@@ -133,6 +135,10 @@ export const updateStudent = async (req, res) => {
         success: false,
         message: "Student not found",
       });
+    }
+
+    if (yearOfJoining !== undefined && yearOfJoining !== "") {
+      record.yearOfJoining = Number(yearOfJoining);
     }
 
     // Student Name update
@@ -238,7 +244,7 @@ export const updateStudentStatus = async (req, res) => {
         updatedBy: req.user?.id,
         updatedDate: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     if (!record) {
@@ -263,14 +269,12 @@ export const updateStudentStatus = async (req, res) => {
   }
 };
 
-
 export const getAllStudents = async (req, res) => {
   try {
-    // Fetch all students, populate references and sort by createdDate descending
     const studentsList = await Student.find()
-      .populate("studentCourseId", "courseName semester") // populate course info
-      .populate("createdBy", "name email") // populate creator info
-      .populate("updatedBy", "name email") // populate updater info
+      .populate("studentCourseId", "courseName semester")
+      .populate("createdBy", "name email")
+      .populate("updatedBy", "name email")
       .sort({ createdDate: -1 });
 
     // Map data to clean response
@@ -279,6 +283,7 @@ export const getAllStudents = async (req, res) => {
       studentName: student.studentName || { en: "", hi: "" },
       rollNo: student.rollNo,
       guideName: student.guideName || { en: "", hi: "" },
+      yearOfJoining: student.yearOfJoining,
       isActive: student.isActive,
       studentCourse: student.studentCourseId || null,
       createdBy: student.createdBy || null,
