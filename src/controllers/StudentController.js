@@ -88,30 +88,20 @@ export const createStudent = async (req, res) => {
 
 export const getStudentsByCourseId = async (req, res) => {
   try {
-    const { courseId } = req.params; 
-    const isAll = req.query.all === "true";
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const skip = (page - 1) * limit;
+    const { courseId } = req.params;
 
-    // Build query
-    let query = Student.find({ studentCourseId: courseId }).sort({ createdDate: -1 });
+    // Directly fetch all students without pagination
+    const students = await Student.find({ studentCourseId: courseId })
+      .sort({ createdDate: -1 });
 
-    let students;
-    const totalStudents = await Student.countDocuments({ studentCourseId: courseId });
-
-    if (isAll) {
-      students = await query;
-    } else {
-      students = await query.skip(skip).limit(limit);
-    }
+    const totalStudents = await Student.countDocuments({
+      studentCourseId: courseId,
+    });
 
     res.status(200).json({
       success: true,
       count: students.length,
       total: totalStudents,
-      page: isAll ? null : page,
-      totalPages: isAll ? 1 : Math.ceil(totalStudents / limit),
       data: students,
     });
   } catch (error) {
