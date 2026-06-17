@@ -769,23 +769,21 @@ export const globalSearch = async (req, res) => {
       });
     });
 
-    // Common album 
-    const galleryPage = pages.find(
-      (p) => p.apiName === "gallery/get/web/:type",
-    );
+    // Common album
 
-    // Common gallery URL
-    const commonGalleryUrl = galleryPage ? `/${galleryPage.slug}` : "/1gallery";
+    const albumPage = pages.find((p) => p.apiName === "album/get/web/:type");
 
-    // Album results add karo
     albumRoutes.forEach((a) => {
+      if (!albumPage?.slug) return;
+
       results.push({
-        title: a.title?.en || a.title?.hi,
+        title: a.title?.en || a.title?.hi || "Album",
         type: "album",
-        url: commonGalleryUrl,
-        apiName: `gallery/get/web/${a.type?.en || ""}`,
+        url: `/${albumPage.slug}`,
+        apiName: `album/get/web/${a.type?.en || ""}`,
       });
     });
+
     // return res.json(results);
     return res.status(200).json({
       success: true,
