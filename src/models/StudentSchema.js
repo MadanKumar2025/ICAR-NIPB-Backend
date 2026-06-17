@@ -15,7 +15,7 @@ const StudentSchema = new mongoose.Schema({
     hi: { type: String },
   },
   yearOfJoining: {
-    type: Number,
+    type: Date,
   },
   isActive: {
     type: Boolean,
