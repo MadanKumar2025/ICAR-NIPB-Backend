@@ -17,6 +17,7 @@ import Student from "../models/StudentSchema.js";
 import Payment from "../models/PaymentSchema.js";
 import TrainingProgram from "../models/TrainingProgramSchema.js";
 import Publications from "../models/PublicationsSchema.js";
+import Album from "../models/AlbumSchema.js";
 
 export const globalSearch = async (req, res) => {
   try {
@@ -259,6 +260,19 @@ export const globalSearch = async (req, res) => {
 
         // category search
         { category: { $regex: keyword, $options: "i" } },
+      ],
+    });
+
+    // Search PublicationsRoutes
+
+    const albumRoutes = await Album.find({
+      $or: [
+        { "type.en": { $regex: keyword, $options: "i" } },
+        { "type.hi": { $regex: keyword, $options: "i" } },
+        { "title.en": { $regex: keyword, $options: "i" } },
+        { "title.hi": { $regex: keyword, $options: "i" } },
+        { "venue.en": { $regex: keyword, $options: "i" } },
+        { "venue.hi": { $regex: keyword, $options: "i" } },
       ],
     });
 
@@ -749,12 +763,29 @@ export const globalSearch = async (req, res) => {
 
         type: "publications",
 
-        url: slug ? `/${slug}` : "/111research-publications",
+        url: slug ? `/${slug}` : "/research-publications",
 
         apiName: `PublicationsRoutes/get/web/${s.category || ""}`,
       });
     });
 
+    // Common album 
+    const galleryPage = pages.find(
+      (p) => p.apiName === "gallery/get/web/:type",
+    );
+
+    // Common gallery URL
+    const commonGalleryUrl = galleryPage ? `/${galleryPage.slug}` : "/1gallery";
+
+    // Album results add karo
+    albumRoutes.forEach((a) => {
+      results.push({
+        title: a.title?.en || a.title?.hi,
+        type: "album",
+        url: commonGalleryUrl,
+        apiName: `gallery/get/web/${a.type?.en || ""}`,
+      });
+    });
     // return res.json(results);
     return res.status(200).json({
       success: true,
