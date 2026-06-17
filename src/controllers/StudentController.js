@@ -138,7 +138,7 @@ export const updateStudent = async (req, res) => {
     }
 
     if (yearOfJoining !== undefined && yearOfJoining !== "") {
-      record.yearOfJoining = Number(yearOfJoining);
+      record.yearOfJoining = yearOfJoining;
     }
 
     // Student Name update
