@@ -771,18 +771,42 @@ export const globalSearch = async (req, res) => {
 
     // Common album
 
-    const albumPage = pages.find((p) => p.apiName === "album/get/web/:type");
+   const albumPageMap = {};
 
-    albumRoutes.forEach((a) => {
-      if (!albumPage?.slug) return;
+pages.forEach((p) => {
+  if (!p.apiName) return;
 
-      results.push({
-        title: a.title?.en || a.title?.hi || "Album",
-        type: "album",
-        url: `/${albumPage.slug}`,
-        apiName: `album/get/web/${a.type?.en || ""}`,
-      });
-    });
+  const parts = p.apiName.split("/");
+
+  const typeName = parts[parts.length - 1]
+    ?.replace(":type", "")
+    ?.trim()
+    ?.toLowerCase();
+
+  if (typeName) {
+    albumPageMap[typeName] = p.slug;
+  }
+});
+
+// Album Search Results
+
+albumRoutes.forEach((a) => {
+  const typeName = (a.type?.en || a.type?.hi || "")
+    .trim()
+    .toLowerCase();
+
+  const slug = albumPageMap[typeName];
+
+  results.push({
+    title: a.title?.en || a.title?.hi || "Album",
+
+    type: "album",
+
+    url: slug ? `/${slug}` : "/album",
+
+    apiName: `album/get/web/${a.type?.en || a.type?.hi || ""}`,
+  });
+}); 
 
     // return res.json(results);
     return res.status(200).json({
