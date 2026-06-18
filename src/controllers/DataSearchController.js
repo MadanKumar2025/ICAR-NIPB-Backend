@@ -614,8 +614,7 @@ export const globalSearch = async (req, res) => {
       (p) => p.apiName === "institutionalProjects/get/web",
     );
 
- 
-     if (institutionalProjectPage?.slug) {
+    if (institutionalProjectPage?.slug) {
       const institutionalProjectUrl = `/${institutionalProjectPage.slug}`;
 
       institutionalProject.forEach((s) => {
@@ -627,9 +626,7 @@ export const globalSearch = async (req, res) => {
         });
       });
     } else {
-      console.warn(
-        "Page not found for apiName: institutionalProjects/get/web",
-      );
+      console.warn("Page not found for apiName: institutionalProjects/get/web");
     }
 
     //ExternallyFundedProject
@@ -816,36 +813,60 @@ export const globalSearch = async (req, res) => {
     });
 
     //publicationsRoutes
-    const publicationsPageMap = {};
+    // const publicationsPageMap = {};
 
-    pages.forEach((p) => {
-      if (!p.apiName) return;
+    // pages.forEach((p) => {
+    //   if (!p.apiName) return;
 
-      const parts = p.apiName.split("/");
+    //   const parts = p.apiName.split("/");
 
-      const categoryName = parts[parts.length - 1]
-        ?.replace(":category", "")
-        ?.trim()
-        ?.toLowerCase();
+    //   const categoryName = parts[parts.length - 1]
+    //     ?.replace(":category", "")
+    //     ?.trim()
+    //     ?.toLowerCase();
 
-      if (categoryName) {
-        publicationsPageMap[categoryName] = p.slug;
-      }
-    });
+    //   if (categoryName) {
+    //     publicationsPageMap[categoryName] = p.slug;
+    //   }
+    // });
 
+    // publicationsRoutes.forEach((s) => {
+    //   const categoryName = (s.category || "").trim().toLowerCase();
+
+    //   const slug = publicationsPageMap[categoryName];
+
+    //   results.push({
+    //     title: s.title?.en || s.title?.hi,
+
+    //     type: "publications",
+
+    //     url: slug ? `/${slug}` : "/research-publications",
+
+    //     apiName: `PublicationsRoutes/get/web/${s.category || ""}`,
+    //   });
+    // });
+
+    const publicationsPage = pages.find(
+      (p) => p.apiName === "PublicationsRoutes/get/webByID",
+    );
+
+    // Base URL
+    const publicationsBaseUrl = publicationsPage
+      ? `/${publicationsPage.slug}`
+      : "/research-publications";
+
+    // Search Results
     publicationsRoutes.forEach((s) => {
-      const categoryName = (s.category || "").trim().toLowerCase();
-
-      const slug = publicationsPageMap[categoryName];
-
       results.push({
         title: s.title?.en || s.title?.hi,
-
         type: "publications",
 
-        url: slug ? `/${slug}` : "/research-publications",
+        // Detail page URL with publication ID
+        url: `${publicationsBaseUrl}/${s._id}`,
 
-        apiName: `PublicationsRoutes/get/web/${s.category || ""}`,
+        id: s._id,
+
+        apiName: "PublicationsRoutes/get/webByID",
       });
     });
 
