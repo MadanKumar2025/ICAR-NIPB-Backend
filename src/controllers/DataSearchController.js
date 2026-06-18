@@ -606,27 +606,29 @@ export const globalSearch = async (req, res) => {
     //   });
     // });
 
+    // Institutional Project Page Find
+
     const institutionalProjectPage = pages.find(
       (p) => p.apiName === "InstitutionalProjectsRoutes/get/web",
     );
 
-    const institutionalProjectBaseUrl = institutionalProjectPage
-      ? `/${institutionalProjectPage.slug}`
-      : "/institutional-1projects";
+ 
+     if (institutionalProjectPage?.slug) {
+      const institutionalProjectUrl = `/${institutionalProjectPage.slug}`;
 
-    institutionalProject.forEach((s) => {
-      results.push({
-        title: s.mainProject?.en || s.mainProject?.hi,
-        type: "institutionalProject",
-
-        // Detail page URL
-        url: `${institutionalProjectBaseUrl}/${s._id}`,
-
-        id: s._id,
-
-        apiName: "InstitutionalProjectsRoutes/get/web",
+      institutionalProject.forEach((s) => {
+        results.push({
+          title: s.mainProject?.en || s.mainProject?.hi,
+          type: "institutionalProject",
+          url: institutionalProjectUrl,
+          apiName: "InstitutionalProjectsRoutes/get/web",
+        });
       });
-    });
+    } else {
+      console.warn(
+        "Page not found for apiName: InstitutionalProjectsRoutes/get/web",
+      );
+    }
 
     //ExternallyFundedProject
     const externallyFundedProjectPage = pages.find(
