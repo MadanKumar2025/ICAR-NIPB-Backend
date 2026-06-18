@@ -434,50 +434,71 @@ export const globalSearch = async (req, res) => {
     //   });
     // });
 
+    
+    
     const staffPageMap = {};
 
-    pages.forEach((p) => {
-      if (!p.apiName) return;
+pages.forEach((p) => {
+  if (!p.apiName || !p.slug) return;
 
-      const api = p.apiName.toLowerCase();
-      const parts = api.split("/");
+  const api = p.apiName.toLowerCase().trim();
 
-      const key = parts[parts.length - 1]
-        ?.replace(":id", "")
-        ?.trim()
-        ?.toLowerCase();
+  const parts = api.split("/");
 
-      if (!key) return;
+  // last segment key (department or entity)
+  const lastKey = parts[parts.length - 1]
+    ?.replace(":id", "")
+    ?.trim()
+    ?.toLowerCase();
 
-      staffPageMap[key] = {
-        slug: p.slug,
-        isById: api.includes("byid"),
-      };
-    });
+  if (!lastKey) return;
 
-    staff.forEach((s) => {
-      const dept = (s.department?.en || s.department?.hi || "")
-        .trim()
-        .toLowerCase();
+  staffPageMap[lastKey] = {
+    slug: p.slug,
+    isById: api.includes("byid") || api.includes(":id"),
+  };
+});
 
-      const page = staffPageMap[dept];
 
-      let url = "/staff";
+// ==============================
+// 2. BUILD STAFF RESULTS
+// ==============================
+staff.forEach((s) => {
+  const deptKey = (s.department?.en || s.department?.hi || "")
+    .trim()
+    .toLowerCase();
 
-      if (page?.slug) {
-        url = page.isById ? `/${page.slug}/${s._id}` : `/${page.slug}`;
-      }
+  const page = staffPageMap[deptKey];
 
-      results.push({
-        title: s.staffName?.en || s.staffName?.hi || "Staff",
+  let url = "/staff";
 
-        type: "staff",
+  if (page?.slug) {
+    // 👉 DETAIL PAGE (byID)
+    if (page.isById) {
+      url = `/${page.slug}/${s._id}`;
+    }
 
-        url,
+    // 👉 LIST PAGE
+    else {
+      url = `/${page.slug}`;
+    }
+  }
 
-        apiName: `staff/get/web/${dept}`,
-      });
-    });
+  results.push({
+    title:
+      s.staffName?.en ||
+      s.staffName?.hi ||
+      s.department?.en ||
+      "Staff",
+
+    type: "staff",
+
+    url,
+
+    apiName: `staff/get/web/${deptKey}`,
+  });
+});
+
 
     // AboutCentres
 
