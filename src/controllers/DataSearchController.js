@@ -401,38 +401,56 @@ export const globalSearch = async (req, res) => {
 
     // Staff Search Results
 
-    const staffPageMap = {};
+    // const staffPageMap = {};
 
-    pages.forEach((p) => {
-      if (!p.apiName) return;
+    // pages.forEach((p) => {
+    //   if (!p.apiName) return;
 
-      const parts = p.apiName.split("/");
+    //   const parts = p.apiName.split("/");
 
-      const deptName = parts[parts.length - 1]?.trim().toLowerCase();
+    //   const deptName = parts[parts.length - 1]?.trim().toLowerCase();
 
-      if (deptName) {
-        staffPageMap[deptName] = p.slug;
-      }
-    });
+    //   if (deptName) {
+    //     staffPageMap[deptName] = p.slug;
+    //   }
+    // });
+
+    // staff.forEach((s) => {
+    //   const departmentName = (s.department?.en || s.department?.hi || "")
+    //     .trim()
+    //     .toLowerCase();
+
+    //   const slug = staffPageMap[departmentName];
+
+    //   results.push({
+    //     title:
+    //       s.staffName?.en || s.staffName?.hi || s.department?.en || "Staff",
+
+    //     type: "staff",
+
+    //     url: slug ? `/${slug}` : "/staff",
+
+    //     apiName: `staff/get/web/${s.department?.en || ""}`,
+    //   });
+    // });
+
+    const staffPage = pages.find((p) => p.apiName === "staff/get/web");
+
+    const staffBaseUrl = staffPage ? `/${staffPage.slug}` : "/staff";
 
     staff.forEach((s) => {
-      const departmentName = (s.department?.en || s.department?.hi || "")
-        .trim()
-        .toLowerCase();
-
-      const slug = staffPageMap[departmentName];
-
       results.push({
-        title:
-          s.staffName?.en || s.staffName?.hi || s.department?.en || "Staff",
+        title: s.staffName?.en || s.staffName?.hi || "Staff",
 
         type: "staff",
 
-        url: slug ? `/${slug}` : "/staff",
+        url: `${staffBaseUrl}/${s._id}`,
 
-        apiName: `staff/get/web/${s.department?.en || ""}`,
+        id: s._id,
+
+        apiName: "staff/get/web",
       });
-    }); 
+    });
 
     // AboutCentres
 
