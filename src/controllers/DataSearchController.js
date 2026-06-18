@@ -919,8 +919,6 @@ export const globalSearch = async (req, res) => {
       }
     });
 
-    // Album Search Results
-
     albumRoutes.forEach((a) => {
       const typeName = (a.type?.en || a.type?.hi || "").trim().toLowerCase();
 
@@ -937,21 +935,6 @@ export const globalSearch = async (req, res) => {
       });
     });
 
-    // const albumPage = pages.find((p) => p.apiName === "album/get/web/id");
-
-    // // base URL
-    // const baseUrl1 = `/${albumPage.slug}`;
-
-    // albumRoutes.forEach((a) => {
-    //   results.push({
-    //     title: a.title?.en || a.title?.hi || "Album",
-    //     type: "album",
-    //     url: `${baseUrl1}/gallery/${a.id}`,
-    //     id: a._id,
-    //     apiName: "album/get/web",
-    //   });
-    // });
-    // return res.json(results);
     return res.status(200).json({
       success: true,
       data: results,
