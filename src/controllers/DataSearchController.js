@@ -947,7 +947,7 @@ export const globalSearch = async (req, res) => {
         title: a.title?.en || a.title?.hi || "Album",
         type: "album",
 
-        url: `${baseUrl1}/${a._id}`,
+        url: `${baseUrl1}/${a.id}`,
 
         id: a._id,
         apiName: "album/get/web",
