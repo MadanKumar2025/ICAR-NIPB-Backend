@@ -523,7 +523,7 @@ export const globalSearch = async (req, res) => {
 
     cadreStrengthRoutes.forEach((s) => {
       results.push({
-        title: s.name?.en || s.name?.hi,
+        title: s.sanctionedStrengthStr  ,
         type: "CadreStrengthRoutes  ",
         url: CadreStrengthRoutesUrl,
         apiName: "CadreStrengthRoutes/get/web",
