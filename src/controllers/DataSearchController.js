@@ -434,71 +434,64 @@ export const globalSearch = async (req, res) => {
     //   });
     // });
 
-    
-    
     const staffPageMap = {};
 
-pages.forEach((p) => {
-  if (!p.apiName || !p.slug) return;
+    pages.forEach((p) => {
+      if (!p.apiName || !p.slug) return;
 
-  const api = p.apiName.toLowerCase().trim();
+      const api = p.apiName.toLowerCase().trim();
 
-  const parts = api.split("/");
+      const parts = api.split("/");
 
-  // last segment key (department or entity)
-  const lastKey = parts[parts.length - 1]
-    ?.replace(":id", "")
-    ?.trim()
-    ?.toLowerCase();
+      // last segment key (department or entity)
+      const lastKey = parts[parts.length - 1]
+        ?.replace(":id", "")
+        ?.trim()
+        ?.toLowerCase();
 
-  if (!lastKey) return;
+      if (!lastKey) return;
 
-  staffPageMap[lastKey] = {
-    slug: p.slug,
-    isById: api.includes("byid") || api.includes(":id"),
-  };
-});
+      staffPageMap[lastKey] = {
+        slug: p.slug,
+        isById: api.includes("byid") || api.includes(":id"),
+      };
+    });
 
+    // ==============================
+    // 2. BUILD STAFF RESULTS
+    // ==============================
+    staff.forEach((s) => {
+      const deptKey = (s.department?.en || s.department?.hi || "")
+        .trim()
+        .toLowerCase();
 
-// ==============================
-// 2. BUILD STAFF RESULTS
-// ==============================
-staff.forEach((s) => {
-  const deptKey = (s.department?.en || s.department?.hi || "")
-    .trim()
-    .toLowerCase();
+      const page = staffPageMap[deptKey];
 
-  const page = staffPageMap[deptKey];
+      let url = "/staff";
 
-  let url = "/staff";
+      if (page?.slug) {
+        // 👉 DETAIL PAGE (byID)
+        if (page.isById) {
+          url = `/${page.slug}/${s._id}`;
+        }
 
-  if (page?.slug) {
-    // 👉 DETAIL PAGE (byID)
-    if (page.isById) {
-      url = `/${page.slug}/${s._id}`;
-    }
+        // 👉 LIST PAGE
+        // else {
+        //   url = `/${page.slug}`;
+        // }
+      }
 
-    // 👉 LIST PAGE
-    else {
-      url = `/${page.slug}`;
-    }
-  }
+      results.push({
+        title:
+          s.staffName?.en || s.staffName?.hi || s.department?.en || "Staff",
 
-  results.push({
-    title:
-      s.staffName?.en ||
-      s.staffName?.hi ||
-      s.department?.en ||
-      "Staff",
+        type: "staff",
 
-    type: "staff",
+        url,
 
-    url,
-
-    apiName: `staff/get/web/${deptKey}`,
-  });
-});
-
+        apiName: `staff/get/web/${deptKey}`,
+      });
+    });
 
     // AboutCentres
 
