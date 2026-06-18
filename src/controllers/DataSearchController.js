@@ -585,23 +585,45 @@ export const globalSearch = async (req, res) => {
     });
 
     //institutionalProject
+    // const institutionalProjectPage = pages.find(
+    //   (p) => p.apiName === "InstitutionalProjectsRoutes/get/web",
+    // );
+    // const institutionalProjectUrl = institutionalProjectPage
+    //   ? `/${institutionalProjectPage.slug}`
+    //   : (() => {
+    //       const fallback = pages.find(
+    //         (p) => p.apiName === "InstitutionalProjectsRoutes/get/web",
+    //       );
+    //       return fallback ? `/${fallback.slug}` : "/institutional-1projects";
+    //     })();
+
+    // institutionalProject.forEach((s) => {
+    //   results.push({
+    //     title: s.mainProject?.en || s.mainProject?.hi,
+    //     type: "institutionalProject",
+    //     url: institutionalProjectUrl,
+    //     apiName: "InstitutionalProjectsRoutes/get/web",
+    //   });
+    // });
+
     const institutionalProjectPage = pages.find(
       (p) => p.apiName === "InstitutionalProjectsRoutes/get/web",
     );
-    const institutionalProjectUrl = institutionalProjectPage
+
+    const institutionalProjectBaseUrl = institutionalProjectPage
       ? `/${institutionalProjectPage.slug}`
-      : (() => {
-          const fallback = pages.find(
-            (p) => p.apiName === "InstitutionalProjectsRoutes/get/web",
-          );
-          return fallback ? `/${fallback.slug}` : "/institutional-1projects";
-        })();
+      : "/institutional-1projects";
 
     institutionalProject.forEach((s) => {
       results.push({
         title: s.mainProject?.en || s.mainProject?.hi,
         type: "institutionalProject",
-        url: institutionalProjectUrl,
+
+        // Detail page URL
+        url: `${institutionalProjectBaseUrl}/${s._id}`,
+
+        id: s._id,
+
         apiName: "InstitutionalProjectsRoutes/get/web",
       });
     });
