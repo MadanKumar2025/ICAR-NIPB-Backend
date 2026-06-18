@@ -609,7 +609,7 @@ export const globalSearch = async (req, res) => {
     // Institutional Project Page Find
 
     const institutionalProjectPage = pages.find(
-      (p) => p.apiName === "InstitutionalProjectsRoutes/get/web",
+      (p) => p.apiName === "institutionalProjects/get/web",
     );
 
  
@@ -621,12 +621,12 @@ export const globalSearch = async (req, res) => {
           title: s.mainProject?.en || s.mainProject?.hi,
           type: "institutionalProject",
           url: institutionalProjectUrl,
-          apiName: "InstitutionalProjectsRoutes/get/web",
+          apiName: "institutionalProjects/get/web",
         });
       });
     } else {
       console.warn(
-        "Page not found for apiName: InstitutionalProjectsRoutes/get/web",
+        "Page not found for apiName: institutionalProjects/get/web",
       );
     }
 
