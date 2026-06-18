@@ -366,14 +366,13 @@ export const globalSearch = async (req, res) => {
       (p) => p.apiName === "ScientistRoutes/get/web",
     );
 
-    const baseUrl = scientistPage ? `/${scientistPage.slug}` : "/scientist";
+    const baseUrl = scientistPage ? `/${scientistPage.slug}` : "/scientist11";
 
     scientists.forEach((s) => {
       results.push({
         title: s.scientistName?.en || s.scientistName?.hi,
         type: "scientist",
 
-        // ✅ IMPORTANT FIX
         url: `${baseUrl}/${s._id}`,
 
         id: s._id,
