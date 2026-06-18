@@ -870,7 +870,6 @@ export const globalSearch = async (req, res) => {
 
       const categorySlug = (s.category || "")
         .trim()
-        .toLowerCase()
         .replace(/\s+/g, "-");
 
       results.push({
