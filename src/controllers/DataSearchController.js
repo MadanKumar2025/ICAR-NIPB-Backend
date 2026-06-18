@@ -858,44 +858,15 @@ export const globalSearch = async (req, res) => {
     .replace(/\s+/g, "-");
 
   results.push({
-    _id: s._id,
-
-    title: s.title,
+    ...s.toObject(),
 
     type: "publications",
-
-    category: s.category,
-
-    year: s.year,
-
-    articleType: s.articleType,
-
-    authors: s.authors,
-
-    abstract: s.abstract,
-
-    keywords: s.keywords,
-
-    journal: s.journal,
-
-    volume: s.volume,
-
-    issue: s.issue,
-
-    pages: s.pages,
-
-    doi: s.doi,
-
-    publisher: s.publisher,
 
     url: slug
       ? `/${slug}/${categorySlug}/${s.year}`
       : `/research-publications/${categorySlug}/${s.year}`,
 
     apiName: `PublicationsRoutes/get/web/${s.category || ""}`,
-
-    createdAt: s.createdAt,
-    updatedAt: s.updatedAt,
   });
 });
 
