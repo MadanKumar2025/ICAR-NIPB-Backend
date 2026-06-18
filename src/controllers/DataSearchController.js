@@ -362,6 +362,7 @@ export const globalSearch = async (req, res) => {
     //     apiName: "ScientistRoutes/get/web",
     //   });
     // });
+
     const scientistPage = pages.find(
       (p) => p.apiName === "ScientistRoutes/get/web",
     );
@@ -400,36 +401,83 @@ export const globalSearch = async (req, res) => {
 
     // Staff Search Results
 
+    // const staffPageMap = {};
+
+    // pages.forEach((p) => {
+    //   if (!p.apiName) return;
+
+    //   const parts = p.apiName.split("/");
+
+    //   const deptName = parts[parts.length - 1]?.trim().toLowerCase();
+
+    //   if (deptName) {
+    //     staffPageMap[deptName] = p.slug;
+    //   }
+    // });
+
+    // staff.forEach((s) => {
+    //   const departmentName = (s.department?.en || s.department?.hi || "")
+    //     .trim()
+    //     .toLowerCase();
+
+    //   const slug = staffPageMap[departmentName];
+
+    //   results.push({
+    //     title:
+    //       s.staffName?.en || s.staffName?.hi || s.department?.en || "Staff",
+
+    //     type: "staff",
+
+    //     url: slug ? `/${slug}` : "/staff",
+
+    //     apiName: `staff/get/web/${s.department?.en || ""}`,
+    //   });
+    // });
+
     const staffPageMap = {};
 
+    // 1. build page map
     pages.forEach((p) => {
       if (!p.apiName) return;
 
-      const parts = p.apiName.split("/");
+      const api = p.apiName.toLowerCase();
+      const parts = api.split("/");
 
-      const deptName = parts[parts.length - 1]?.trim().toLowerCase();
+      const key = parts[parts.length - 1]
+        ?.replace(":id", "")
+        ?.trim()
+        ?.toLowerCase();
 
-      if (deptName) {
-        staffPageMap[deptName] = p.slug;
-      }
+      if (!key) return;
+
+      staffPageMap[key] = {
+        slug: p.slug,
+        isById: api.includes("byid"),
+      };
     });
 
+    // 2. build results
     staff.forEach((s) => {
-      const departmentName = (s.department?.en || s.department?.hi || "")
+      const dept = (s.department?.en || s.department?.hi || "")
         .trim()
         .toLowerCase();
 
-      const slug = staffPageMap[departmentName];
+      const page = staffPageMap[dept];
+
+      let url = "/staff";
+
+      if (page?.slug) {
+        url = page.isById ? `/${page.slug}/${s._id}` : `/${page.slug}`;
+      }
 
       results.push({
-        title:
-          s.staffName?.en || s.staffName?.hi || s.department?.en || "Staff",
+        title: s.staffName?.en || s.staffName?.hi || "Staff",
 
         type: "staff",
 
-        url: slug ? `/${slug}` : "/staff",
+        url,
 
-        apiName: `staff/get/web/${s.department?.en || ""}`,
+        apiName: `staff/get/web/${dept}`,
       });
     });
 
