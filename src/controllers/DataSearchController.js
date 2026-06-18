@@ -444,7 +444,7 @@ export const globalSearch = async (req, res) => {
 
         type: "staff",
 
-        url: `${staffBaseUrl}/${s._id}`,
+        url: `${staffBaseUrl}/StaffDetails/${s._id}`,
 
         id: s._id,
 
