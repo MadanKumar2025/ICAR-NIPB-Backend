@@ -868,9 +868,7 @@ export const globalSearch = async (req, res) => {
 
       const slug = publicationsPageMap[categoryName];
 
-      const categorySlug = (s.category || "")
-        .trim()
-        .replace(/\s+/g, "-");
+      const categorySlug = (s.category || "").trim().replace(/\s+/g, "-");
 
       results.push({
         _id: s._id,
@@ -939,24 +937,22 @@ export const globalSearch = async (req, res) => {
     //   });
     // });
 
-const albumPage = pages.find(
-  (p) => p.apiName === "album/get/web",
-);
+    const albumPage = pages.find((p) => p.apiName === "album/get/web");
 
-// base URL (same as scientist)
-const baseUrl = albumPage ? `/${albumPage.slug}` : "/album";
+    // base URL (same as scientist)
+    const baseUrl = albumPage ? `/${albumPage.slug}` : "/album";
 
-albumRoutes.forEach((a) => {
-  results.push({
-    title: a.title?.en || a.title?.hi || "Album",
-    type: "album",
+    albumRoutes.forEach((a) => {
+      results.push({
+        title: a.title?.en || a.title?.hi || "Album",
+        type: "album",
 
-    url: `${baseUrl}/${a._id}`,
+        url: `${baseUrl}/${a._id}`,
 
-    id: a._id,
-    apiName: "album/get/web",
-  });
-});
+        id: a._id,
+        apiName: "album/get/web",
+      });
+    });
 
     // return res.json(results);
     return res.status(200).json({
