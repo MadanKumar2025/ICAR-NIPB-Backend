@@ -813,95 +813,39 @@ export const globalSearch = async (req, res) => {
     });
 
     //publicationsRoutes
-    // const publicationsPageMap = {};
-
-    // pages.forEach((p) => {
-    //   if (!p.apiName) return;
-
-    //   const parts = p.apiName.split("/");
-
-    //   const categoryName = parts[parts.length - 1]
-    //     ?.replace(":category", "")
-    //     ?.trim()
-    //     ?.toLowerCase();
-
-    //   if (categoryName) {
-    //     publicationsPageMap[categoryName] = p.slug;
-    //   }
-    // });
-
-    // publicationsRoutes.forEach((s) => {
-    //   const categoryName = (s.category || "").trim().toLowerCase();
-
-    //   const slug = publicationsPageMap[categoryName];
-
-    //   results.push({
-    //     title: s.title?.en || s.title?.hi,
-
-    //     type: "publications",
-
-    //     url: slug ? `/${slug}` : "/research-publications",
-
-    //     apiName: `PublicationsRoutes/get/web/${s.category || ""}`,
-    //   });
-    // });
     const publicationsPageMap = {};
 
-pages.forEach((p) => {
-  if (!p.apiName) return;
+    pages.forEach((p) => {
+      if (!p.apiName) return;
 
-  const parts = p.apiName.split("/");
+      const parts = p.apiName.split("/");
 
-  const categoryName = parts[parts.length - 1]
-    ?.replace(":category", "")
-    ?.trim()
-    ?.toLowerCase();
+      const categoryName = parts[parts.length - 1]
+        ?.replace(":category", "")
+        ?.trim()
+        ?.toLowerCase();
 
-  if (categoryName && p.slug) {
-    publicationsPageMap[categoryName] = p.slug;
-  }
-});
+      if (categoryName) {
+        publicationsPageMap[categoryName] = p.slug;
+      }
+    });
 
-// Step 2: Build results
-publicationsRoutes.forEach((s) => {
-  const categoryName = (s.category || "").trim().toLowerCase();
+    publicationsRoutes.forEach((s) => {
+      const categoryName = (s.category || "").trim().toLowerCase();
 
-  const slug = publicationsPageMap[categoryName];
+      const slug = publicationsPageMap[categoryName];
 
-  const categorySlug = (s.category || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "-");
+      results.push({
+        title: s.title?.en || s.title?.hi,
 
-  results.push({
-    _id: s._id,
+        type: "publications",
 
-    title: s.title,
+        url: slug ? `/${slug}` : "/research-publications",
 
-    type: "publications",
-
-    category: s.category,
-
-    year: s.year,
-
-    articleType: s.articleType,
-
-    file: s.file,
-
-    isActive: s.isActive,
-
-    createdAt: s.createdAt,
-    updatedAt: s.updatedAt,
-
-    // URL structure:
-    // /slug/category/year
-    url: slug
-      ? `/${slug}/${categorySlug}/${s.year}`
-      : `/research-publications/${categorySlug}/${s.year}`,
-
-    apiName: `PublicationsRoutes/get/web/${s.category || ""}`,
-  });
-});
+        apiName: `PublicationsRoutes/get/web/${s.category || ""}`,
+      });
+    });
+   
 
     // Common album
 
