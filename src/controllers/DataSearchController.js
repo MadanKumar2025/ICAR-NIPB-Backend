@@ -936,21 +936,27 @@ export const globalSearch = async (req, res) => {
     //     apiName: `album/get/web/${a.type?.en || a.type?.hi || ""}`,
     //   });
     // });
+ 
+    const albumPage = pages.find((p) => p.apiName === "album/get/web/id");
 
-  const albumPage = pages.find((p) => p.apiName === "album/get/web/id");
+if (!albumPage?.slug) {
+  // agar page nahi mila to albums ko skip karo
+  console.warn("Album page not found in pages");
+} else {
+  const baseUrl1 = `/${albumPage.slug}`;
 
-// base URL
-const baseUrl1 = albumPage ? `/${albumPage.slug}` : "/album";
-
-albumRoutes.forEach((a) => {
-  results.push({
-    title: a.title?.en || a.title?.hi || "Album",
-    type: "album",
-    url: `${baseUrl1}/${a.id}`,
-    id: a._id,
-    apiName: "album/get/web",
+  albumRoutes.forEach((a) => {
+    results.push({
+      title: a.title?.en || a.title?.hi || "Album",
+      type: "album",
+      url: `${baseUrl1}/gallery/${a._id}`,
+      id: a._id,
+      apiName: "album/get/web",
+    });
   });
-});
+}
+
+
     // return res.json(results);
     return res.status(200).json({
       success: true,
