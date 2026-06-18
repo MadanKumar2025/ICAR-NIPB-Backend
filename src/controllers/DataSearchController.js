@@ -440,21 +440,48 @@ export const globalSearch = async (req, res) => {
       if (!p.apiName || !p.slug) return;
 
       const api = p.apiName.toLowerCase().trim();
-
       const parts = api.split("/");
 
-      // last segment key (department or entity)
-      const lastKey = parts[parts.length - 1]
-        ?.replace(":id", "")
-        ?.trim()
-        ?.toLowerCase();
+      const rawKey =
+        parts.find(
+          (x) => x && x !== "get" && x !== "web" && x !== "byid" && x !== ":id",
+        ) || parts[parts.length - 1];
 
-      if (!lastKey) return;
+      const key = rawKey?.trim()?.toLowerCase();
 
-      staffPageMap[lastKey] = {
+      if (!key) return;
+
+      staffPageMap[key] = {
         slug: p.slug,
         isById: api.includes("byid") || api.includes(":id"),
       };
+    });
+
+    staff.forEach((s) => {
+      const deptKey = (s.department?.en || s.department?.hi || "")
+        .trim()
+        .toLowerCase();
+
+      const page = staffPageMap[deptKey];
+
+      let url = "/staff";
+
+      if (page?.slug) {
+        if (page.isById) {
+          url = `/${page.slug}/${s._id}`;
+        }
+      }
+
+      results.push({
+        title:
+          s.staffName?.en || s.staffName?.hi || s.department?.en || "Staff",
+
+        type: "staff",
+
+        url,
+
+        apiName: `staff/get/web/${deptKey}`,
+      });
     });
 
     // ==============================
@@ -470,7 +497,6 @@ export const globalSearch = async (req, res) => {
       let url = "/staff";
 
       if (page?.slug) {
-        // 👉 DETAIL PAGE (byID)
         if (page.isById) {
           url = `/${page.slug}/${s._id}`;
         }
