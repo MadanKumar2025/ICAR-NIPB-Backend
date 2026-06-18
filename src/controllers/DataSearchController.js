@@ -51,6 +51,24 @@ export const globalSearch = async (req, res) => {
       $or: [
         { "scientistName.en": { $regex: keyword, $options: "i" } },
         { "scientistName.hi": { $regex: keyword, $options: "i" } },
+        { phone1: { $regex: keyword, $options: "i" } },
+        { phone2: { $regex: keyword, $options: "i" } },
+        { email1: { $regex: keyword, $options: "i" } },
+        { email2: { $regex: keyword, $options: "i" } },
+        { "education.en": { $regex: keyword, $options: "i" } },
+        { "education.hi": { $regex: keyword, $options: "i" } },
+        { "majorCourses.en": { $regex: keyword, $options: "i" } },
+        { "majorCourses.hi": { $regex: keyword, $options: "i" } },
+        { "researchInterest.en": { $regex: keyword, $options: "i" } },
+        { "researchInterest.hi": { $regex: keyword, $options: "i" } },
+        { "publications.en": { $regex: keyword, $options: "i" } },
+        { "publications.hi": { $regex: keyword, $options: "i" } },
+        { "IPR.en": { $regex: keyword, $options: "i" } },
+        { "IPR.hi": { $regex: keyword, $options: "i" } },
+        { "awards.en": { $regex: keyword, $options: "i" } },
+        { "awards.hi": { $regex: keyword, $options: "i" } },
+        { "externallyFundedProjects.en": { $regex: keyword, $options: "i" } },
+        { "externallyFundedProjects.hi": { $regex: keyword, $options: "i" } },
       ],
     });
 
@@ -324,23 +342,41 @@ export const globalSearch = async (req, res) => {
     });
 
     // Scientists
+    // const scientistPage = pages.find(
+    //   (p) => p.apiName === "ScientistRoutes/get/web",
+    // );
+    // const scientistUrl = scientistPage
+    //   ? `/${scientistPage.slug}`
+    //   : (() => {
+    //       const fallback = pages.find(
+    //         (p) => p.apiName === "ScientistRoutes/get/web",
+    //       );
+    //       return fallback ? `/${fallback.slug}` : "/scientist";
+    //     })();
+
+    // scientists.forEach((s) => {
+    //   results.push({
+    //     title: s.scientistName?.en || s.scientistName?.hi,
+    //     type: "scientist",
+    //     url: scientistUrl,
+    //     apiName: "ScientistRoutes/get/web",
+    //   });
+    // });
     const scientistPage = pages.find(
       (p) => p.apiName === "ScientistRoutes/get/web",
     );
-    const scientistUrl = scientistPage
-      ? `/${scientistPage.slug}`
-      : (() => {
-          const fallback = pages.find(
-            (p) => p.apiName === "ScientistRoutes/get/web",
-          );
-          return fallback ? `/${fallback.slug}` : "/scientist";
-        })();
+
+    const baseUrl = scientistPage ? `/${scientistPage.slug}` : "/scientist";
 
     scientists.forEach((s) => {
       results.push({
         title: s.scientistName?.en || s.scientistName?.hi,
         type: "scientist",
-        url: scientistUrl,
+
+        // ✅ IMPORTANT FIX
+        url: `${baseUrl}/${s._id}`,
+
+        id: s._id,
         apiName: "ScientistRoutes/get/web",
       });
     });
