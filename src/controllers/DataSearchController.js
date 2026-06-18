@@ -436,7 +436,6 @@ export const globalSearch = async (req, res) => {
 
     const staffPageMap = {};
 
-    // 1. build page map
     pages.forEach((p) => {
       if (!p.apiName) return;
 
@@ -456,7 +455,6 @@ export const globalSearch = async (req, res) => {
       };
     });
 
-    // 2. build results
     staff.forEach((s) => {
       const dept = (s.department?.en || s.department?.hi || "")
         .trim()
