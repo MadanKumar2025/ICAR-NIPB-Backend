@@ -940,14 +940,14 @@ export const globalSearch = async (req, res) => {
     const albumPage = pages.find((p) => p.apiName === "album/get/web");
 
     // base URL (same as scientist)
-    const baseUrl = albumPage ? `/${albumPage.slug}` : "/album";
+    const baseUrl1 = albumPage ? `/${albumPage.slug}` : "/album";
 
     albumRoutes.forEach((a) => {
       results.push({
         title: a.title?.en || a.title?.hi || "Album",
         type: "album",
 
-        url: `${baseUrl}/${a._id}`,
+        url: `${baseUrl1}/${a._id}`,
 
         id: a._id,
         apiName: "album/get/web",
