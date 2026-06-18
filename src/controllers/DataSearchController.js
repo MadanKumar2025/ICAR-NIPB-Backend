@@ -902,55 +902,55 @@ export const globalSearch = async (req, res) => {
 
     // Common album
 
-    // const albumPageMap = {};
+    const albumPageMap = {};
 
-    // pages.forEach((p) => {
-    //   if (!p.apiName) return;
+    pages.forEach((p) => {
+      if (!p.apiName) return;
 
-    //   const parts = p.apiName.split("/");
+      const parts = p.apiName.split("/");
 
-    //   const typeName = parts[parts.length - 1]
-    //     ?.replace(":type", "")
-    //     ?.trim()
-    //     ?.toLowerCase();
+      const typeName = parts[parts.length - 1]
+        ?.replace(":type", "")
+        ?.trim()
+        ?.toLowerCase();
 
-    //   if (typeName) {
-    //     albumPageMap[typeName] = p.slug;
-    //   }
-    // });
+      if (typeName) {
+        albumPageMap[typeName] = p.slug;
+      }
+    });
 
-    // // Album Search Results
-
-    // albumRoutes.forEach((a) => {
-    //   const typeName = (a.type?.en || a.type?.hi || "").trim().toLowerCase();
-
-    //   const slug = albumPageMap[typeName];
-
-    //   results.push({
-    //     title: a.title?.en || a.title?.hi || "Album",
-
-    //     type: "album",
-
-    //     url: slug ? `/${slug}` : "/album",
-
-    //     apiName: `album/get/web/${a.type?.en || a.type?.hi || ""}`,
-    //   });
-    // });
-
-    const albumPage = pages.find((p) => p.apiName === "album/get/web/id");
-
-    // base URL
-    const baseUrl1 = `/${albumPage.slug}`;
+    // Album Search Results
 
     albumRoutes.forEach((a) => {
+      const typeName = (a.type?.en || a.type?.hi || "").trim().toLowerCase();
+
+      const slug = albumPageMap[typeName];
+
       results.push({
         title: a.title?.en || a.title?.hi || "Album",
+
         type: "album",
-        url: `${baseUrl1}/gallery/${a.id}`,
-        id: a._id,
-        apiName: "album/get/web",
+
+        url: slug ? `/${slug}` : "/album",
+
+        apiName: `album/get/web/${a.type?.en || a.type?.hi || ""}`,
       });
     });
+
+    // const albumPage = pages.find((p) => p.apiName === "album/get/web/id");
+
+    // // base URL
+    // const baseUrl1 = `/${albumPage.slug}`;
+
+    // albumRoutes.forEach((a) => {
+    //   results.push({
+    //     title: a.title?.en || a.title?.hi || "Album",
+    //     type: "album",
+    //     url: `${baseUrl1}/gallery/${a.id}`,
+    //     id: a._id,
+    //     apiName: "album/get/web",
+    //   });
+    // });
     // return res.json(results);
     return res.status(200).json({
       success: true,
