@@ -937,7 +937,7 @@ export const globalSearch = async (req, res) => {
     //   });
     // });
 
-    const albumPage = pages.find((p) => p.apiName === "album/get/web");
+    const albumPage = pages.find((p) => p.apiName === "album/get/web/id");
 
     // base URL (same as scientist)
     const baseUrl1 = albumPage ? `/${albumPage.slug}` : "/album";
