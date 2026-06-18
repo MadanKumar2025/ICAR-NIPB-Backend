@@ -16,8 +16,7 @@ const ProfessorSchema = new mongoose.Schema({
 
   workingPeriod: {
     type: String,
-    required: true,
-  },
+   },
 
   email1: {
     type: String,
