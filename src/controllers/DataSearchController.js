@@ -845,9 +845,25 @@ export const globalSearch = async (req, res) => {
     //     apiName: `PublicationsRoutes/get/web/${s.category || ""}`,
     //   });
     // });
+    const publicationsPageMap = {};
 
+pages.forEach((p) => {
+  if (!p.apiName) return;
 
-    publicationsRoutes.forEach((s) => {
+  const parts = p.apiName.split("/");
+
+  const categoryName = parts[parts.length - 1]
+    ?.replace(":category", "")
+    ?.trim()
+    ?.toLowerCase();
+
+  if (categoryName && p.slug) {
+    publicationsPageMap[categoryName] = p.slug;
+  }
+});
+
+// Step 2: Build results
+publicationsRoutes.forEach((s) => {
   const categoryName = (s.category || "").trim().toLowerCase();
 
   const slug = publicationsPageMap[categoryName];
@@ -858,10 +874,27 @@ export const globalSearch = async (req, res) => {
     .replace(/\s+/g, "-");
 
   results.push({
-    ...s.toObject(),
+    _id: s._id,
+
+    title: s.title,
 
     type: "publications",
 
+    category: s.category,
+
+    year: s.year,
+
+    articleType: s.articleType,
+
+    file: s.file,
+
+    isActive: s.isActive,
+
+    createdAt: s.createdAt,
+    updatedAt: s.updatedAt,
+
+    // URL structure:
+    // /slug/category/year
     url: slug
       ? `/${slug}/${categorySlug}/${s.year}`
       : `/research-publications/${categorySlug}/${s.year}`,
@@ -869,30 +902,6 @@ export const globalSearch = async (req, res) => {
     apiName: `PublicationsRoutes/get/web/${s.category || ""}`,
   });
 });
-
-    // const publicationsPage = pages.find(
-    //   (p) => p.apiName === "PublicationsRoutes/get/webByID",
-    // );
-
-    // // Base URL
-    // const publicationsBaseUrl = publicationsPage
-    //   ? `/${publicationsPage.slug}`
-    //   : "/research-publications";
-
-    // // Search Results
-    // publicationsRoutes.forEach((s) => {
-    //   results.push({
-    //     title: s.title?.en || s.title?.hi,
-    //     type: "publications",
-
-    //     // Detail page URL with publication ID
-    //     url: `${publicationsBaseUrl}/${s._id}`,
-
-    //     id: s._id,
-
-    //     apiName: "PublicationsRoutes/get/webByID",
-    //   });
-    // });
 
     // Common album
 
