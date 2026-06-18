@@ -194,8 +194,10 @@ export const globalSearch = async (req, res) => {
         { "title.hi": { $regex: keyword, $options: "i" } },
         { "fundingAgency.en": { $regex: keyword, $options: "i" } },
         { "fundingAgency.hi": { $regex: keyword, $options: "i" } },
-        { sanctionedBudget: { $regex: keyword, $options: "i" } },
-        { principalInvestigator: { $regex: keyword, $options: "i" } },
+        { "sanctionedBudget.en": { $regex: keyword, $options: "i" } },
+        { "sanctionedBudget.hi": { $regex: keyword, $options: "i" } },
+        { "principalInvestigator.en": { $regex: keyword, $options: "i" } },
+        { "principalInvestigator.hi": { $regex: keyword, $options: "i" } },
       ],
     });
 
