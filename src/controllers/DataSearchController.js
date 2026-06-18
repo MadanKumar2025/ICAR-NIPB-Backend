@@ -937,23 +937,20 @@ export const globalSearch = async (req, res) => {
     //   });
     // });
 
-    const albumPage = pages.find((p) => p.apiName === "album/get/web/id");
+  const albumPage = pages.find((p) => p.apiName === "album/get/web/id");
 
-    // base URL (same as scientist)
-    const baseUrl1 = albumPage ? `/${albumPage.slug}` : "/album";
+// base URL
+const baseUrl1 = albumPage ? `/${albumPage.slug}` : "/album";
 
-    albumRoutes.forEach((a) => {
-      results.push({
-        title: a.title?.en || a.title?.hi || "Album",
-        type: "album",
-
-        url: `${baseUrl1}/${a.id}`,
-
-        id: a._id,
-        apiName: "album/get/web",
-      });
-    });
-
+albumRoutes.forEach((a) => {
+  results.push({
+    title: a.title?.en || a.title?.hi || "Album",
+    type: "album",
+    url: `${baseUrl1}/${a.id}`,
+    id: a._id,
+    apiName: "album/get/web",
+  });
+});
     // return res.json(results);
     return res.status(200).json({
       success: true,
