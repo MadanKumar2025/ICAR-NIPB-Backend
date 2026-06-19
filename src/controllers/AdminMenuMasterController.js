@@ -17,7 +17,7 @@ export const createAdminMenu = async (req, res) => {
     url = url?.trim();
 
     // Basic required checks (only essential)
-    if (!menuName || !url || displayOrderNumber === undefined) {
+    if (!menuName || displayOrderNumber === undefined) {
       return res.status(400).json({
         success: false,
         message: "menuName, url and displayOrderNumber are required",
@@ -82,8 +82,7 @@ export const createAdminMenu = async (req, res) => {
     if (existingOrder) {
       return res.status(409).json({
         success: false,
-        message:
-          "This display order number is already used in this menu level",
+        message: "This display order number is already used in this menu level",
       });
     }
 
@@ -172,7 +171,6 @@ export const getAdminMenus = async (req, res) => {
   }
 };
 
-
 export const updateAdminMenu = async (req, res) => {
   try {
     const { id } = req.params;
@@ -207,7 +205,8 @@ export const updateAdminMenu = async (req, res) => {
     }
 
     // URL
-    if (url !== undefined) {
+    // if (url !== undefined) {
+    if (url) {
       if (!url.trim()) {
         return res.status(400).json({
           success: false,
@@ -295,9 +294,7 @@ export const updateAdminMenu = async (req, res) => {
     }
 
     if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map(
-        (val) => val.message
-      );
+      const messages = Object.values(error.errors).map((val) => val.message);
 
       return res.status(400).json({
         success: false,
