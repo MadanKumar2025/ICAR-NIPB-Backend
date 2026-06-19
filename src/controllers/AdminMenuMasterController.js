@@ -353,9 +353,155 @@ export const getAdminMenus = async (req, res) => {
   }
 };
 
+// export const updateAdminMenu = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+
+//     const {
+//       menuName,
+//       url,
+//       displayOrderNumber,
+//       parentMenuId,
+//       menuType,
+//       isActive,
+//     } = req.body;
+
+//     const menu = await AdminMenuMaster.findById(id);
+
+//     if (!menu) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Menu not found",
+//       });
+//     }
+
+//     // MENU NAME
+//     if (menuName !== undefined) {
+//       if (!menuName.trim()) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "menuName cannot be empty",
+//         });
+//       }
+//       menu.menuName = menuName.trim();
+//     }
+
+//     // URL
+
+//     // if (url) {
+//     // if (!url.trim()) {
+//     //   return res.status(400).json({
+//     //     success: false,
+//     //     message: "url cannot be empty",
+//     //   });
+//     // }
+//     menu.url = url.trim();
+
+//     // DISPLAY ORDER
+//     if (displayOrderNumber !== undefined) {
+//       const num = Number(displayOrderNumber);
+
+//       if (Number.isNaN(num) || num < 0) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "displayOrderNumber must be a valid number",
+//         });
+//       }
+
+//       menu.displayOrderNumber = num;
+//     }
+
+//     // MENU TYPE
+//     if (menuType !== undefined) {
+//       if (!menuType.trim()) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "menuType cannot be empty",
+//         });
+//       }
+//       menu.menuType = menuType.trim();
+//     }
+
+//     // PARENT MENU
+//     // if (parentMenuId !== undefined) {
+//     //   if (parentMenuId === null || parentMenuId === "") {
+//     //     menu.parentMenuId = null;
+//     //   } else {
+//     //     if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
+//     //       return res.status(400).json({
+//     //         success: false,
+//     //         message: "Invalid parentMenuId",
+//     //       });
+//     //     }
+
+//     //     const parent = await AdminMenuMaster.findById(parentMenuId);
+
+//     //     if (!parent) {
+//     //       return res.status(400).json({
+//     //         success: false,
+//     //         message: "Parent menu not found",
+//     //       });
+//     //     }
+
+//     //     menu.parentMenuId = parentMenuId;
+//     //   }
+//     // }
+//     const parent = await AdminMenuMaster.findById(parentMenuId);
+
+//     // IS ACTIVE
+//     if (isActive !== undefined) {
+//       menu.isActive = isActive === "true" || isActive === true;
+//     }
+
+//     // SYSTEM FIELDS
+//     menu.updatedBy = req.user?.id || null;
+//     menu.updatedAt = Date.now();
+
+//     const updatedMenu = await menu.save();
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "Menu updated successfully",
+//       data: updatedMenu,
+//     });
+//   } catch (error) {
+//     console.error("updateAdminMenu error:", error);
+
+//     if (error.code === 11000) {
+//       const field = Object.keys(error.keyValue)[0];
+//       return res.status(400).json({
+//         success: false,
+//         message: `${field} already exists`,
+//       });
+//     }
+
+//     if (error.name === "ValidationError") {
+//       const messages = Object.values(error.errors).map((val) => val.message);
+
+//       return res.status(400).json({
+//         success: false,
+//         message: messages.join(", "),
+//       });
+//     }
+
+//     return res.status(500).json({
+//       success: false,
+//       message: "Something went wrong",
+//     });
+//   }
+// };
+
+
 export const updateAdminMenu = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid menu id",
+      });
+    }
 
     const {
       menuName,
@@ -377,34 +523,59 @@ export const updateAdminMenu = async (req, res) => {
 
     // MENU NAME
     if (menuName !== undefined) {
-      if (!menuName.trim()) {
+      const trimmedName = menuName.trim();
+
+      if (!trimmedName) {
         return res.status(400).json({
           success: false,
-          message: "menuName cannot be empty",
+          message: "Menu Name cannot be empty",
         });
       }
-      menu.menuName = menuName.trim();
+
+      const existingName = await AdminMenuMaster.findOne({
+        _id: { $ne: id },
+        menuName: { $regex: `^${trimmedName}$`, $options: "i" },
+      });
+
+      if (existingName) {
+        return res.status(409).json({
+          success: false,
+          message: "Menu Name already exists",
+        });
+      }
+
+      menu.menuName = trimmedName;
     }
 
     // URL
+    if (url !== undefined) {
+      const trimmedUrl = url?.trim();
 
-    // if (url) {
-    // if (!url.trim()) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "url cannot be empty",
-    //   });
-    // }
-    menu.url = url.trim();
+      if (trimmedUrl) {
+        const existingUrl = await AdminMenuMaster.findOne({
+          _id: { $ne: id },
+          url: { $regex: `^${trimmedUrl}$`, $options: "i" },
+        });
+
+        if (existingUrl) {
+          return res.status(409).json({
+            success: false,
+            message: "Menu URL already exists",
+          });
+        }
+      }
+
+      menu.url = trimmedUrl || "";
+    }
 
     // DISPLAY ORDER
     if (displayOrderNumber !== undefined) {
       const num = Number(displayOrderNumber);
 
-      if (Number.isNaN(num) || num < 0) {
+      if (isNaN(num) || num < 0) {
         return res.status(400).json({
           success: false,
-          message: "displayOrderNumber must be a valid number",
+          message: "Display Order Number must be a valid number",
         });
       }
 
@@ -413,49 +584,72 @@ export const updateAdminMenu = async (req, res) => {
 
     // MENU TYPE
     if (menuType !== undefined) {
-      if (!menuType.trim()) {
+      const trimmedType = menuType.trim();
+
+      if (!trimmedType) {
         return res.status(400).json({
           success: false,
-          message: "menuType cannot be empty",
+          message: "Menu Type cannot be empty",
         });
       }
-      menu.menuType = menuType.trim();
+
+      menu.menuType = trimmedType;
     }
 
     // PARENT MENU
-    // if (parentMenuId !== undefined) {
-    //   if (parentMenuId === null || parentMenuId === "") {
-    //     menu.parentMenuId = null;
-    //   } else {
-    //     if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
-    //       return res.status(400).json({
-    //         success: false,
-    //         message: "Invalid parentMenuId",
-    //       });
-    //     }
+    if (parentMenuId !== undefined) {
+      if (parentMenuId === "" || parentMenuId === null) {
+        menu.parentMenuId = null;
+      } else {
+        if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid Parent Menu Id",
+          });
+        }
 
-    //     const parent = await AdminMenuMaster.findById(parentMenuId);
+        if (parentMenuId === id) {
+          return res.status(400).json({
+            success: false,
+            message: "Menu cannot be parent of itself",
+          });
+        }
 
-    //     if (!parent) {
-    //       return res.status(400).json({
-    //         success: false,
-    //         message: "Parent menu not found",
-    //       });
-    //     }
+        const parent = await AdminMenuMaster.findById(parentMenuId);
 
-    //     menu.parentMenuId = parentMenuId;
-    //   }
-    // }
-    const parent = await AdminMenuMaster.findById(parentMenuId);
+        if (!parent) {
+          return res.status(404).json({
+            success: false,
+            message: "Parent Menu not found",
+          });
+        }
+
+        menu.parentMenuId = parentMenuId;
+      }
+    }
+
+    // CHECK DISPLAY ORDER DUPLICATE
+    const existingOrder = await AdminMenuMaster.findOne({
+      _id: { $ne: id },
+      displayOrderNumber: menu.displayOrderNumber,
+      parentMenuId: menu.parentMenuId || null,
+    });
+
+    if (existingOrder) {
+      return res.status(409).json({
+        success: false,
+        message:
+          "This display order number is already used in the same menu level",
+      });
+    }
 
     // IS ACTIVE
     if (isActive !== undefined) {
-      menu.isActive = isActive === "true" || isActive === true;
+      menu.isActive = isActive === true || isActive === "true";
     }
 
-    // SYSTEM FIELDS
     menu.updatedBy = req.user?.id || null;
-    menu.updatedAt = Date.now();
+    menu.updatedAt = new Date();
 
     const updatedMenu = await menu.save();
 
@@ -468,25 +662,24 @@ export const updateAdminMenu = async (req, res) => {
     console.error("updateAdminMenu error:", error);
 
     if (error.code === 11000) {
-      const field = Object.keys(error.keyValue)[0];
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
-        message: `${field} already exists`,
+        message: "Duplicate value already exists",
       });
     }
 
     if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map((val) => val.message);
-
       return res.status(400).json({
         success: false,
-        message: messages.join(", "),
+        message: Object.values(error.errors)
+          .map((e) => e.message)
+          .join(", "),
       });
     }
 
     return res.status(500).json({
       success: false,
-      message: "Something went wrong",
+      message: error.message || "Something went wrong",
     });
   }
 };
