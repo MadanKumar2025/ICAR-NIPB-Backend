@@ -43,23 +43,24 @@ export const createAdminMenu = async (req, res) => {
     // Parent handling
     let parent = null;
 
-    if (parentMenuId) {
-      if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid parentMenuId",
-        });
-      }
+    // if (parentMenuId) {
+    //   if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
+    //     return res.status(400).json({
+    //       success: false,
+    //       message: "Invalid parentMenuId",
+    //     });
+    //   }
 
+    //   parent = await AdminMenuMaster.findById(parentMenuId);
+
+    //   if (!parent) {
+    //     return res.status(400).json({
+    //       success: false,
+    //       message: "Parent menu not found",
+    //     });
+    //   }
+    // }
       parent = await AdminMenuMaster.findById(parentMenuId);
-
-      if (!parent) {
-        return res.status(400).json({
-          success: false,
-          message: "Parent menu not found",
-        });
-      }
-    }
 
     // Duplicate URL (case-insensitive exact match)
     // const existingMenu = await AdminMenuMaster.findOne({
