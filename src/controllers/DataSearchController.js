@@ -296,6 +296,23 @@ export const globalSearch = async (req, res) => {
       ],
     });
 
+    // Search ProfessorRoutes
+
+    const professorRoutes = await Album.find({
+      $or: [
+        { "name.en": { $regex: keyword, $options: "i" } },
+        { "name.hi": { $regex: keyword, $options: "i" } },
+        { workingPeriod: { $regex: keyword, $options: "i" } },
+        { email1: { $regex: keyword, $options: "i" } },
+        { email2: { $regex: keyword, $options: "i" } },
+        { phone: { $regex: keyword, $options: "i" } },
+        { "education.en": { $regex: keyword, $options: "i" } },
+        { "education.hi": { $regex: keyword, $options: "i" } },
+        { "message.en": { $regex: keyword, $options: "i" } },
+        { "message.hi": { $regex: keyword, $options: "i" } },
+      ],
+    });
+
     const results = [];
 
     //////////////////////////
@@ -934,6 +951,29 @@ export const globalSearch = async (req, res) => {
         apiName: `album/get/web/${a.type?.en || a.type?.hi || ""}`,
       });
     });
+
+ //professorRoutes/ professor 
+    const professorRoutesPage = pages.find(
+      (p) => p.apiName === "ProfessorRoutes/get/web",
+    );
+    const professorUrl = professorRoutesPage
+      ? `/${professorRoutesPage.slug}`
+      : (() => {
+          const fallback = pages.find(
+            (p) => p.apiName === "ProfessorRoutes/get/web",
+          );
+          return fallback ? `/${fallback.slug}` : "/ProfessorRoutes ";
+        })();
+
+    professorRoutes.forEach((s) => {
+      results.push({
+        title: s.name?.en || s.name?.hi,
+        type: "professor ",
+        url: professorUrl,
+        apiName: "ProfessorRoutes/get/web",
+      });
+    });
+
 
     return res.status(200).json({
       success: true,
