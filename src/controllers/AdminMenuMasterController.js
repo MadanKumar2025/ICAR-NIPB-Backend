@@ -205,8 +205,8 @@ export const updateAdminMenu = async (req, res) => {
     }
 
     // URL
-    // if (url !== undefined) {
-    if (url) {
+    if (url !== undefined) {
+    // if (url) {
       if (!url.trim()) {
         return res.status(400).json({
           success: false,
