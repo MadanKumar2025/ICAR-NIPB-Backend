@@ -14,7 +14,7 @@ export const createAdminMenu = async (req, res) => {
 
     // Normalize inputs
     menuName = menuName?.trim();
-    url = url?.trim();
+    // url = url?.trim();
 
     // Basic required checks (only essential)
     if (!menuName || displayOrderNumber === undefined) {
