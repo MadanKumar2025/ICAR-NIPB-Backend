@@ -14,8 +14,17 @@ export const createDirector = async (req, res) => {
       phone,
       education_en,
       education_hi,
+      message_en,
+      message_hi,
       acting,
     } = req.body;
+
+    if (!name_en || !name_hi || !workingPeriod) {
+      return res.status(400).json({
+        success: false,
+        message: "Name and Working Period are required",
+      });
+    }
 
     if (!req.file) {
       return res.status(400).json({
@@ -35,6 +44,10 @@ export const createDirector = async (req, res) => {
       email,
       phone,
 
+      message: {
+        en: message_en.trim(),
+        hi: message_hi.trim(),
+      },
       education: {
         en: education_en,
         hi: education_hi,
@@ -84,7 +97,7 @@ export const getDirectors = async (req, res) => {
 
     const total = await Director.countDocuments();
 
-    let query = Director.find().sort({ createdate: -1 }).select("-__v"); // optional clean response
+    let query = Director.find().sort({ createdate: -1 }).select("-__v");
 
     let directors;
 
@@ -168,6 +181,8 @@ export const updateDirector = async (req, res) => {
       phone,
       education_en,
       education_hi,
+      message_en,
+      message_hi,
       acting,
       isActive,
     } = req.body;
@@ -210,6 +225,13 @@ export const updateDirector = async (req, res) => {
       director.education = {
         en: education_en ?? director.education?.en,
         hi: education_hi ?? director.education?.hi,
+      };
+    }
+
+    if (message_en !== undefined || message_hi !== undefined) {
+      director.message = {
+        en: message_en ?? director.message?.en,
+        hi: message_hi ?? director.message?.hi,
       };
     }
 
@@ -290,6 +312,7 @@ export const getAllDirectorWeb = async (req, res) => {
       id: director._id,
 
       name: director.name || { en: "", hi: "" },
+      message: director.message || { en: "", hi: "" },
       workingPeriod: director.workingPeriod || "",
       photoTitle: director.photoTitle || "",
       photo: director.photo || null,

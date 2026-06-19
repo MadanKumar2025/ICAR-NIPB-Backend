@@ -5,6 +5,10 @@ const DirectorSchema = new mongoose.Schema({
     en: { type: String, required: true },
     hi: { type: String, required: true },
   },
+  message: {
+    en: { type: String },
+    hi: { type: String },
+  },
   workingPeriod: {
     type: String,
     required: true,
