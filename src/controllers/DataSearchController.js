@@ -148,6 +148,8 @@ export const globalSearch = async (req, res) => {
       $or: [
         { "name.en": { $regex: keyword, $options: "i" } },
         { "name.hi": { $regex: keyword, $options: "i" } },
+        { "message.en": { $regex: keyword, $options: "i" } },
+        { "message.hi": { $regex: keyword, $options: "i" } },
         { workingPeriod: { $regex: keyword, $options: "i" } },
         { email: { $regex: keyword, $options: "i" } },
         { phone: { $regex: keyword, $options: "i" } },
