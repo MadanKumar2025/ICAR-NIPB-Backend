@@ -14,6 +14,10 @@ const adminMenuMasterSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  menuType: {
+    type: String,
+    required: true,
+  },
   parentMenuId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "AdminMenuMaster",

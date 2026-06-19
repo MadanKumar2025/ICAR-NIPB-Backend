@@ -8,6 +8,7 @@ export const createAdminMenu = async (req, res) => {
       url,
       displayOrderNumber,
       parentMenuId,
+      menuType,
       isActive,
     } = req.body || {};
 
@@ -20,6 +21,12 @@ export const createAdminMenu = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "menuName, url and displayOrderNumber are required",
+      });
+    }
+    if (!menuType) {
+      return res.status(400).json({
+        success: false,
+        message: "Menu Type are required",
       });
     }
 
@@ -84,6 +91,7 @@ export const createAdminMenu = async (req, res) => {
     const newMenu = await AdminMenuMaster.create({
       menuName,
       url,
+      menuType,
       displayOrderNumber,
       parentMenuId: parent ? parent._id : null,
       isActive: isActive ?? true,
@@ -160,6 +168,146 @@ export const getAdminMenus = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: error.message || "Something went wrong",
+    });
+  }
+};
+
+
+export const updateAdminMenu = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const {
+      menuName,
+      url,
+      displayOrderNumber,
+      parentMenuId,
+      menuType,
+      isActive,
+    } = req.body;
+
+    const menu = await AdminMenuMaster.findById(id);
+
+    if (!menu) {
+      return res.status(404).json({
+        success: false,
+        message: "Menu not found",
+      });
+    }
+
+    // MENU NAME
+    if (menuName !== undefined) {
+      if (!menuName.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "menuName cannot be empty",
+        });
+      }
+      menu.menuName = menuName.trim();
+    }
+
+    // URL
+    if (url !== undefined) {
+      if (!url.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "url cannot be empty",
+        });
+      }
+      menu.url = url.trim();
+    }
+
+    // DISPLAY ORDER
+    if (displayOrderNumber !== undefined) {
+      const num = Number(displayOrderNumber);
+
+      if (Number.isNaN(num) || num < 0) {
+        return res.status(400).json({
+          success: false,
+          message: "displayOrderNumber must be a valid number",
+        });
+      }
+
+      menu.displayOrderNumber = num;
+    }
+
+    // MENU TYPE
+    if (menuType !== undefined) {
+      if (!menuType.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "menuType cannot be empty",
+        });
+      }
+      menu.menuType = menuType.trim();
+    }
+
+    // PARENT MENU
+    if (parentMenuId !== undefined) {
+      if (parentMenuId === null || parentMenuId === "") {
+        menu.parentMenuId = null;
+      } else {
+        if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid parentMenuId",
+          });
+        }
+
+        const parent = await AdminMenuMaster.findById(parentMenuId);
+
+        if (!parent) {
+          return res.status(400).json({
+            success: false,
+            message: "Parent menu not found",
+          });
+        }
+
+        menu.parentMenuId = parentMenuId;
+      }
+    }
+
+    // IS ACTIVE
+    if (isActive !== undefined) {
+      menu.isActive = isActive === "true" || isActive === true;
+    }
+
+    // SYSTEM FIELDS
+    menu.updatedBy = req.user?.id || null;
+    menu.updatedAt = Date.now();
+
+    const updatedMenu = await menu.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Menu updated successfully",
+      data: updatedMenu,
+    });
+  } catch (error) {
+    console.error("updateAdminMenu error:", error);
+
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0];
+      return res.status(400).json({
+        success: false,
+        message: `${field} already exists`,
+      });
+    }
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map(
+        (val) => val.message
+      );
+
+      return res.status(400).json({
+        success: false,
+        message: messages.join(", "),
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
     });
   }
 };
