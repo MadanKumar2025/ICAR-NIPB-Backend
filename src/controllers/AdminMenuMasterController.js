@@ -14,7 +14,7 @@ export const createAdminMenu = async (req, res) => {
 
     // Normalize inputs
     menuName = menuName?.trim();
-    // url = url?.trim();
+    url = url?.trim();
 
     // Basic required checks (only essential)
     if (!menuName || displayOrderNumber === undefined) {
@@ -60,7 +60,7 @@ export const createAdminMenu = async (req, res) => {
     //     });
     //   }
     // }
-      parent = await AdminMenuMaster.findById(parentMenuId);
+    parent = await AdminMenuMaster.findById(parentMenuId);
 
     // Duplicate URL (case-insensitive exact match)
     // const existingMenu = await AdminMenuMaster.findOne({
@@ -206,16 +206,15 @@ export const updateAdminMenu = async (req, res) => {
     }
 
     // URL
-    if (url) {
+
     // if (url) {
-      if (!url.trim()) {
-        return res.status(400).json({
-          success: false,
-          message: "url cannot be empty",
-        });
-      }
-      menu.url = url.trim();
+    if (!url.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "url cannot be empty",
+      });
     }
+    menu.url = url.trim();
 
     // DISPLAY ORDER
     if (displayOrderNumber !== undefined) {
