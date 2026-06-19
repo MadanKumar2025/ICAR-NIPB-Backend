@@ -123,80 +123,6 @@ export const getPermissionsByUser = async (req, res) => {
   }
 };
 
-// export const updateUserPermission = async (req, res) => {
-//   try {
-//     const { userId, menuId } = req.params;
-
-//     const {
-//       pageAccess,
-//       addAccess,
-//       editAccess,
-//       activeAccess,
-//       deleteAccess,
-//       isActive,
-//     } = req.body;
-
-//     // Validate IDs
-//     if (
-//       !mongoose.Types.ObjectId.isValid(userId) ||
-//       !mongoose.Types.ObjectId.isValid(menuId)
-//     ) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Invalid userId or menuId",
-//       });
-//     }
-
-//     // Find user permission document
-//     const userPermission = await UserPermissions.findOne({ userId });
-
-//     if (!userPermission) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "User permissions not found",
-//       });
-//     }
-
-//     // Find specific menu permission
-//     const menuPermission = userPermission.menuPermissions.find(
-//       (p) => p.menuId.toString() === menuId
-//     );
-
-//     if (!menuPermission) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Menu permission not found",
-//       });
-//     }
-
-//     // Update only provided fields
-//     if (pageAccess !== undefined) menuPermission.pageAccess = pageAccess;
-//     if (addAccess !== undefined) menuPermission.addAccess = addAccess;
-//     if (editAccess !== undefined) menuPermission.editAccess = editAccess;
-//     if (activeAccess !== undefined) menuPermission.activeAccess = activeAccess;
-//     if (deleteAccess !== undefined) menuPermission.deleteAccess = deleteAccess;
-
-//     // Update meta
-//     userPermission.isActive = isActive ?? userPermission.isActive;
-//     userPermission.updatedBy = req.user?.id || null;
-//     userPermission.updatedAt = new Date();
-
-//     await userPermission.save();
-
-//     return res.status(200).json({
-//       success: true,
-//       message: "Menu permission updated successfully",
-//       data: userPermission,
-//     });
-//   } catch (error) {
-//     console.error("Update Permission Error =>", error);
-
-//     return res.status(500).json({
-//       success: false,
-//       message: error.message || "Something went wrong",
-//     });
-//   }
-// };
 
 export const updateUserPermission = async (req, res) => {
   try {
@@ -236,73 +162,13 @@ export const updateUserPermission = async (req, res) => {
   }
 };
 
-// export const updateUserPermission = async (req, res) => {
-//   try {
-//     const { userId, menuPermissions, isActive } = req.body;
-
-//     if (!userId || !Array.isArray(menuPermissions) || menuPermissions.length === 0) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "userId and menuPermissions are required",
-//       });
-//     }
-
-//     if (!mongoose.Types.ObjectId.isValid(userId)) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Invalid userId",
-//       });
-//     }
-
-//     // validate menuIds
-//     for (const p of menuPermissions) {
-//       if (!mongoose.Types.ObjectId.isValid(p.menuId)) {
-//         return res.status(400).json({
-//           success: false,
-//           message: `Invalid menuId: ${p.menuId}`,
-//         });
-//       }
-//     }
-
-//     const data = await UserPermissions.findOneAndUpdate(
-//       { userId },
-//       {
-//         $set: {
-//           menuPermissions,
-//           isActive: isActive ?? true,
-//           updatedBy: req.user?.id,
-//           updatedAt: new Date(),
-//         },
-//         $setOnInsert: {
-//           createdBy: req.user?.id,
-//         },
-//       },
-//       {
-//         new: true,
-//         upsert: true,
-//       }
-//     );
-
-//     return res.status(200).json({
-//       success: true,
-//       message: "Permissions saved successfully",
-//       data,
-//     });
-//   } catch (err) {
-//     return res.status(500).json({
-//       success: false,
-//       message: err.message,
-//     });
-//   }
-// };
-
 export const getAllPermissions = async (req, res) => {
   try {
     const data = await UserPermissions.find()
       .populate("userId", "name email")
       .populate(
         "menuPermissions.menuId",
-        "menuName url parentMenuId displayOrderNumber",
+        "menuName url parentMenuId displayOrderNumber menuType",
       );
 
     return res.status(200).json({
