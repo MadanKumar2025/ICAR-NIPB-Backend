@@ -208,12 +208,12 @@ export const updateAdminMenu = async (req, res) => {
     // URL
 
     // if (url) {
-    if (!url.trim()) {
-      return res.status(400).json({
-        success: false,
-        message: "url cannot be empty",
-      });
-    }
+    // if (!url.trim()) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "url cannot be empty",
+    //   });
+    // }
     menu.url = url.trim();
 
     // DISPLAY ORDER
