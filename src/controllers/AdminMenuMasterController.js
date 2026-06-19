@@ -20,7 +20,7 @@ export const createAdminMenu = async (req, res) => {
     if (!menuName || displayOrderNumber === undefined) {
       return res.status(400).json({
         success: false,
-        message: "menuName, url and displayOrderNumber are required",
+        message: "menuName,   displayOrderNumber are required",
       });
     }
     if (!menuType) {
@@ -62,9 +62,9 @@ export const createAdminMenu = async (req, res) => {
     }
 
     // Duplicate URL (case-insensitive exact match)
-    const existingMenu = await AdminMenuMaster.findOne({
-      url: { $regex: `^${url}$`, $options: "i" },
-    });
+    // const existingMenu = await AdminMenuMaster.findOne({
+    //   url: { $regex: `^${url}$`, $options: "i" },
+    // });
 
     if (existingMenu) {
       return res.status(409).json({
