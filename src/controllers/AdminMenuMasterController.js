@@ -242,29 +242,30 @@ export const updateAdminMenu = async (req, res) => {
     }
 
     // PARENT MENU
-    if (parentMenuId !== undefined) {
-      if (parentMenuId === null || parentMenuId === "") {
-        menu.parentMenuId = null;
-      } else {
-        if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
-          return res.status(400).json({
-            success: false,
-            message: "Invalid parentMenuId",
-          });
-        }
+    // if (parentMenuId !== undefined) {
+    //   if (parentMenuId === null || parentMenuId === "") {
+    //     menu.parentMenuId = null;
+    //   } else {
+    //     if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
+    //       return res.status(400).json({
+    //         success: false,
+    //         message: "Invalid parentMenuId",
+    //       });
+    //     }
 
+    //     const parent = await AdminMenuMaster.findById(parentMenuId);
+
+    //     if (!parent) {
+    //       return res.status(400).json({
+    //         success: false,
+    //         message: "Parent menu not found",
+    //       });
+    //     }
+
+    //     menu.parentMenuId = parentMenuId;
+    //   }
+    // }
         const parent = await AdminMenuMaster.findById(parentMenuId);
-
-        if (!parent) {
-          return res.status(400).json({
-            success: false,
-            message: "Parent menu not found",
-          });
-        }
-
-        menu.parentMenuId = parentMenuId;
-      }
-    }
 
     // IS ACTIVE
     if (isActive !== undefined) {
