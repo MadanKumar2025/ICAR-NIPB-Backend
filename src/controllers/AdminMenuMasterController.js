@@ -1,6 +1,5 @@
 import AdminMenuMaster from "../models/AdminMenuMasterSchema.js";
 import mongoose from "mongoose";
- 
 
 export const createAdminMenu = async (req, res) => {
   try {
@@ -96,30 +95,30 @@ export const createAdminMenu = async (req, res) => {
     //   }
     // }
 
-if (parentMenuId !== undefined) {
-  if (!parentMenuId || parentMenuId === "") {
-    menu.parentMenuId = null; // remove parent
-  } else {
-    if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid Parent Menu Id",
-      });
+    if (parentMenuId !== undefined) {
+      if (!parentMenuId || parentMenuId === "") {
+        menu.parentMenuId = null; // remove parent
+      } else {
+        if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid Parent Menu Id",
+          });
+        }
+
+        const parent = await AdminMenuMaster.findById(parentMenuId);
+
+        if (!parent) {
+          return res.status(404).json({
+            success: false,
+            message: "Parent Menu not found",
+          });
+        }
+
+        menu.parentMenuId = parentMenuId; // set parent
+      }
     }
 
-    const parent = await AdminMenuMaster.findById(parentMenuId);
-
-    if (!parent) {
-      return res.status(404).json({
-        success: false,
-        message: "Parent Menu not found",
-      });
-    }
-
-    menu.parentMenuId = parentMenuId; // set parent
-  }
-}
-    
     // Check display order duplication under same parent
     const existingOrder = await AdminMenuMaster.findOne({
       displayOrderNumber,
@@ -216,7 +215,6 @@ export const getAdminMenus = async (req, res) => {
     });
   }
 };
- 
 
 export const updateAdminMenu = async (req, res) => {
   try {
@@ -309,17 +307,24 @@ export const updateAdminMenu = async (req, res) => {
     }
 
     // MENU TYPE
+    // if (menuType !== undefined) {
+    //   const trimmedType = menuType.trim();
+
+    //   if (!trimmedType) {
+    //     return res.status(400).json({
+    //       success: false,
+    //       message: "Menu Type cannot be empty",
+    //     });
+    //   }
+
+    //   menu.menuType = trimmedType;
+    // }
+
     if (menuType !== undefined) {
-      const trimmedType = menuType.trim();
+      const trimmedType = menuType?.trim();
 
-      if (!trimmedType) {
-        return res.status(400).json({
-          success: false,
-          message: "Menu Type cannot be empty",
-        });
-      }
-
-      menu.menuType = trimmedType;
+      // agar value empty string ho ya undefined ho to null/empty set kar do
+      menu.menuType = trimmedType || null;
     }
 
     // PARENT MENU
