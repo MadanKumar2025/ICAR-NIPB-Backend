@@ -12,7 +12,7 @@ const organizationSchema = new mongoose.Schema({
   },
 
   officeHours: {
- en: { type: String, required: true },
+    en: { type: String, required: true },
     hi: { type: String, required: true },
   },
 
