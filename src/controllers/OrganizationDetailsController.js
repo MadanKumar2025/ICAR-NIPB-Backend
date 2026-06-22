@@ -562,6 +562,13 @@ export const updateOrganization = async (req, res) => {
       isActive,
     } = req.body;
 
+        return res.status(200).json({
+      success: true,
+      officeHours_en,
+      officeHours_hi,
+      body: req.body,
+    });
+
     const record = await OrganizationDetails.findById(id);
 
     if (!record) {
