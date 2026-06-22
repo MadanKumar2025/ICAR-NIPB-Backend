@@ -361,9 +361,7 @@ export const createOrganization = async (req, res) => {
     }
 
     const logo1 = req.files.logo1[0].filename;
-    const logo2 = req.files.logo2
-      ? req.files.logo2[0].filename
-      : null;
+    const logo2 = req.files.logo2 ? req.files.logo2[0].filename : null;
 
     // -------------------------
     // Create Organization
@@ -452,9 +450,7 @@ export const createOrganization = async (req, res) => {
     }
 
     if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map(
-        (err) => err.message
-      );
+      const messages = Object.values(error.errors).map((err) => err.message);
 
       return res.status(400).json({
         success: false,
@@ -562,7 +558,7 @@ export const updateOrganization = async (req, res) => {
       isActive,
     } = req.body;
 
-        return res.status(200).json({
+    return res.status(200).json({
       success: true,
       officeHours_en,
       officeHours_hi,
