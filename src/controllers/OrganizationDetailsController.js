@@ -288,11 +288,10 @@ export const updateOrganization = async (req, res) => {
         hi: tagLine_hi ?? record.tagLine.hi,
       };
     }
-
     if (officeHours_en !== undefined || officeHours_hi !== undefined) {
       record.officeHours = {
-        en: officeHours_en ?? "",
-        hi: officeHours_hi ?? "",
+        en: officeHours_en ?? record.officeHours?.en,
+        hi: officeHours_hi ?? record.officeHours?.hi,
       };
     }
 
