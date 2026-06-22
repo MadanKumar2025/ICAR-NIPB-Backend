@@ -429,7 +429,7 @@ export const getAllOrganizationsWeb = async (req, res) => {
       logo1Title: org.logo1Title || "",
       logo2: org.logo2 || "",
       logo2Title: org.logo2Title || "",
-         officeHours: org.officeHours || { en: "", hi: "" },
+      officeHours: org.officeHours || { en: "", hi: "" },
       isActive: org.isActive,
       createdBy: org.createby || null,
       updatedBy: org.updateby || null,
