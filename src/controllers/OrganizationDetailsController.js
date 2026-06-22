@@ -558,12 +558,7 @@ export const updateOrganization = async (req, res) => {
       isActive,
     } = req.body;
 
-    return res.status(200).json({
-      success: true,
-      officeHours_en,
-      officeHours_hi,
-      body: req.body,
-    });
+ 
 
     const record = await OrganizationDetails.findById(id);
 
@@ -592,12 +587,10 @@ export const updateOrganization = async (req, res) => {
         hi: tagLine_hi ?? record.tagLine.hi,
       };
     }
-    if (officeHours_en !== undefined || officeHours_hi !== undefined) {
-      record.officeHours = {
-        en: officeHours_en ?? record.officeHours?.en,
-        hi: officeHours_hi ?? record.officeHours?.hi,
-      };
-    }
+record.officeHours = {
+  en: officeHours_en ?? record.officeHours?.en ?? "",
+  hi: officeHours_hi ?? record.officeHours?.hi ?? "",
+};
 
     // addressLine1
     if (addressLine1_en !== undefined || addressLine1_hi !== undefined) {
