@@ -32,6 +32,8 @@ export const createOrganization = async (req, res) => {
       logo1Title,
       logo2Title,
       paymentUrl,
+      officeHours_en,
+      officeHours_hi,
     } = req.body;
 
     // --- Validations ---
@@ -115,6 +117,8 @@ export const createOrganization = async (req, res) => {
           : null,
       city: { en: city_en, hi: city_hi },
       state: { en: state_en, hi: state_hi },
+      officeHours: { en: officeHours_en, hi: officeHours_hi },
+
       pinCode,
       contactNumber,
       faxNumber,
@@ -174,6 +178,7 @@ export const getAllOrganizations = async (req, res) => {
     const data = organizations.map((org) => ({
       id: org._id,
       organizationName: org.organizationName || { en: "", hi: "" },
+      officeHours: org.officeHours || { en: "", hi: "" },
       tagLine: org.tagLine || { en: "", hi: "" },
       addressLine1: org.addressLine1 || { en: "", hi: "" },
       addressLine2: org.addressLine2 || { en: "", hi: "" },
@@ -224,6 +229,8 @@ export const updateOrganization = async (req, res) => {
     const {
       organizationName_en,
       organizationName_hi,
+      officeHours_en,
+      officeHours_hi,
       tagLine_en,
       tagLine_hi,
       logo1,
@@ -279,6 +286,13 @@ export const updateOrganization = async (req, res) => {
       record.tagLine = {
         en: tagLine_en ?? record.tagLine.en,
         hi: tagLine_hi ?? record.tagLine.hi,
+      };
+    }
+
+    if (officeHours_en !== undefined || officeHours_hi !== undefined) {
+      record.officeHours = {
+        en: officeHours_en ?? record.officeHours?.en,
+        hi: officeHours_hi ?? record.officeHours?.hi,
       };
     }
 
@@ -415,6 +429,7 @@ export const getAllOrganizationsWeb = async (req, res) => {
       logo1Title: org.logo1Title || "",
       logo2: org.logo2 || "",
       logo2Title: org.logo2Title || "",
+         officeHours: org.officeHours || { en: "", hi: "" },
       isActive: org.isActive,
       createdBy: org.createby || null,
       updatedBy: org.updateby || null,

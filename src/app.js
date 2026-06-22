@@ -55,6 +55,7 @@ import PopupRoutes from "./routes/PopupRoutes.js";
 import TrainingProgramRoutes from "./routes/TrainingProgramRoutes.js";
 import DataSearch from "./routes/DataSearch.js";
 import ProfessorRoutes from "./routes/ProfessorRoutes.js";
+import FacebookPostRoutes from "./routes/FacebookPostRoutes.js";
 import cors from "cors";
 import path from "path";
 
@@ -142,6 +143,7 @@ app.use("/api/PaymentRoutes", PaymentRoutes);
 app.use("/api/PopupRoutes", PopupRoutes);
 app.use("/api/TrainingProgramRoutes", TrainingProgramRoutes);
 app.use("/api/ProfessorRoutes", ProfessorRoutes);
+app.use("/api/FacebookPostRoutes", FacebookPostRoutes);
 
 app.use("/api/search", DataSearch); 
 // This is use for SearchIng

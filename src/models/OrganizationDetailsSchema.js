@@ -11,6 +11,11 @@ const organizationSchema = new mongoose.Schema({
     hi: { type: String, required: true },
   },
 
+  officeHours: {
+    en: { type: String },
+    hi: { type: String },
+  },
+
   logo1: {
     type: String,
     required: true,
