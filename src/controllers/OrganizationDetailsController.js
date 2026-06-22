@@ -396,7 +396,6 @@ export const getAllOrganizations = async (req, res) => {
 // };
 
 // this is use for web
-import OrganizationDetails from "../models/OrganizationDetails.js";
 
 export const updateOrganization = async (req, res) => {
   try {
