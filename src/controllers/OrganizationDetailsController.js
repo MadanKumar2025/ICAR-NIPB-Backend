@@ -291,8 +291,8 @@ export const updateOrganization = async (req, res) => {
 
     if (officeHours_en !== undefined || officeHours_hi !== undefined) {
       record.officeHours = {
-        en: officeHours_en ?? record.officeHours?.en,
-        hi: officeHours_hi ?? record.officeHours?.hi,
+        en: officeHours_en ?? "",
+        hi: officeHours_hi ?? "",
       };
     }
 
