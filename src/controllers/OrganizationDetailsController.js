@@ -587,10 +587,13 @@ export const updateOrganization = async (req, res) => {
         hi: tagLine_hi ?? record.tagLine.hi,
       };
     }
-record.officeHours = {
-  en: officeHours_en ?? record.officeHours?.en ?? "",
-  hi: officeHours_hi ?? record.officeHours?.hi ?? "",
-};
+ 
+    if (officeHours_en !== undefined || officeHours_hi !== undefined) {
+  record.officeHours = {
+    en: officeHours_en ?? record.officeHours.en,
+    hi: officeHours_hi ?? record.officeHours.hi,
+  };
+}
 
     // addressLine1
     if (addressLine1_en !== undefined || addressLine1_hi !== undefined) {
