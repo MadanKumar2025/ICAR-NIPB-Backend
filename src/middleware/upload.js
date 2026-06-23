@@ -24,12 +24,12 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp","application/pdf"];
+  const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp","application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",];
 
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Only JPG, PNG, WEBP images and Pdf are allowed"), false);
+    cb(new Error("Only JPG, PNG, WEBP images , DOC/DOCX and Pdf are allowed"), false);
   }
 };
 
