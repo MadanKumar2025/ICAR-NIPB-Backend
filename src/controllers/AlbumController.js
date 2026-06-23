@@ -285,16 +285,16 @@ export const updateAlbum = async (req, res) => {
     }
 
     if (displayOrderNo !== undefined) {
-      const orderNo = Number(displayOrderNo);
+      // const orderNo = Number(displayOrderNo);
 
-      if (isNaN(orderNo)) {
+      if (isNaN(displayOrderNo)) {
         return res.status(400).json({
           success: false,
           message: "Display Order Number must be a valid number",
         });
       }
 
-      album.displayOrderNo = orderNo;
+      album.displayOrderNo = displayOrderNo;
     }
 
     // Update isActive if provided
