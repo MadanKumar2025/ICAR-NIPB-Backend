@@ -95,6 +95,7 @@ export const createGallery = async (req, res) => {
 
     let photo = null;
     let document = null;
+    const t = type?.toLowerCase();
 
     // ================= PHOTO =================
     if (t === "photo") {
