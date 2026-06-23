@@ -16,12 +16,23 @@ const router = express.Router();
 // this is use for web
 router.get("/getGalleryByAlbumId/web/:albumId", getGalleryByAlbumIdWeb);
 
-router.post("/create", authMiddleware, upload.single("photo"), createGallery);
+router.post(
+  "/create",
+  authMiddleware,
+  upload.fields([
+    { name: "photo", maxCount: 1 },
+    { name: "document", maxCount: 1 },
+  ]),
+  createGallery,
+);
 router.get("/allgallery", authMiddleware, getGallery);
 router.put(
   "/updateGallery/:id",
   authMiddleware,
-  upload.single("photo"),
+ upload.fields([
+  { name: "photo", maxCount: 1 },
+  { name: "document", maxCount: 1 }
+]),
   updateGallery,
 );
 router.get(
