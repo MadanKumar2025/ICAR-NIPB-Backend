@@ -49,7 +49,7 @@ export const createGallery = async (req, res) => {
     };
 
     let photo = null;
-    if (type.toLowerCase() === "photo") {
+    if (type.toLowerCase() === "photo" || type.toLowerCase() === "Pdf") {
       if (!req.file) {
         return res.status(400).json({
           success: false,
@@ -88,7 +88,7 @@ export const createGallery = async (req, res) => {
     } else {
       return res.status(400).json({
         success: false,
-        message: "Gallery type must be either 'photo' or 'video'",
+        message: "Gallery type must be either 'photo' , 'PDF' or 'video'",
       });
     }
 
@@ -328,7 +328,7 @@ export const updateGallery = async (req, res) => {
 };
 
 export const getGalleryByAlbumId = async (req, res) => {
-   try {
+  try {
     const { albumId } = req.params;
 
     const galleryItems = await Gallery.find({ albumId })
@@ -548,4 +548,3 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
     });
   }
 };
- 
