@@ -22,6 +22,10 @@ const GallerySchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  document: {
+    type: String,
+    default: null,
+  },
   isActive: {
     type: Boolean,
     // default: true,

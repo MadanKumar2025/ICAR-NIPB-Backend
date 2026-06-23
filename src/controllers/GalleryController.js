@@ -93,13 +93,15 @@ export const createGallery = async (req, res) => {
     //   });
     // }
 
-    const t = type.toLowerCase();
+   let photo = null;
+    let document = null;
 
+    // ================= PHOTO =================
     if (t === "photo") {
       if (!req.file) {
         return res.status(400).json({
           success: false,
-          message: "Photo file is required for photo type",
+          message: "Photo file is required",
         });
       }
 
@@ -118,11 +120,14 @@ export const createGallery = async (req, res) => {
       }
 
       photo = req.file.filename;
-    } else if (t === "pdf") {
+    }
+
+    // ================= DOCUMENT (PDF + DOC + DOCX) =================
+    else if (t === "document") {
       if (!req.file) {
         return res.status(400).json({
           success: false,
-          message: "PDF file is required for pdf type",
+          message: "Document file is required",
         });
       }
 
@@ -135,16 +140,19 @@ export const createGallery = async (req, res) => {
       if (!allowedTypes.includes(req.file.mimetype)) {
         return res.status(400).json({
           success: false,
-        message: "Only PDF, DOC, DOCX files are allowed",
+          message: "Only PDF, DOC, DOCX files are allowed",
         });
       }
 
-      pdf = req.file.filename;
-    } else if (t === "video") {
+      document = req.file.filename;
+    }
+
+    // ================= VIDEO =================
+    else if (t === "video") {
       if (!videoUrl) {
         return res.status(400).json({
           success: false,
-          message: "Video URL is required for video type",
+          message: "Video URL is required",
         });
       }
 
@@ -154,10 +162,13 @@ export const createGallery = async (req, res) => {
           message: "Invalid video URL format",
         });
       }
-    } else {
+    }
+
+    // ================= INVALID TYPE =================
+    else {
       return res.status(400).json({
         success: false,
-        message: "Gallery type must be either 'photo', 'pdf' or 'video'",
+        message: "Type must be 'photo', 'document', or 'video'",
       });
     }
 
