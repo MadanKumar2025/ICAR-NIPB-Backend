@@ -29,10 +29,10 @@ router.get("/allgallery", authMiddleware, getGallery);
 router.put(
   "/updateGallery/:id",
   authMiddleware,
- upload.fields([
-  { name: "photo", maxCount: 1 },
-  { name: "document", maxCount: 1 }
-]),
+  upload.fields([
+    { name: "photo", maxCount: 1 },
+    { name: "document", maxCount: 1 },
+  ]),
   updateGallery,
 );
 router.get(

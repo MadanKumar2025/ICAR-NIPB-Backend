@@ -93,8 +93,10 @@ export const createGallery = async (req, res) => {
     //   });
     // }
 
-   let photo = null;
+    let photo = null;
     let document = null;
+
+    const t = type?.toLowerCase();
 
     // ================= PHOTO =================
     if (t === "photo") {
@@ -183,6 +185,7 @@ export const createGallery = async (req, res) => {
       title,
       type,
       photo,
+      document,
       videoUrl: videoUrl || null,
       createdBy,
     });
