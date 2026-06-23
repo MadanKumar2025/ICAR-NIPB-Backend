@@ -48,8 +48,54 @@ export const createGallery = async (req, res) => {
       }
     };
 
-    let photo = null;
-    if (type.toLowerCase() === "photo" || type.toLowerCase() === "Pdf") {
+    // let photo = null;
+
+    // if (type.toLowerCase() === "photo" || type.toLowerCase() === "Pdf") {
+    //   if (!req.file) {
+    //     return res.status(400).json({
+    //       success: false,
+    //       message: "Photo file is required for photo type",
+    //     });
+    //   }
+
+    //   const allowedTypes = [
+    //     "image/jpeg",
+    //     "image/png",
+    //     "image/jpg",
+    //     "image/webp",
+    //   ];
+    //   if (!allowedTypes.includes(req.file.mimetype)) {
+    //     return res.status(400).json({
+    //       success: false,
+    //       message: "Only image files (jpeg, jpg, png, webp) are allowed",
+    //     });
+    //   }
+
+    //   photo = req.file.filename;
+    // } else if (type.toLowerCase() === "video") {
+    //   if (!videoUrl) {
+    //     return res.status(400).json({
+    //       success: false,
+    //       message: "Video URL is required for video type",
+    //     });
+    //   }
+
+    //   if (!isValidUrl(videoUrl)) {
+    //     return res.status(400).json({
+    //       success: false,
+    //       message: "Invalid video URL format",
+    //     });
+    //   }
+    // } else {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Gallery type must be either 'photo' , 'PDF' or 'video'",
+    //   });
+    // }
+
+    const t = type.toLowerCase();
+
+    if (t === "photo") {
       if (!req.file) {
         return res.status(400).json({
           success: false,
@@ -63,6 +109,7 @@ export const createGallery = async (req, res) => {
         "image/jpg",
         "image/webp",
       ];
+
       if (!allowedTypes.includes(req.file.mimetype)) {
         return res.status(400).json({
           success: false,
@@ -71,7 +118,25 @@ export const createGallery = async (req, res) => {
       }
 
       photo = req.file.filename;
-    } else if (type.toLowerCase() === "video") {
+    } else if (t === "pdf") {
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: "PDF file is required for pdf type",
+        });
+      }
+
+      const allowedTypes = ["application/pdf"];
+
+      if (!allowedTypes.includes(req.file.mimetype)) {
+        return res.status(400).json({
+          success: false,
+          message: "Only PDF files are allowed",
+        });
+      }
+
+      pdf = req.file.filename;  
+    } else if (t === "video") {
       if (!videoUrl) {
         return res.status(400).json({
           success: false,
@@ -88,7 +153,7 @@ export const createGallery = async (req, res) => {
     } else {
       return res.status(400).json({
         success: false,
-        message: "Gallery type must be either 'photo' , 'PDF' or 'video'",
+        message: "Gallery type must be either 'photo', 'pdf' or 'video'",
       });
     }
 
