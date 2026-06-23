@@ -12,6 +12,7 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "@copilotkit/runtime": "^1.61.0",
     "axios": "^1.18.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
