@@ -96,81 +96,45 @@ export const createGallery = async (req, res) => {
     let photo = null;
     let document = null;
 
-    const t = type?.toLowerCase();
-
     // ================= PHOTO =================
     if (t === "photo") {
-      if (!req.file) {
+      if (!req.files?.photo?.[0]) {
         return res.status(400).json({
           success: false,
           message: "Photo file is required",
         });
       }
 
-      const allowedTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/jpg",
-        "image/webp",
-      ];
-
-      if (!allowedTypes.includes(req.file.mimetype)) {
-        return res.status(400).json({
-          success: false,
-          message: "Only image files (jpeg, jpg, png, webp) are allowed",
-        });
-      }
-
-      photo = req.file.filename;
+      photo = req.files.photo[0].filename;
     }
 
-    // ================= DOCUMENT (PDF + DOC + DOCX) =================
+    // ================= DOCUMENT =================
     else if (t === "document") {
-      if (!req.file) {
+      if (!req.files?.document?.[0]) {
         return res.status(400).json({
           success: false,
           message: "Document file is required",
         });
       }
 
-      const allowedTypes = [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      ];
-
-      if (!allowedTypes.includes(req.file.mimetype)) {
-        return res.status(400).json({
-          success: false,
-          message: "Only PDF, DOC, DOCX files are allowed",
-        });
-      }
-
-      document = req.file.filename;
+      document = req.files.document[0].filename;
     }
 
     // ================= VIDEO =================
     else if (t === "video") {
-      if (!videoUrl) {
+      if (!videoUrl || !isValidUrl(videoUrl)) {
         return res.status(400).json({
           success: false,
-          message: "Video URL is required",
-        });
-      }
-
-      if (!isValidUrl(videoUrl)) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid video URL format",
+          message: "Valid video URL is required",
         });
       }
     }
 
-    // ================= INVALID TYPE =================
+    // ================= INVALID =================
     else {
       return res.status(400).json({
         success: false,
-        message: "Type must be 'photo', 'document', or 'video'",
+        message: "Type must be photo, document or video",
       });
     }
 
