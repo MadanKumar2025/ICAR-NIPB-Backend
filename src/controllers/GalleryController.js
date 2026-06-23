@@ -126,16 +126,20 @@ export const createGallery = async (req, res) => {
         });
       }
 
-      const allowedTypes = ["application/pdf"];
+      const allowedTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ];
 
       if (!allowedTypes.includes(req.file.mimetype)) {
         return res.status(400).json({
           success: false,
-          message: "Only PDF files are allowed",
+        message: "Only PDF, DOC, DOCX files are allowed",
         });
       }
 
-      pdf = req.file.filename;  
+      pdf = req.file.filename;
     } else if (t === "video") {
       if (!videoUrl) {
         return res.status(400).json({
