@@ -25,6 +25,11 @@ const albumSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  displayOrderNo: {
+    type: Number,
+    default: 0,
+  },
+
   isActive: {
     type: Boolean,
     default: true,

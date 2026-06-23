@@ -13,6 +13,7 @@ export const createAlbum = async (req, res) => {
       venue_hi,
       publishDate,
       expiryDate,
+      displayOrderNo,
     } = req.body;
 
     type_en = type_en?.trim();
@@ -109,6 +110,7 @@ export const createAlbum = async (req, res) => {
       expiryDate: expDate,
       coverPic,
       createdBy,
+      displayOrderNo: displayOrderNo || 0,
     });
 
     const savedAlbum = await album.save();
@@ -166,6 +168,7 @@ export const getAlbums = async (req, res) => {
       updatedBy: album.updatedBy || null,
       createdAt: album.createdDate || null,
       updatedAt: album.updatedDate || null,
+      displayOrderNo: album.displayOrderNo || 0,
     }));
 
     res.status(200).json({
@@ -194,6 +197,7 @@ export const updateAlbum = async (req, res) => {
       venue_hi,
       publishDate,
       expiryDate,
+      displayOrderNo,
       isActive,
     } = req.body;
 
@@ -278,6 +282,19 @@ export const updateAlbum = async (req, res) => {
         });
       }
       album.expiryDate = expDate;
+    }
+
+    if (displayOrderNo !== undefined) {
+      const orderNo = Number(displayOrderNo);
+
+      if (isNaN(orderNo)) {
+        return res.status(400).json({
+          success: false,
+          message: "Display Order Number must be a valid number",
+        });
+      }
+
+      album.displayOrderNo = orderNo;
     }
 
     // Update isActive if provided
@@ -368,8 +385,8 @@ export const getAllAlbumWeb = async (req, res) => {
     const albumList = await Album.find()
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email")
-      .sort({ createdDate: -1 });
-
+      .sort({ displayOrderNo: 1 });
+    // .sort({ createdDate: -1 });
     // Map albums into clean response format
     const data = albumList.map((album) => ({
       id: album._id,
@@ -384,6 +401,7 @@ export const getAllAlbumWeb = async (req, res) => {
       updatedBy: album.updatedBy || null,
       createdAt: album.createdDate || null,
       updatedAt: album.updatedDate || null,
+      displayOrderNo: album.displayOrderNo || 0,
     }));
 
     res.status(200).json({
@@ -413,7 +431,8 @@ export const getAllAlbumByTypeWeb = async (req, res) => {
     const albumList = await Album.find(filter)
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email")
-      .sort({ createdDate: -1 });
+      .sort({ displayOrderNo: 1 });
+      // .sort({ createdDate: -1 });
 
     const data = albumList.map((album) => ({
       id: album._id,
@@ -428,6 +447,7 @@ export const getAllAlbumByTypeWeb = async (req, res) => {
       updatedBy: album.updatedBy || null,
       createdAt: album.createdDate || null,
       updatedAt: album.updatedDate || null,
+        displayOrderNo: album.displayOrderNo || 0,
     }));
 
     res.status(200).json({
@@ -472,6 +492,7 @@ export const getAlbumByIdWeb = async (req, res) => {
       updatedBy: album.updatedBy || null,
       createdDate: album.createdDate || null,
       updatedDate: album.updatedDate || null,
+      displayOrderNo: album.displayOrderNo || 0,
     };
 
     res.status(200).json({
