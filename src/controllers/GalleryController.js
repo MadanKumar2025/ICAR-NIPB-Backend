@@ -180,35 +180,78 @@ export const createGallery = async (req, res) => {
   }
 };
 
+// export const getGallery = async (req, res) => {
+//   try {
+//     const isAll = req.query.all === "true";
+
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = 10;
+//     const skip = (page - 1) * limit;
+
+//     let query = Gallery.find().sort({ createdDate: -1 });
+
+//     let galleryItems;
+//     const totalGallery = await Gallery.countDocuments();
+
+//     if (isAll) {
+//       galleryItems = await query;
+//     } else {
+//       galleryItems = await query.skip(skip).limit(limit);
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       count: galleryItems.length,
+//       total: totalGallery,
+//       page: isAll ? null : page,
+//       totalPages: isAll ? 1 : Math.ceil(totalGallery / limit),
+//       data: galleryItems,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       success: false,
+//       message: error.message || "Internal server error",
+//     });
+//   }
+// };
+
 export const getGallery = async (req, res) => {
   try {
     const isAll = req.query.all === "true";
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.max(parseInt(req.query.limit) || 10, 1);
     const skip = (page - 1) * limit;
 
-    let query = Gallery.find().sort({ createdDate: -1 });
+    const baseQuery = {};
+
+    const total = await Gallery.countDocuments(baseQuery);
 
     let galleryItems;
-    const totalGallery = await Gallery.countDocuments();
 
     if (isAll) {
-      galleryItems = await query;
+      galleryItems = await Gallery.find(baseQuery).sort({
+        createdDate: -1,
+      });
     } else {
-      galleryItems = await query.skip(skip).limit(limit);
+      galleryItems = await Gallery.find(baseQuery)
+        .sort({ createdDate: -1 })
+        .skip(skip)
+        .limit(limit);
     }
 
     res.status(200).json({
       success: true,
       count: galleryItems.length,
-      total: totalGallery,
+      total,
       page: isAll ? null : page,
-      totalPages: isAll ? 1 : Math.ceil(totalGallery / limit),
+      totalPages: isAll ? 1 : Math.ceil(total / limit),
       data: galleryItems,
     });
   } catch (error) {
     console.error(error);
+
     res.status(500).json({
       success: false,
       message: error.message || "Internal server error",
@@ -375,40 +418,132 @@ export const updateGallery = async (req, res) => {
   }
 };
 
-export const getGalleryByAlbumId = async (req, res) => {
+// export const getGalleryByAlbumId = async (req, res) => {
+//   try {
+//     const { albumId } = req.params;
+
+//     const galleryItems = await Gallery.find({ albumId })
+//       .populate("albumId", "title")
+//       .populate("createdBy", "name email")
+//       .populate("updatedBy", "name email")
+//       .sort({ createdDate: -1 });
+
+//     const formattedData = galleryItems.map((gallery) => ({
+//       id: gallery._id,
+//       albumId: gallery.albumId?._id || null,
+//       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
+//       title: gallery.title || { en: "", hi: "" },
+//       type: gallery.type || "",
+//       photo: gallery.photo || null,
+//       videoUrl: gallery.videoUrl || null,
+//       isActive: gallery.isActive,
+//       createdBy: gallery.createdBy || null,
+//       updatedBy: gallery.updatedBy || null,
+//       createdAt: gallery.createdDate,
+//       updatedAt: gallery.updatedDate || null,
+//     }));
+
+//     res.status(200).json({
+//       success: true,
+//       count: formattedData.length,
+//       data: formattedData,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: error.message,
+//     });
+//   }
+// };
+
+export const createGallery = async (req, res) => {
   try {
-    const { albumId } = req.params;
+    let { albumId, title_en, title_hi, type, videoUrl, isActive } = req.body;
 
-    const galleryItems = await Gallery.find({ albumId })
-      .populate("albumId", "title")
-      .populate("createdBy", "name email")
-      .populate("updatedBy", "name email")
-      .sort({ createdDate: -1 });
+    albumId = albumId?.trim();
+    title_en = title_en?.trim();
+    title_hi = title_hi?.trim();
+    type = type?.trim()?.toLowerCase();
+    videoUrl = videoUrl?.trim();
 
-    const formattedData = galleryItems.map((gallery) => ({
-      id: gallery._id,
-      albumId: gallery.albumId?._id || null,
-      albumTitle: gallery.albumId?.title || { en: "", hi: "" },
-      title: gallery.title || { en: "", hi: "" },
-      type: gallery.type || "",
-      photo: gallery.photo || null,
-      videoUrl: gallery.videoUrl || null,
-      isActive: gallery.isActive,
-      createdBy: gallery.createdBy || null,
-      updatedBy: gallery.updatedBy || null,
-      createdAt: gallery.createdDate,
-      updatedAt: gallery.updatedDate || null,
-    }));
+    if (!albumId || !mongoose.Types.ObjectId.isValid(albumId)) {
+      return res.status(400).json({ success: false, message: "Valid Album ID is required" });
+    }
 
-    res.status(200).json({
-      success: true,
-      count: formattedData.length,
-      data: formattedData,
+    if (!type) {
+      return res.status(400).json({ success: false, message: "Type is required" });
+    }
+
+    const isValidUrl = (url) => {
+      try {
+        new URL(url);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    let photo = null;
+    let document = null;
+
+    // ================= PHOTO =================
+    if (type === "photo") {
+      if (!req.files?.photo?.[0]) {
+        return res.status(400).json({ success: false, message: "Photo file is required" });
+      }
+      photo = req.files.photo[0].filename;
+    }
+
+    // ================= DOCUMENT =================
+    else if (type === "document") {
+      if (!req.files?.document?.[0]) {
+        return res.status(400).json({ success: false, message: "Document file is required" });
+      }
+      document = req.files.document[0].filename;
+    }
+
+    // ================= VIDEO =================
+    else if (type === "video") {
+      if (!videoUrl || !isValidUrl(videoUrl)) {
+        return res.status(400).json({ success: false, message: "Valid video URL is required" });
+      }
+    }
+
+    // ================= INVALID =================
+    else {
+      return res.status(400).json({
+        success: false,
+        message: "Type must be photo, document or video",
+      });
+    }
+
+    const gallery = new Gallery({
+      albumId,
+      title: {
+        en: title_en,
+        hi: title_hi,
+      },
+      type,
+      photo,
+      document,
+      videoUrl: videoUrl || null,
+      isActive: isActive ?? true,
+      createdBy: req.user?.id || null,
     });
+
+    const saved = await gallery.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Gallery created successfully",
+      data: saved,
+    });
+
   } catch (error) {
-    res.status(500).json({
+    console.error(error);
+    return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Internal server error",
     });
   }
 };
@@ -457,6 +592,44 @@ export const updateGalleryStatus = async (req, res) => {
 };
 
 // this is use for web
+// export const getAllGalleryWeb = async (req, res) => {
+//   try {
+//     const galleryList = await Gallery.find()
+//       .populate("albumId", "title")
+//       .populate("createdBy", "name email")
+//       .populate("updatedBy", "name email")
+//       .sort({ createdDate: -1 });
+
+//     const data = galleryList.map((gallery) => ({
+//       id: gallery._id,
+//       albumId: gallery.albumId?._id || null,
+//       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
+
+//       title: gallery.title || { en: "", hi: "" },
+//       type: gallery.type || "",
+//       photo: gallery.photo || null,
+//       videoUrl: gallery.videoUrl || null,
+//       isActive: gallery.isActive,
+
+//       createdBy: gallery.createdBy || null,
+//       updatedBy: gallery.updatedBy || null,
+//       createdAt: gallery.createdDate,
+//       updatedAt: gallery.updatedDate || null,
+//     }));
+
+//     res.status(200).json({
+//       success: true,
+//       count: data.length,
+//       data,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error fetching gallery data",
+//     });
+//   }
+// };
 export const getAllGalleryWeb = async (req, res) => {
   try {
     const galleryList = await Gallery.find()
@@ -465,36 +638,43 @@ export const getAllGalleryWeb = async (req, res) => {
       .populate("updatedBy", "name email")
       .sort({ createdDate: -1 });
 
-    const data = galleryList.map((gallery) => ({
-      id: gallery._id,
-      albumId: gallery.albumId?._id || null,
-      albumTitle: gallery.albumId?.title || { en: "", hi: "" },
+    const data = galleryList.map((g) => ({
+      id: g._id,
 
-      title: gallery.title || { en: "", hi: "" },
-      type: gallery.type || "",
-      photo: gallery.photo || null,
-      videoUrl: gallery.videoUrl || null,
-      isActive: gallery.isActive,
+      albumId: g.albumId?._id || null,
+      albumTitle: g.albumId?.title || { en: "", hi: "" },
 
-      createdBy: gallery.createdBy || null,
-      updatedBy: gallery.updatedBy || null,
-      createdAt: gallery.createdDate,
-      updatedAt: gallery.updatedDate || null,
+      title: g.title || { en: "", hi: "" },
+      type: g.type || "",
+
+      photo: g.photo || null,
+      document: g.document || null,    
+      videoUrl: g.videoUrl || null,
+
+      isActive: g.isActive ?? true,
+
+      createdBy: g.createdBy || null,
+      updatedBy: g.updatedBy || null,
+
+      createdAt: g.createdDate,
+      updatedAt: g.updatedDate || null,
     }));
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       count: data.length,
       data,
     });
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Error fetching gallery data",
     });
   }
 };
+
 // this is use for web
 // export const getGalleryByAlbumIdWeb = async (req, res) => {
 //   try {
@@ -537,50 +717,117 @@ export const getAllGalleryWeb = async (req, res) => {
 //   }
 // };
 
+// export const getGalleryByAlbumIdWeb = async (req, res) => {
+//   try {
+//     const { albumId } = req.params;
+
+//     const isAll = req.query.all === "true";
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = 1000;
+//     const skip = (page - 1) * limit;
+
+//     let query = Gallery.find({ albumId })
+//       .populate("albumId", "title")
+//       .populate("createdBy", "name email")
+//       .populate("updatedBy", "name email")
+//       .sort({ createdDate: -1 });
+
+//     let galleryItems;
+//     const totalGallery = await Gallery.countDocuments({ albumId });
+
+//     if (isAll) {
+//       galleryItems = await query;
+//     } else {
+//       galleryItems = await query.skip(skip).limit(limit);
+//     }
+
+//     const formattedData = galleryItems.map((gallery) => ({
+//       id: gallery._id,
+
+//       albumId: gallery.albumId?._id || null,
+//       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
+
+//       title: gallery.title || { en: "", hi: "" },
+//       type: gallery.type || "",
+//       photo: gallery.photo || null,
+//       videoUrl: gallery.videoUrl || null,
+//       isActive: gallery.isActive,
+
+//       createdBy: gallery.createdBy || null,
+//       updatedBy: gallery.updatedBy || null,
+
+//       createdAt: gallery.createdDate,
+//       updatedAt: gallery.updatedDate || null,
+//     }));
+
+//     res.status(200).json({
+//       success: true,
+//       count: formattedData.length,
+//       total: totalGallery,
+//       page: isAll ? null : page,
+//       totalPages: isAll ? 1 : Math.ceil(totalGallery / limit),
+//       data: formattedData,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       success: false,
+//       message: error.message || "Internal server error",
+//     });
+//   }
+// };
+
 export const getGalleryByAlbumIdWeb = async (req, res) => {
   try {
     const { albumId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(albumId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid albumId",
+      });
+    }
 
     const isAll = req.query.all === "true";
     const page = parseInt(req.query.page) || 1;
     const limit = 1000;
     const skip = (page - 1) * limit;
 
-    let query = Gallery.find({ albumId })
+    const baseQuery = Gallery.find({ albumId })
       .populate("albumId", "title")
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email")
       .sort({ createdDate: -1 });
 
-    let galleryItems;
     const totalGallery = await Gallery.countDocuments({ albumId });
 
-    if (isAll) {
-      galleryItems = await query;
-    } else {
-      galleryItems = await query.skip(skip).limit(limit);
-    }
+    const galleryItems = isAll
+      ? await baseQuery
+      : await baseQuery.skip(skip).limit(limit);
 
-    const formattedData = galleryItems.map((gallery) => ({
-      id: gallery._id,
+    const formattedData = galleryItems.map((g) => ({
+      id: g._id,
 
-      albumId: gallery.albumId?._id || null,
-      albumTitle: gallery.albumId?.title || { en: "", hi: "" },
+      albumId: g.albumId?._id || null,
+      albumTitle: g.albumId?.title || { en: "", hi: "" },
 
-      title: gallery.title || { en: "", hi: "" },
-      type: gallery.type || "",
-      photo: gallery.photo || null,
-      videoUrl: gallery.videoUrl || null,
-      isActive: gallery.isActive,
+      title: g.title || { en: "", hi: "" },
+      type: g.type || "",
 
-      createdBy: gallery.createdBy || null,
-      updatedBy: gallery.updatedBy || null,
+      photo: g.photo || null,
+      document: g.document || null,  
+      videoUrl: g.videoUrl || null,
 
-      createdAt: gallery.createdDate,
-      updatedAt: gallery.updatedDate || null,
+      isActive: g.isActive ?? true,
+
+      createdBy: g.createdBy || null,
+      updatedBy: g.updatedBy || null,
+
+      createdAt: g.createdDate,
+      updatedAt: g.updatedDate || null,
     }));
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       count: formattedData.length,
       total: totalGallery,
@@ -588,9 +835,10 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
       totalPages: isAll ? 1 : Math.ceil(totalGallery / limit),
       data: formattedData,
     });
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message || "Internal server error",
     });
