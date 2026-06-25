@@ -220,8 +220,8 @@ export const globalSearch = async (req, res) => {
         { "nameOfOtherParty.hi": { $regex: keyword, $options: "i" } },
         { "collaboratingInstituteICAR.en": { $regex: keyword, $options: "i" } },
         { "collaboratingInstituteICAR.hi": { $regex: keyword, $options: "i" } },
-        { "nameOfTechnology.en": { $regex: keyword, $options: "i" } },
-        { "nameOfTechnology.hi": { $regex: keyword, $options: "i" } },
+        // { "nameOfTechnology.en": { $regex: keyword, $options: "i" } },
+        // { "nameOfTechnology.hi": { $regex: keyword, $options: "i" } },
       ],
     });
 
