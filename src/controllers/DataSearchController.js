@@ -214,16 +214,16 @@ export const globalSearch = async (req, res) => {
     });
 
     // Search TechnologiesDeveloped
-    const technologiesDeveloped = await TechnologiesDeveloped.find({
-      $or: [
-        { "nameOfOtherParty.en": { $regex: keyword, $options: "i" } },
-        { "nameOfOtherParty.hi": { $regex: keyword, $options: "i" } },
-        { "collaboratingInstituteICAR.en": { $regex: keyword, $options: "i" } },
-        { "collaboratingInstituteICAR.hi": { $regex: keyword, $options: "i" } },
-        // { "nameOfTechnology.en": { $regex: keyword, $options: "i" } },
-        // { "nameOfTechnology.hi": { $regex: keyword, $options: "i" } },
-      ],
-    });
+    // const technologiesDeveloped = await TechnologiesDeveloped.find({
+    //   $or: [
+    //     { "nameOfOtherParty.en": { $regex: keyword, $options: "i" } },
+    //     { "nameOfOtherParty.hi": { $regex: keyword, $options: "i" } },
+    //     { "collaboratingInstituteICAR.en": { $regex: keyword, $options: "i" } },
+    //     { "collaboratingInstituteICAR.hi": { $regex: keyword, $options: "i" } },
+    //     { "nameOfTechnology.en": { $regex: keyword, $options: "i" } },
+    //     { "nameOfTechnology.hi": { $regex: keyword, $options: "i" } },
+    //   ],
+    // });
 
     // Search StudentCourse
     const studentCourse = await StudentCourse.find({
@@ -693,26 +693,26 @@ export const globalSearch = async (req, res) => {
     });
 
     //technologiesDeveloped
-    const technologiesDevelopedPage = pages.find(
-      (p) => p.apiName === "technologiesDeveloped/get/web",
-    );
-    const technologiesDevelopedUrl = technologiesDevelopedPage
-      ? `/${technologiesDevelopedPage.slug}`
-      : (() => {
-          const fallback = pages.find(
-            (p) => p.apiName === "/technologiesDeveloped/get/web",
-          );
-          return fallback ? `/${fallback.slug}` : "/technologies-developed";
-        })();
+    // const technologiesDevelopedPage = pages.find(
+    //   (p) => p.apiName === "technologiesDeveloped/get/web",
+    // );
+    // const technologiesDevelopedUrl = technologiesDevelopedPage
+    //   ? `/${technologiesDevelopedPage.slug}`
+    //   : (() => {
+    //       const fallback = pages.find(
+    //         (p) => p.apiName === "/technologiesDeveloped/get/web",
+    //       );
+    //       return fallback ? `/${fallback.slug}` : "/technologies-developed";
+    //     })();
 
-    technologiesDeveloped.forEach((s) => {
-      results.push({
-        title: s.type?.en || s.type?.hi,
-        type: "technologiesDeveloped",
-        url: technologiesDevelopedUrl,
-        apiName: "technologiesDeveloped/get/web",
-      });
-    });
+    // technologiesDeveloped.forEach((s) => {
+    //   results.push({
+    //     title: s.type?.en || s.type?.hi,
+    //     type: "technologiesDeveloped",
+    //     url: technologiesDevelopedUrl,
+    //     apiName: "technologiesDeveloped/get/web",
+    //   });
+    // });
 
     //studentCourse
     // const studentCoursePage = pages.find(
