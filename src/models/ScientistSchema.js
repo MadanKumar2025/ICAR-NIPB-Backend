@@ -24,12 +24,12 @@ const scientistSchema = new mongoose.Schema({
 
   email1: {
     type: String,
-    match: [/^\S+@\S+\.\S+$/, "Invalid email1"],
+    // match: [/^\S+@\S+\.\S+$/, "Invalid email1"],
   },
 
   email2: {
     type: String,
-    match: [/^\S+@\S+\.\S+$/, "Invalid email2"],
+    // match: [/^\S+@\S+\.\S+$/, "Invalid email2"],
   },
 
   education: {
