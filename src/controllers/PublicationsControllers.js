@@ -343,7 +343,8 @@ export const getAllPublicationsWeb = async (req, res) => {
     const publicationsList = await PublicationsSchema.find()
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     const data = publicationsList.map((publication) => ({
       id: publication._id,
@@ -359,8 +360,8 @@ export const getAllPublicationsWeb = async (req, res) => {
       },
       category: publication.category || "",
 
-      file: publication.file ? publication.file : null,
       image: publication.image || null,
+      file: publication.file ? publication.file : null,
 
       isActive: publication.isActive ?? true,
 
@@ -421,7 +422,7 @@ export const getPublicationsByCategory = async (req, res) => {
       category: item.category || "",
 
       file: item.file || null,
-      image: publication.image || null,
+      image: item.image ?? null,
       isActive: item.isActive ?? true,
 
       createdBy: item.createdBy || null,
