@@ -238,8 +238,8 @@ export const getAllStudentCoursesWeb = async (req, res) => {
     // Fetch all student courses, populate user info, sort by creation date descending
     const coursesList = await StudentCourse.find()
       .populate("createdBy", "name email")
-      .populate("updatedBy", "name email")
-      .sort({ createdDate: -1 });
+      .populate("updatedBy", "name email");
+      // .sort({ createdDate: -1 });
 
     // Map data to a clean response
     const data = coursesList.map((course) => ({
