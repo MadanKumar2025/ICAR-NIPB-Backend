@@ -229,9 +229,6 @@ export const updateStudentCourseStatus = async (req, res) => {
   }
 };
 
-
-
-
 // this is use for web
 export const getAllStudentCoursesWeb = async (req, res) => {
   try {
@@ -239,7 +236,7 @@ export const getAllStudentCoursesWeb = async (req, res) => {
     const coursesList = await StudentCourse.find()
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email");
-      // .sort({ createdDate: -1 });
+    // .sort({ createdDate: -1 });
 
     // Map data to a clean response
     const data = coursesList.map((course) => ({

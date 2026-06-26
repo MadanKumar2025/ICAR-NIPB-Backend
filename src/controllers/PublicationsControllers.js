@@ -52,6 +52,12 @@ export const createPublication = async (req, res) => {
 
     // File handling
     let file = null;
+    let image = null;
+
+    if (req.files?.image) {
+      image = req.files.image[0].filename;
+    }
+
     if (req.file) {
       file = req.file.filename;
     }
@@ -71,6 +77,7 @@ export const createPublication = async (req, res) => {
       category,
 
       file,
+      image,
 
       isActive: isActive !== undefined ? isActive : true,
 
@@ -139,6 +146,7 @@ export const getAllPublications = async (req, res) => {
 
       category: pub.category || "",
       file: pub.file || null,
+      image: pub.image || null,
       isActive: pub.isActive,
       createdBy: pub.createdBy || null,
       updatedBy: pub.updatedBy || null,
@@ -234,10 +242,17 @@ export const updatePublication = async (req, res) => {
     }
 
     // File handling
-    if (req.file) {
-      publication.file = req.file.filename;
+    // if (req.file) {
+    //   publication.file = req.file.filename;
+    // }
+
+    if (req.files?.file && req.files.file.length > 0) {
+      publication.file = req.files.file[0].filename;
     }
 
+    if (req.files?.image && req.files.image.length > 0) {
+      publication.image = req.files.image[0].filename;
+    }
     // Updated by
     publication.updatedBy = req.user.id;
 
@@ -345,6 +360,7 @@ export const getAllPublicationsWeb = async (req, res) => {
       category: publication.category || "",
 
       file: publication.file ? publication.file : null,
+      image: publication.image || null,
 
       isActive: publication.isActive ?? true,
 
@@ -405,7 +421,7 @@ export const getPublicationsByCategory = async (req, res) => {
       category: item.category || "",
 
       file: item.file || null,
-
+      image: publication.image || null,
       isActive: item.isActive ?? true,
 
       createdBy: item.createdBy || null,
@@ -469,7 +485,7 @@ export const getPublicationByIdWeb = async (req, res) => {
       category: publication.category || "",
 
       file: publication.file || null,
-
+      image: publication.image || null,
       isActive: publication.isActive ?? true,
 
       createdBy: publication.createdBy || null,
