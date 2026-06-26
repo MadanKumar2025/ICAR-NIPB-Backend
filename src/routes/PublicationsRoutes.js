@@ -17,14 +17,22 @@ const router = express.Router();
 router.post(
   "/create",
   authMiddleware,
-  uploadAll.single("file"),
+  // uploadAll.single("file"),
+  uploadAll.fields([
+  { name: "file", maxCount: 1 },
+  { name: "image", maxCount: 1 },
+]),
   createPublication,
 );
 router.get("/getAll", authMiddleware, getAllPublications);
 router.put(
   "/update/:id",
   authMiddleware,
-  uploadAll.single("file"),
+  // uploadAll.single("file"),
+   uploadAll.fields([
+  { name: "file", maxCount: 1 },
+  { name: "image", maxCount: 1 },
+]),
   updatePublication,
 );
 router.put("/updateStatus/:id", authMiddleware, updatePublicationStatus);
