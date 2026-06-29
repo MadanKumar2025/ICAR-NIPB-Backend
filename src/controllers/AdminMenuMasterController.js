@@ -75,7 +75,7 @@ export const createAdminMenu = async (req, res) => {
     }
 
     // Parent menu validation
-    let parent = null;
+    // let parent = null;
 
     // if (parentMenuId) {
     //   if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
@@ -95,10 +95,35 @@ export const createAdminMenu = async (req, res) => {
     //   }
     // }
 
-    if (parentMenuId !== undefined) {
-      if (!parentMenuId || parentMenuId === "") {
-        menu.parentMenuId = null; // remove parent
-      } else {
+    // if (parentMenuId !== undefined) {
+    //   if (!parentMenuId || parentMenuId === "") {
+    //     menu.parentMenuId = null; // remove parent
+    //   } else {
+    //     if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
+    //       return res.status(400).json({
+    //         success: false,
+    //         message: "Invalid Parent Menu Id",
+    //       });
+    //     }
+
+    //     const parent = await AdminMenuMaster.findById(parentMenuId);
+
+    //     if (!parent) {
+    //       return res.status(404).json({
+    //         success: false,
+    //         message: "Parent Menu not found",
+    //       });
+    //     }
+
+    //     menu.parentMenuId = parentMenuId; // set parent
+    //   }
+    // }
+
+    let finalParentMenuId = null;
+
+    if (parentMenuId) {
+      // if not empty string
+      if (parentMenuId.trim() !== "") {
         if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
           return res.status(400).json({
             success: false,
@@ -115,7 +140,7 @@ export const createAdminMenu = async (req, res) => {
           });
         }
 
-        menu.parentMenuId = parentMenuId; // set parent
+        finalParentMenuId = parent._id;
       }
     }
 
