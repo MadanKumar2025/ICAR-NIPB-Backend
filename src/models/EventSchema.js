@@ -8,7 +8,6 @@ const eventSchema = new mongoose.Schema({
   eventBannerPhoto: {
     type: String,
     default: null,
-    required: true,
   },
   eventPhoto: {
     type: String,
@@ -17,15 +16,13 @@ const eventSchema = new mongoose.Schema({
   },
   startTime: {
     type: Date,
-    required: true,
   },
   endTime: {
     type: Date,
-    required: true,
   },
   location: {
-    en: { type: String, required: true },
-    hi: { type: String, required: true },
+    en: { type: String },
+    hi: { type: String },
   },
   description: {
     en: { type: String },
