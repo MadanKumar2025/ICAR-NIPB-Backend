@@ -1,6 +1,202 @@
 import AdminMenuMaster from "../models/AdminMenuMasterSchema.js";
 import mongoose from "mongoose";
 
+// export const createAdminMenu = async (req, res) => {
+//   try {
+//     let {
+//       menuName,
+//       url,
+//       displayOrderNumber,
+//       parentMenuId,
+//       menuType,
+//       isActive,
+//     } = req.body;
+
+//     // Normalize data
+//     menuName = menuName?.trim();
+//     url = url?.trim();
+
+//     // Required fields validation
+//     if (!menuName) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Menu Name is required",
+//       });
+//     }
+
+//     if (displayOrderNumber === undefined || displayOrderNumber === null) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Display Order Number is required",
+//       });
+//     }
+
+//     if (!menuType) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Menu Type is required",
+//       });
+//     }
+
+//     // Convert to number
+//     displayOrderNumber = Number(displayOrderNumber);
+
+//     if (isNaN(displayOrderNumber) || displayOrderNumber < 0) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Display Order Number must be a valid number",
+//       });
+//     }
+
+//     // Check duplicate menu name
+//     const existingMenuName = await AdminMenuMaster.findOne({
+//       menuName: { $regex: `^${menuName}$`, $options: "i" },
+//     });
+
+//     if (existingMenuName) {
+//       return res.status(409).json({
+//         success: false,
+//         message: "Menu Name already exists",
+//       });
+//     }
+
+//     // Check duplicate URL (if provided)
+//     if (url) {
+//       const existingMenu = await AdminMenuMaster.findOne({
+//         url: { $regex: `^${url}$`, $options: "i" },
+//       });
+
+//       if (existingMenu) {
+//         return res.status(409).json({
+//           success: false,
+//           message: "Menu with this URL already exists",
+//         });
+//       }
+//     }
+
+//     // Parent menu validation
+//     // let parent = null;
+
+//     // if (parentMenuId) {
+//     //   if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
+//     //     return res.status(400).json({
+//     //       success: false,
+//     //       message: "Invalid Parent Menu Id",
+//     //     });
+//     //   }
+
+//     //   parent = await AdminMenuMaster.findById(parentMenuId);
+
+//     //   if (!parent) {
+//     //     return res.status(404).json({
+//     //       success: false,
+//     //       message: "Parent Menu not found",
+//     //     });
+//     //   }
+//     // }
+
+//     // if (parentMenuId !== undefined) {
+//     //   if (!parentMenuId || parentMenuId === "") {
+//     //     menu.parentMenuId = null; // remove parent
+//     //   } else {
+//     //     if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
+//     //       return res.status(400).json({
+//     //         success: false,
+//     //         message: "Invalid Parent Menu Id",
+//     //       });
+//     //     }
+
+//     //     const parent = await AdminMenuMaster.findById(parentMenuId);
+
+//     //     if (!parent) {
+//     //       return res.status(404).json({
+//     //         success: false,
+//     //         message: "Parent Menu not found",
+//     //       });
+//     //     }
+
+//     //     menu.parentMenuId = parentMenuId; // set parent
+//     //   }
+//     // }
+
+//     let finalParentMenuId = null;
+
+//     if (parentMenuId && parentMenuId.trim() !== "") {
+//       if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "Invalid Parent Menu Id",
+//         });
+//       }
+
+//       const parent = await AdminMenuMaster.findById(parentMenuId);
+
+//       if (!parent) {
+//         return res.status(404).json({
+//           success: false,
+//           message: "Parent Menu not found",
+//         });
+//       }
+
+//       finalParentMenuId = parent._id;
+//     }
+
+//     // Check display order duplication under same parent
+//     const existingOrder = await AdminMenuMaster.findOne({
+//       displayOrderNumber,
+//       parentMenuId: parent ? parent._id : null,
+//     });
+
+//     if (existingOrder) {
+//       return res.status(409).json({
+//         success: false,
+//         message:
+//           "This display order number is already used in the same menu level",
+//       });
+//     }
+
+//     // Create menu
+//     const newMenu = await AdminMenuMaster.create({
+//       menuName,
+//       url,
+//       menuType,
+//       displayOrderNumber,
+//       parentMenuId: parent ? parent._id : null,
+//       isActive: isActive ?? true,
+//       createdBy: req.user?.id || null,
+//     });
+
+//     return res.status(201).json({
+//       success: true,
+//       message: "Admin Menu created successfully",
+//       data: newMenu,
+//     });
+//   } catch (err) {
+//     console.error("Create Admin Menu Error =>", err);
+
+//     if (err.name === "ValidationError") {
+//       return res.status(400).json({
+//         success: false,
+//         message: Object.values(err.errors)
+//           .map((e) => e.message)
+//           .join(", "),
+//       });
+//     }
+
+//     if (err.code === 11000) {
+//       return res.status(409).json({
+//         success: false,
+//         message: "Duplicate value already exists",
+//       });
+//     }
+
+//     return res.status(500).json({
+//       success: false,
+//       message: err.message || "Internal Server Error",
+//     });
+//   }
+// };
+
 export const createAdminMenu = async (req, res) => {
   try {
     let {
@@ -12,11 +208,12 @@ export const createAdminMenu = async (req, res) => {
       isActive,
     } = req.body;
 
-    // Normalize data
+    // Normalize
     menuName = menuName?.trim();
     url = url?.trim();
+    parentMenuId = parentMenuId?.trim();
 
-    // Required fields validation
+    // Required validations
     if (!menuName) {
       return res.status(400).json({
         success: false,
@@ -38,17 +235,17 @@ export const createAdminMenu = async (req, res) => {
       });
     }
 
-    // Convert to number
+    // Convert number
     displayOrderNumber = Number(displayOrderNumber);
 
-    if (isNaN(displayOrderNumber) || displayOrderNumber < 0) {
+    if (!Number.isFinite(displayOrderNumber) || displayOrderNumber < 0) {
       return res.status(400).json({
         success: false,
-        message: "Display Order Number must be a valid number",
+        message: "Display Order Number must be valid",
       });
     }
 
-    // Check duplicate menu name
+    // Duplicate menuName
     const existingMenuName = await AdminMenuMaster.findOne({
       menuName: { $regex: `^${menuName}$`, $options: "i" },
     });
@@ -60,98 +257,53 @@ export const createAdminMenu = async (req, res) => {
       });
     }
 
-    // Check duplicate URL (if provided)
+    // Duplicate URL
     if (url) {
-      const existingMenu = await AdminMenuMaster.findOne({
+      const existingUrl = await AdminMenuMaster.findOne({
         url: { $regex: `^${url}$`, $options: "i" },
       });
 
-      if (existingMenu) {
+      if (existingUrl) {
         return res.status(409).json({
           success: false,
-          message: "Menu with this URL already exists",
+          message: "Menu URL already exists",
         });
       }
     }
 
-    // Parent menu validation
-    // let parent = null;
-
-    // if (parentMenuId) {
-    //   if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
-    //     return res.status(400).json({
-    //       success: false,
-    //       message: "Invalid Parent Menu Id",
-    //     });
-    //   }
-
-    //   parent = await AdminMenuMaster.findById(parentMenuId);
-
-    //   if (!parent) {
-    //     return res.status(404).json({
-    //       success: false,
-    //       message: "Parent Menu not found",
-    //     });
-    //   }
-    // }
-
-    // if (parentMenuId !== undefined) {
-    //   if (!parentMenuId || parentMenuId === "") {
-    //     menu.parentMenuId = null; // remove parent
-    //   } else {
-    //     if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
-    //       return res.status(400).json({
-    //         success: false,
-    //         message: "Invalid Parent Menu Id",
-    //       });
-    //     }
-
-    //     const parent = await AdminMenuMaster.findById(parentMenuId);
-
-    //     if (!parent) {
-    //       return res.status(404).json({
-    //         success: false,
-    //         message: "Parent Menu not found",
-    //       });
-    //     }
-
-    //     menu.parentMenuId = parentMenuId; // set parent
-    //   }
-    // }
-
+    // ---------------- Parent optional ----------------
     let finalParentMenuId = null;
 
-if (parentMenuId && parentMenuId.trim() !== "") {
-  if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid Parent Menu Id",
-    });
-  }
+    if (parentMenuId && parentMenuId.trim() !== "") {
+      if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid Parent Menu Id",
+        });
+      }
 
-  const parent = await AdminMenuMaster.findById(parentMenuId);
+      const parent = await AdminMenuMaster.findById(parentMenuId);
 
-  if (!parent) {
-    return res.status(404).json({
-      success: false,
-      message: "Parent Menu not found",
-    });
-  }
+      if (!parent) {
+        return res.status(404).json({
+          success: false,
+          message: "Parent Menu not found",
+        });
+      }
 
-  finalParentMenuId = parent._id;
-}
+      finalParentMenuId = parent._id;
+    }
 
-    // Check display order duplication under same parent
+    // Duplicate order check per level
     const existingOrder = await AdminMenuMaster.findOne({
       displayOrderNumber,
-      parentMenuId: parent ? parent._id : null,
+      parentMenuId: finalParentMenuId,
     });
 
     if (existingOrder) {
       return res.status(409).json({
         success: false,
-        message:
-          "This display order number is already used in the same menu level",
+        message: "Display order already used in this menu level",
       });
     }
 
@@ -161,7 +313,7 @@ if (parentMenuId && parentMenuId.trim() !== "") {
       url,
       menuType,
       displayOrderNumber,
-      parentMenuId: parent ? parent._id : null,
+      parentMenuId: finalParentMenuId, // null allowed
       isActive: isActive ?? true,
       createdBy: req.user?.id || null,
     });
@@ -173,22 +325,6 @@ if (parentMenuId && parentMenuId.trim() !== "") {
     });
   } catch (err) {
     console.error("Create Admin Menu Error =>", err);
-
-    if (err.name === "ValidationError") {
-      return res.status(400).json({
-        success: false,
-        message: Object.values(err.errors)
-          .map((e) => e.message)
-          .join(", "),
-      });
-    }
-
-    if (err.code === 11000) {
-      return res.status(409).json({
-        success: false,
-        message: "Duplicate value already exists",
-      });
-    }
 
     return res.status(500).json({
       success: false,
