@@ -121,28 +121,25 @@ export const createAdminMenu = async (req, res) => {
 
     let finalParentMenuId = null;
 
-    if (parentMenuId) {
-      // if not empty string
-      if (parentMenuId.trim() !== "") {
-        if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
-          return res.status(400).json({
-            success: false,
-            message: "Invalid Parent Menu Id",
-          });
-        }
+if (parentMenuId && parentMenuId.trim() !== "") {
+  if (!mongoose.Types.ObjectId.isValid(parentMenuId)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid Parent Menu Id",
+    });
+  }
 
-        const parent = await AdminMenuMaster.findById(parentMenuId);
+  const parent = await AdminMenuMaster.findById(parentMenuId);
 
-        if (!parent) {
-          return res.status(404).json({
-            success: false,
-            message: "Parent Menu not found",
-          });
-        }
+  if (!parent) {
+    return res.status(404).json({
+      success: false,
+      message: "Parent Menu not found",
+    });
+  }
 
-        finalParentMenuId = parent._id;
-      }
-    }
+  finalParentMenuId = parent._id;
+}
 
     // Check display order duplication under same parent
     const existingOrder = await AdminMenuMaster.findOne({
