@@ -23,6 +23,7 @@ router.post(
   createOrganization,
 );
 
+
 router.get("/", authMiddleware, getAllOrganizations);
 router.put(
   "/update/:id",
