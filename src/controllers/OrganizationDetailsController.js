@@ -613,19 +613,18 @@ export const updateOrganization = async (req, res) => {
 
 export const getAllOrganizationsWeb = async (req, res) => {
   try {
-    // Visitor Counter Update
+    let counter = null;
+
+    try {
+      counter = await VisitorCounter.findOne();
+    } catch (err) {
+      console.log("VisitorCounter Error:", err);
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    let counter = await VisitorCounter.findOne();
-
-    if (!counter) {
-      counter = await VisitorCounter.create({
-        todayDate: today,
-        todayViews: 1,
-        totalViews: 1,
-      });
-    } else {
+    if (counter) {
       const counterDate = new Date(counter.todayDate);
       counterDate.setHours(0, 0, 0, 0);
 
@@ -637,12 +636,9 @@ export const getAllOrganizationsWeb = async (req, res) => {
       }
 
       counter.totalViews += 1;
-      counter.updatedate = new Date();
-
       await counter.save();
     }
 
-    // Organization Data
     const organizations = await OrganizationDetails.find()
       .populate("createby", "name email")
       .populate("updateby", "name email")
@@ -683,21 +679,28 @@ export const getAllOrganizationsWeb = async (req, res) => {
       updatedAt: org.updatedate,
     }));
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       count: data.length,
-      visitorCounter: {
-        todayViews: counter.todayViews,
-        totalViews: counter.totalViews,
-      },
+      visitorCounter: counter
+        ? {
+            todayViews: counter.todayViews,
+            totalViews: counter.totalViews,
+          }
+        : {
+            todayViews: 0,
+            totalViews: 0,
+          },
       data,
     });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
+    console.error("FULL ERROR:", error);
+
+    return res.status(500).json({
       success: false,
       message: "Error fetching organizations",
+      error: error.message,
     });
   }
 };
