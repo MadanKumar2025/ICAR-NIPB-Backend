@@ -1,6 +1,7 @@
 import OrganizationDetails from "../models/OrganizationDetailsSchema.js";
 import fs from "fs";
 import path from "path";
+import VisitorCounter from "../models/VisitorCounter.js";
 
 export const createOrganization = async (req, res) => {
   try {
@@ -526,6 +527,33 @@ export const updateOrganization = async (req, res) => {
 
 // this is use for web
 export const getAllOrganizationsWeb = async (req, res) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let counter = await VisitorCounter.findOne();
+  if (!counter) {
+    counter = await VisitorCounter.create({
+      todayDate: today,
+      todayViews: 1,
+      totalViews: 1,
+    });
+  } else {
+    const counterDate = new Date(counter.todayDate);
+    counterDate.setHours(0, 0, 0, 0);
+
+    if (counterDate.getTime() === today.getTime()) {
+      counter.todayViews += 1;
+    } else {
+      counter.todayDate = today;
+      counter.todayViews = 1;
+    }
+
+    counter.totalViews += 1;
+    counter.updatedate = new Date();
+
+    await counter.save();
+  }
+
   try {
     const organizations = await OrganizationDetails.find()
       .populate("createby", "name email")
@@ -579,6 +607,34 @@ export const getAllOrganizationsWeb = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching organizations",
+    });
+  }
+};
+
+export const getVisitorCounter = async (req, res) => {
+  try {
+    const counter = await VisitorCounter.findOne();
+
+    if (!counter) {
+      return res.status(404).json({
+        success: false,
+        message: "Visitor counter not found.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        todayDate: counter.todayDate,
+        todayViews: counter.todayViews,
+        totalViews: counter.totalViews,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching visitor counter:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
     });
   }
 };
