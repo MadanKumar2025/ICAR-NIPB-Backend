@@ -38,6 +38,6 @@ router.put(
 router.get("/get/web", getAllOrganizationsWeb);
 
 router.get("/Visitor", getVisitorCounter);
-router.get("/Update/Visitor", updateVisitorCounter);
+router.post("/Update/Visitor", updateVisitorCounter);
 
 export default router;
