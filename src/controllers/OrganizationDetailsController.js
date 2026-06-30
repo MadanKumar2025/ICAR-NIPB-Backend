@@ -526,35 +526,123 @@ export const updateOrganization = async (req, res) => {
 };
 
 // this is use for web
+// export const getAllOrganizationsWeb = async (req, res) => {
+//   const today = new Date();
+//   today.setHours(0, 0, 0, 0);
+
+//   let counter = await VisitorCounter.findOne();
+//   if (!counter) {
+//     counter = await VisitorCounter.create({
+//       todayDate: today,
+//       todayViews: 1,
+//       totalViews: 1,
+//     });
+//   } else {
+//     const counterDate = new Date(counter.todayDate);
+//     counterDate.setHours(0, 0, 0, 0);
+
+//     if (counterDate.getTime() === today.getTime()) {
+//       counter.todayViews += 1;
+//     } else {
+//       counter.todayDate = today;
+//       counter.todayViews = 1;
+//     }
+
+//     counter.totalViews += 1;
+//     counter.updatedate = new Date();
+
+//     await counter.save();
+//   }
+
+//   try {
+//     const organizations = await OrganizationDetails.find()
+//       .populate("createby", "name email")
+//       .populate("updateby", "name email")
+//       .sort({ createdate: -1 });
+
+//     const data = organizations.map((org) => ({
+//       id: org._id,
+//       organizationName: org.organizationName || { en: "", hi: "" },
+//       tagLine: org.tagLine || { en: "", hi: "" },
+//       addressLine1: org.addressLine1 || { en: "", hi: "" },
+//       addressLine2: org.addressLine2 || { en: "", hi: "" },
+//       city: org.city || { en: "", hi: "" },
+//       state: org.state || { en: "", hi: "" },
+//       pinCode: org.pinCode || "",
+//       contactNumber: org.contactNumber || "",
+//       faxNumber: org.faxNumber || "",
+//       email1: org.email1 || "",
+//       email2: org.email2 || "",
+//       websiteLink: org.websiteLink || "",
+//       facebookLink: org.facebookLink || "",
+//       twitterLink: org.twitterLink || "",
+//       linkedinLink: org.linkedinLink || "",
+//       youtubeLink: org.youtubeLink || "",
+//       instagramLink: org.instagramLink || "",
+//       googleMapLink: org.googleMapLink || "",
+//       paymentUrl: org.paymentUrl || "",
+//       logo1: org.logo1 || "",
+//       logo1Title: org.logo1Title || "",
+//       logo2: org.logo2 || "",
+//       logo2Title: org.logo2Title || "",
+//       officeHours: org.officeHours || { en: "", hi: "" },
+
+//       isoNumber: org.isoNumber || "",
+//       isoPhoto: org.isoPhoto || "",
+
+//       isActive: org.isActive,
+//       createdBy: org.createby || null,
+//       updatedBy: org.updateby || null,
+//       createdAt: org.createdate,
+//       updatedAt: org.updatedate || null,
+//     }));
+
+//     res.status(200).json({
+//       success: true,
+//       count: data.length,
+//       data,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching organizations:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error fetching organizations",
+//     });
+//   }
+// };
+
 export const getAllOrganizationsWeb = async (req, res) => {
-  // const today = new Date();
-  // today.setHours(0, 0, 0, 0);
-
-  // let counter = await VisitorCounter.findOne();
-  // if (!counter) {
-  //   counter = await VisitorCounter.create({
-  //     todayDate: today,
-  //     todayViews: 1,
-  //     totalViews: 1,
-  //   });
-  // } else {
-  //   const counterDate = new Date(counter.todayDate);
-  //   counterDate.setHours(0, 0, 0, 0);
-
-  //   if (counterDate.getTime() === today.getTime()) {
-  //     counter.todayViews += 1;
-  //   } else {
-  //     counter.todayDate = today;
-  //     counter.todayViews = 1;
-  //   }
-
-  //   counter.totalViews += 1;
-  //   counter.updatedate = new Date();
-
-  //   await counter.save();
-  // }
-
   try {
+    // Visitor Counter Update
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let counter = await VisitorCounter.findOne();
+
+    if (!counter) {
+      counter = await VisitorCounter.create({
+        todayDate: today,
+        todayViews: 1,
+        totalViews: 1,
+      });
+    } else {
+      const counterDate = new Date(counter.todayDate);
+      counterDate.setHours(0, 0, 0, 0);
+
+      if (counterDate.getTime() === today.getTime()) {
+        counter.todayViews += 1;
+      } else {
+        counter.todayDate = today;
+        counter.todayViews = 1;
+      }
+
+      counter.totalViews += 1;
+      counter.updatedate = new Date();
+
+      await counter.save();
+    }
+
+    // Organization Data
     const organizations = await OrganizationDetails.find()
       .populate("createby", "name email")
       .populate("updateby", "name email")
@@ -562,54 +650,148 @@ export const getAllOrganizationsWeb = async (req, res) => {
 
     const data = organizations.map((org) => ({
       id: org._id,
-      organizationName: org.organizationName || { en: "", hi: "" },
-      tagLine: org.tagLine || { en: "", hi: "" },
-      addressLine1: org.addressLine1 || { en: "", hi: "" },
-      addressLine2: org.addressLine2 || { en: "", hi: "" },
-      city: org.city || { en: "", hi: "" },
-      state: org.state || { en: "", hi: "" },
-      pinCode: org.pinCode || "",
-      contactNumber: org.contactNumber || "",
-      faxNumber: org.faxNumber || "",
-      email1: org.email1 || "",
-      email2: org.email2 || "",
-      websiteLink: org.websiteLink || "",
-      facebookLink: org.facebookLink || "",
-      twitterLink: org.twitterLink || "",
-      linkedinLink: org.linkedinLink || "",
-      youtubeLink: org.youtubeLink || "",
-      instagramLink: org.instagramLink || "",
-      googleMapLink: org.googleMapLink || "",
-      paymentUrl: org.paymentUrl || "",
-      logo1: org.logo1 || "",
-      logo1Title: org.logo1Title || "",
-      logo2: org.logo2 || "",
-      logo2Title: org.logo2Title || "",
-      officeHours: org.officeHours || { en: "", hi: "" },
-
-      isoNumber: org.isoNumber || "",
-      isoPhoto: org.isoPhoto || "",
-
+      organizationName: org.organizationName,
+      tagLine: org.tagLine,
+      addressLine1: org.addressLine1,
+      addressLine2: org.addressLine2,
+      city: org.city,
+      state: org.state,
+      pinCode: org.pinCode,
+      contactNumber: org.contactNumber,
+      faxNumber: org.faxNumber,
+      email1: org.email1,
+      email2: org.email2,
+      websiteLink: org.websiteLink,
+      facebookLink: org.facebookLink,
+      twitterLink: org.twitterLink,
+      linkedinLink: org.linkedinLink,
+      youtubeLink: org.youtubeLink,
+      instagramLink: org.instagramLink,
+      googleMapLink: org.googleMapLink,
+      paymentUrl: org.paymentUrl,
+      logo1: org.logo1,
+      logo1Title: org.logo1Title,
+      logo2: org.logo2,
+      logo2Title: org.logo2Title,
+      officeHours: org.officeHours,
+      isoNumber: org.isoNumber,
+      isoPhoto: org.isoPhoto,
       isActive: org.isActive,
-      createdBy: org.createby || null,
-      updatedBy: org.updateby || null,
+      createdBy: org.createby,
+      updatedBy: org.updateby,
       createdAt: org.createdate,
-      updatedAt: org.updatedate || null,
+      updatedAt: org.updatedate,
     }));
 
     res.status(200).json({
       success: true,
       count: data.length,
+      visitorCounter: {
+        todayViews: counter.todayViews,
+        totalViews: counter.totalViews,
+      },
       data,
     });
+
   } catch (error) {
-    console.error("Error fetching organizations:", error);
+    console.error(error);
     res.status(500).json({
       success: false,
       message: "Error fetching organizations",
     });
   }
 };
+]
+// export const getAllOrganizationsWeb = async (req, res) => {
+//   try {
+//     // Visitor Counter
+//     const today = new Date();
+//     today.setHours(0, 0, 0, 0);
+
+//     let counter = await VisitorCounter.findOne();
+
+//     if (!counter) {
+//       counter = await VisitorCounter.create({
+//         todayDate: today,
+//         todayViews: 1,
+//         totalViews: 1,
+//       });
+//     } else {
+//       const counterDate = new Date(counter.todayDate);
+//       counterDate.setHours(0, 0, 0, 0);
+
+//       if (counterDate.getTime() === today.getTime()) {
+//         counter.todayViews += 1;
+//       } else {
+//         counter.todayDate = today;
+//         counter.todayViews = 1;
+//       }
+
+//       counter.totalViews += 1;
+//       counter.updatedate = new Date();
+
+//       await counter.save();
+//     }
+
+//     // Fetch Organizations
+//     const organizations = await OrganizationDetails.find()
+//       .populate("createby", "name email")
+//       .populate("updateby", "name email")
+//       .sort({ createdate: -1 });
+
+//     const data = organizations.map((org) => ({
+//       id: org._id,
+//       organizationName: org.organizationName || { en: "", hi: "" },
+//       tagLine: org.tagLine || { en: "", hi: "" },
+//       addressLine1: org.addressLine1 || { en: "", hi: "" },
+//       addressLine2: org.addressLine2 || { en: "", hi: "" },
+//       city: org.city || { en: "", hi: "" },
+//       state: org.state || { en: "", hi: "" },
+//       pinCode: org.pinCode || "",
+//       contactNumber: org.contactNumber || "",
+//       faxNumber: org.faxNumber || "",
+//       email1: org.email1 || "",
+//       email2: org.email2 || "",
+//       websiteLink: org.websiteLink || "",
+//       facebookLink: org.facebookLink || "",
+//       twitterLink: org.twitterLink || "",
+//       linkedinLink: org.linkedinLink || "",
+//       youtubeLink: org.youtubeLink || "",
+//       instagramLink: org.instagramLink || "",
+//       googleMapLink: org.googleMapLink || "",
+//       paymentUrl: org.paymentUrl || "",
+//       logo1: org.logo1 || "",
+//       logo1Title: org.logo1Title || "",
+//       logo2: org.logo2 || "",
+//       logo2Title: org.logo2Title || "",
+//       officeHours: org.officeHours || { en: "", hi: "" },
+//       isoNumber: org.isoNumber || "",
+//       isoPhoto: org.isoPhoto || "",
+//       isActive: org.isActive,
+//       createdBy: org.createby || null,
+//       updatedBy: org.updateby || null,
+//       createdAt: org.createdate,
+//       updatedAt: org.updatedate || null,
+//     }));
+
+//     return res.status(200).json({
+//       success: true,
+//       count: data.length,
+//       data,
+//     });
+
+//   } catch (error) {
+//     console.error(error);
+
+//     return res.status(500).json({
+//       success: false,
+//       message: "Error fetching organizations",
+//       error: error.message,
+//     });
+//   }
+// };
+
+
 
 export const getVisitorCounter = async (req, res) => {
   try {
