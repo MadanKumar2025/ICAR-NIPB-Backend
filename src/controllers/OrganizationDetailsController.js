@@ -679,79 +679,81 @@ export const getAllOrganizationsWeb = async (req, res) => {
   }
 };
 
-export const updateVisitorCounter = async (req, res) => {
-  try {
-    let counter = await VisitorCounter.findOne();
+// export const updateVisitorCounter = async (req, res) => {
+//   try {
+//     let counter = await VisitorCounter.findOne();
 
-    if (!counter) {
-      counter = await VisitorCounter.create({
-        todayDate: new Date(),
-        todayViews: 0,
-        totalViews: 0,
-      });
-    }
+//     if (!counter) {
+//       counter = await VisitorCounter.create({
+//         todayDate: new Date(),
+//         todayViews: 0,
+//         totalViews: 0,
+//       });
+//     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+//     const today = new Date();
+//     today.setHours(0, 0, 0, 0);
 
-    const counterDate = new Date(counter.todayDate);
-    counterDate.setHours(0, 0, 0, 0);
+//     const counterDate = new Date(counter.todayDate);
+//     counterDate.setHours(0, 0, 0, 0);
 
-    if (counterDate.getTime() === today.getTime()) {
-      counter.todayViews += 1;
-    } else {
-      counter.todayDate = today;
-      counter.todayViews = 1;
-    }
+//     if (counterDate.getTime() === today.getTime()) {
+//       counter.todayViews += 1;
+//     } else {
+//       counter.todayDate = today;
+//       counter.todayViews = 1;
+//     }
 
-    counter.totalViews += 1;
+//     counter.totalViews += 1;
 
-    await counter.save();
+//     await counter.save();
 
-    return res.status(200).json({
-      success: true,
-      message: "Visitor counter updated successfully",
-      data: {
-        todayViews: counter.todayViews,
-        totalViews: counter.totalViews,
-      },
-    });
-  } catch (error) {
-    console.error("Visitor Counter Error:", error);
+//     return res.status(200).json({
+//       success: true,
+//       message: "Visitor counter updated successfully",
+//       data: {
+//         todayViews: counter.todayViews,
+//         totalViews: counter.totalViews,
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Visitor Counter Error:", error);
 
-    return res.status(500).json({
-      success: false,
-      message: "Failed to update visitor counter",
-      error: error.message,
-    });
-  }
-};
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to update visitor counter",
+//       error: error.message,
+//     });
+//   }
+// };
 
 
-export const getVisitorCounter = async (req, res) => {
-  try {
-    const counter = await VisitorCounter.findOne();
 
-    if (!counter) {
-      return res.status(404).json({
-        success: false,
-        message: "Visitor counter not found.",
-      });
-    }
 
-    res.status(200).json({
-      success: true,
-      data: {
-        todayDate: counter.todayDate,
-        todayViews: counter.todayViews,
-        totalViews: counter.totalViews,
-      },
-    });
-  } catch (error) {
-    console.error("Error fetching visitor counter:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-    });
-  }
-};
+// export const getVisitorCounter = async (req, res) => {
+//   try {
+//     const counter = await VisitorCounter.findOne();
+
+//     if (!counter) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Visitor counter not found.",
+//       });
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       data: {
+//         todayDate: counter.todayDate,
+//         todayViews: counter.todayViews,
+//         totalViews: counter.totalViews,
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Error fetching visitor counter:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Internal Server Error",
+//     });
+//   }
+// };
