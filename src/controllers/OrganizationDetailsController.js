@@ -1,7 +1,7 @@
 import OrganizationDetails from "../models/OrganizationDetailsSchema.js";
 import fs from "fs";
 import path from "path";
-import VisitorCounter from "../models/VisitorCounter.js";
+import VisitorCounter from "../models/visitorCounterSchema.js";
 
 export const createOrganization = async (req, res) => {
   try {
