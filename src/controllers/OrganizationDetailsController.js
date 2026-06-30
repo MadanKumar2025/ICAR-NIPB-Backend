@@ -701,7 +701,7 @@ export const getAllOrganizationsWeb = async (req, res) => {
     });
   }
 };
-]
+
 // export const getAllOrganizationsWeb = async (req, res) => {
 //   try {
 //     // Visitor Counter
