@@ -6,12 +6,13 @@ import {
   getAllOrganizations,
   updateOrganization,
   getAllOrganizationsWeb,
-  getVisitorCounter,
   updateVisitorCounter,
+  getVisitorCounter,
 } from "../controllers/OrganizationDetailsController.js";
 
 const router = express.Router();
 
+router.get("/Visitor", getVisitorCounter);
 router.post(
   "/createOrganization",
   authMiddleware,
@@ -38,7 +39,7 @@ router.put(
 
 router.get("/get/web", getAllOrganizationsWeb);
 
-router.get("/Visitor", getVisitorCounter);
+
 router.post("/Update/Visitor", updateVisitorCounter);
 
 export default router;
