@@ -17,30 +17,6 @@ const visitorCounterSchema = new mongoose.Schema({
     default: 0,
   },
 
-  isActive: {
-    type: Boolean,
-    default: true,
-  },
-
-  createdate: {
-    type: Date,
-    default: Date.now,
-  },
-
-  createby: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-
-  updateby: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-
-  updatedate: {
-    type: Date,
-  },
 });
 
 export default mongoose.model("VisitorCounter", visitorCounterSchema);

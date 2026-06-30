@@ -794,7 +794,36 @@ export const getAllOrganizationsWeb = async (req, res) => {
 //   }
 // };
 
+export const getVisitorCounternew = async (req, res) => {
+  try {
+    let counter = await VisitorCounter.findOne();
 
+    // 🔥 agar DB empty hai to auto create
+    if (!counter) {
+      counter = await VisitorCounter.create({
+        todayDate: new Date(),
+        todayViews: 0,
+        totalViews: 0,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        todayDate: counter.todayDate,
+        todayViews: counter.todayViews,
+        totalViews: counter.totalViews,
+      },
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+};
 
 export const getVisitorCounter = async (req, res) => {
   try {
