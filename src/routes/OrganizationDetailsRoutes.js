@@ -7,6 +7,7 @@ import {
   updateOrganization,
   getAllOrganizationsWeb,
   getVisitorCounter,
+  getVisitorCounternew,
 } from "../controllers/OrganizationDetailsController.js";
 
 const router = express.Router();
