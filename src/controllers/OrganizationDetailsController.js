@@ -527,34 +527,34 @@ export const updateOrganization = async (req, res) => {
 
 // this is use for web
 export const getAllOrganizationsWeb = async (req, res) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  let counter = await VisitorCounter.findOne();
-  if (!counter) {
-    counter = await VisitorCounter.create({
-      todayDate: today,
-      todayViews: 1,
-      totalViews: 1,
-    });
-  } else {
-    const counterDate = new Date(counter.todayDate);
-    counterDate.setHours(0, 0, 0, 0);
-
-    if (counterDate.getTime() === today.getTime()) {
-      counter.todayViews += 1;
+    let counter = await VisitorCounter.findOne();
+    if (!counter) {
+      counter = await VisitorCounter.create({
+        todayDate: today,
+        todayViews: 1,
+        totalViews: 1,
+      });
     } else {
-      counter.todayDate = today;
-      counter.todayViews = 1;
+      const counterDate = new Date(counter.todayDate);
+      counterDate.setHours(0, 0, 0, 0);
+
+      if (counterDate.getTime() === today.getTime()) {
+        counter.todayViews += 1;
+      } else {
+        counter.todayDate = today;
+        counter.todayViews = 1;
+      }
+
+      counter.totalViews += 1;
+      counter.updatedate = new Date();
+
+      await counter.save();
     }
 
-    counter.totalViews += 1;
-    counter.updatedate = new Date();
-
-    await counter.save();
-  }
-
-  try {
     const organizations = await OrganizationDetails.find()
       .populate("createby", "name email")
       .populate("updateby", "name email")
