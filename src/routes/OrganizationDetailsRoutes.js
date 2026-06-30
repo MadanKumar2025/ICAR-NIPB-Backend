@@ -35,5 +35,5 @@ router.put(
 );
 
 router.get("/get/web", getAllOrganizationsWeb);
-router.get("/get/web", getVisitorCounter);
+router.get("/get/web/Visitor", getVisitorCounter);
 export default router;
