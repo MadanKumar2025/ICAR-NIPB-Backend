@@ -113,6 +113,14 @@ const organizationSchema = new mongoose.Schema({
     type: String,
     match: [/^https?:\/\/.+/, "Invalid payment URL"],
   },
+  isoNumber: {
+    type: String,
+    trim: true,
+  },
+
+  isoPhoto: {
+    type: String,
+  },
   isActive: {
     type: Boolean,
     default: true,

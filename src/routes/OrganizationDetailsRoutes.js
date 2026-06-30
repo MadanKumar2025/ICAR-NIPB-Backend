@@ -16,6 +16,7 @@ router.post(
   upload.fields([
     { name: "logo1", maxCount: 1 },
     { name: "logo2", maxCount: 1 },
+    { name: "isoPhoto", maxCount: 1 },
   ]),
   createOrganization,
 );
@@ -27,6 +28,7 @@ router.put(
   upload.fields([
     { name: "logo1", maxCount: 1 },
     { name: "logo2", maxCount: 1 },
+    { name: "isoPhoto", maxCount: 1 },
   ]),
   updateOrganization,
 );
