@@ -22,9 +22,7 @@ router.post(
   ]),
   createOrganization,
 );
-
 router.get("/", authMiddleware, getAllOrganizations);
-
 router.put(
   "/update/:id",
   authMiddleware,
@@ -35,10 +33,11 @@ router.put(
   ]),
   updateOrganization,
 );
-
 router.get("/get/web", getAllOrganizationsWeb);
 
-router.post("/Update/Visitor", updateVisitorCounter);
+
 router.get("/Visitor", getVisitorCounter);
+router.post("/Update/Visitor", updateVisitorCounter);
+
 
 export default router;
