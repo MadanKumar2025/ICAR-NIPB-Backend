@@ -396,15 +396,26 @@ export const createScientistLogin = async (req, res) => {
       });
     }
 
+    // let photo = scientist.photo;
+
+    // if (req.file) {
+    //   photo = req.file.filename;
+    //   console.log("New uploaded file:", req.file.filename);
+    // } else {
+    //   console.log("No new file uploaded, using existingPhoto or old");
+    //   photo = existingPhoto || scientist.photo;
+    // }
     let photo = scientist.photo;
 
+    // if new file uploaded
     if (req.file) {
       photo = req.file.filename;
-      console.log("New uploaded file:", req.file.filename);
-    } else {
-      console.log("No new file uploaded, using existingPhoto or old");
-      photo = existingPhoto || scientist.photo;
     }
+    // if no file but frontend sends existing photo explicitly
+    else if (existingPhoto) {
+      photo = existingPhoto;
+    }
+
     const createby = req.user.id;
 
     const user = new User({
