@@ -79,6 +79,7 @@ app.use(
       "http://14.139.229.204",
       "http://test.nipb.res.in",
       "https://test.nipb.res.in",
+      "https://www.nipb.res.in",
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE","OPTIONS"],
   }),
