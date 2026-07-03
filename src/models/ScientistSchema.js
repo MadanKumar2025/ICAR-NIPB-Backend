@@ -14,22 +14,18 @@ const scientistSchema = new mongoose.Schema({
 
   phone1: {
     type: String,
-    // match: [/^[0-9]{10}$/, "Phone1 must be 10 digits"],
   },
 
   phone2: {
     type: String,
-    // match: [/^[0-9]{10}$/, "Phone2 must be 10 digits"],
   },
 
   email1: {
     type: String,
-    // match: [/^\S+@\S+\.\S+$/, "Invalid email1"],
   },
 
   email2: {
     type: String,
-    // match: [/^\S+@\S+\.\S+$/, "Invalid email2"],
   },
 
   education: {
@@ -49,7 +45,20 @@ const scientistSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
-
+  galleryPhotos: [
+    {
+      galleryPhotostitle: {
+        type: String,
+      },
+      galleryPhotos: {
+        type: String,
+      },
+      orderNumberGallery: {
+        type: Number,
+        default: 0,
+      },
+    },
+  ],
   isActive: {
     type: Boolean,
     default: true,

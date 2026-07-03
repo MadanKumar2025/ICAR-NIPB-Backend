@@ -5,7 +5,8 @@ import {
   updateScientist,
   updateScientistStatus,
   getAllScientistsWeb,
-  getScientistByIdWeb,getScientistById
+  getScientistByIdWeb,
+  getScientistById,
 } from "../controllers/ScientistController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -17,23 +18,11 @@ const router = express.Router();
 router.get("/get/web", getAllScientistsWeb);
 router.get("/get/web/:id", getScientistByIdWeb);
 
-router.post(
-  "/create",
-  authMiddleware,
-   upload.any(),
-  createScientist,
-);
+router.post("/create", authMiddleware, upload.any(), createScientist);
 router.get("/getAll", authMiddleware, getScientist);
 router.get("/get/:id", authMiddleware, getScientistById);
 
-router.put(
-  "/update/:id",
-  authMiddleware,
-   upload.any(),
-  updateScientist,
-);
+router.put("/update/:id", authMiddleware, upload.any(), updateScientist);
 router.put("/updateStatus/:id", authMiddleware, updateScientistStatus);
-
-
 
 export default router;

@@ -29,6 +29,7 @@ export const createScientist = async (req, res) => {
       labProfile,
       displayOrder,
       createby,
+      galleryPhotos,
     } = req.body;
 
     // validation
@@ -65,6 +66,29 @@ export const createScientist = async (req, res) => {
     // main photo
     const photoFile = req.files.find((f) => f.fieldname === "photo");
     const photo = photoFile?.filename || null;
+
+    const parseGalleryPhotos = (data) => {
+      if (!data) return [];
+      try {
+        const parsed = JSON.parse(data);
+
+        return parsed.map((item, index) => {
+          const file = req.files?.find(
+            (f) =>
+              f.fieldname === item.photoKey ||
+              f.fieldname === `galleryPhotos_${index}`,
+          );
+
+          return {
+            galleryPhotostitle: item.galleryPhotostitle || "",
+            galleryPhotos: file?.filename || item.galleryPhotos || null,
+            orderNumberGallery: item.orderNumberGallery || 0,
+          };
+        });
+      } catch (err) {
+        return [];
+      }
+    };
 
     const parseLabProfile = (data) => {
       if (!data) return [];
@@ -126,6 +150,7 @@ export const createScientist = async (req, res) => {
         en: externallyFundedProjects_en || "",
         hi: externallyFundedProjects_hi || "",
       },
+      galleryPhotos: parseGalleryPhotos(galleryPhotos),
       labProfile: parseLabProfile(labProfile),
       displayOrder: displayOrder ?? 0,
       createby,
@@ -214,6 +239,13 @@ export const getScientist = async (req, res) => {
         hi: "",
       },
 
+      galleryPhotos:
+        scientist.galleryPhotos?.map((img) => ({
+          galleryPhotostitle: img.galleryPhotostitle || "",
+          galleryPhotos: img.galleryPhotos || null,
+          orderNumberGallery: img.orderNumberGallery || 0,
+        })) || [],
+
       labProfile:
         scientist.labProfile?.map((lab) => ({
           name: lab.name || { en: "", hi: "" },
@@ -290,6 +322,7 @@ export const updateScientist = async (req, res) => {
       externallyFundedProjects_hi,
       displayOrder,
       labProfile,
+      galleryPhotos,
     } = req.body;
 
     // Validate designationId
@@ -367,6 +400,29 @@ export const updateScientist = async (req, res) => {
         return scientist.labProfile || [];
       }
     };
+    const parseGalleryPhotos = (data) => {
+      if (!data) return scientist.galleryPhotos || [];
+
+      try {
+        const parsed = typeof data === "string" ? JSON.parse(data) : data;
+
+        return parsed.map((item, index) => {
+          const file = req.files?.find((f) => f.fieldname === item.photoKey);
+
+          return {
+            galleryPhotostitle: item?.galleryPhotostitle || "",
+            galleryPhotos:
+              file?.filename ||
+              scientist.galleryPhotos?.[index]?.galleryPhotos ||
+              null,
+            orderNumberGallery: item?.orderNumberGallery || 0,
+          };
+        });
+      } catch (err) {
+        console.error("Gallery Photos Parse Error:", err.message);
+        return scientist.galleryPhotos || [];
+      }
+    };
 
     // Update fields
 
@@ -437,6 +493,7 @@ export const updateScientist = async (req, res) => {
     );
 
     scientist.labProfile = parseLabProfile(labProfile);
+    scientist.galleryPhotos = parseGalleryPhotos(galleryPhotos);
 
     if (req.user?.id) {
       scientist.updateby = req.user.id;
@@ -680,7 +737,12 @@ export const getScientistByIdWeb = async (req, res) => {
         en: "",
         hi: "",
       },
-
+      galleryPhotos:
+        scientist.galleryPhotos?.map((img) => ({
+          galleryPhotostitle: img.galleryPhotostitle || "",
+          galleryPhotos: img.galleryPhotos || null,
+          orderNumberGallery: img.orderNumberGallery || 0,
+        })) || [],
       labProfile:
         scientist.labProfile?.map((lab) => ({
           name: lab.name || { en: "", hi: "" },
