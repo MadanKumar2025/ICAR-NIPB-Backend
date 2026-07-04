@@ -61,61 +61,91 @@ export const createPatents = async (req, res) => {
 };
 
 export const getAllPatents = async (req, res) => {
-  try {
-    const isAll = req.query.all === "true";
+  // try {
+  //   const isAll = req.query.all === "true";
 
-    const pageNumber = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (pageNumber - 1) * limit;
+  //   const pageNumber = parseInt(req.query.page) || 1;
+  //   const limit = parseInt(req.query.limit) || 10;
+  //   const skip = (pageNumber - 1) * limit;
 
-    const filter = {};
+  //   const filter = {};
 
-    if (req.query.title) {
-      filter.$or = [
-        { "title.en": { $regex: req.query.title, $options: "i" } },
-        { "title.hi": { $regex: req.query.title, $options: "i" } },
-      ];
-    }
+  //   if (req.query.title) {
+  //     filter.$or = [
+  //       { "title.en": { $regex: req.query.title, $options: "i" } },
+  //       { "title.hi": { $regex: req.query.title, $options: "i" } },
+  //     ];
+  //   }
 
-    if (req.query.type) {
-      filter.$or = [
-        { "type.en": { $regex: req.query.type, $options: "i" } },
-        { "type.hi": { $regex: req.query.type, $options: "i" } },
-      ];
-    }
+  //   if (req.query.type) {
+  //     filter.$or = [
+  //       { "type.en": { $regex: req.query.type, $options: "i" } },
+  //       { "type.hi": { $regex: req.query.type, $options: "i" } },
+  //     ];
+  //   }
 
-    if (req.query.isActive !== undefined) {
-      filter.isActive = req.query.isActive === "true";
-    }
+  //   if (req.query.isActive !== undefined) {
+  //     filter.isActive = req.query.isActive === "true";
+  //   }
 
-    let patentQuery = Patents.find(filter)
-      .populate("createby", "username")
-      .populate("updateby", "username")
-      .sort({ createdate: -1 });
+  //   let patentQuery = Patents.find(filter)
+  //     .populate("createby", "username")
+  //     .populate("updateby", "username")
+  //     .sort({ createdate: -1 });
 
-    let patents;
-    const totalCount = await Patents.countDocuments(filter);
+  //   let patents;
+  //   const totalCount = await Patents.countDocuments(filter);
 
-    if (isAll) {
-      patents = await patentQuery;
-    } else {
-      patents = await patentQuery.skip(skip).limit(limit);
-    }
+  //   if (isAll) {
+  //     patents = await patentQuery;
+  //   } else {
+  //     patents = await patentQuery.skip(skip).limit(limit);
+  //   }
+
+  //   res.status(200).json({
+  //     success: true,
+  //     count: patents.length,
+  //     total: totalCount,
+  //     page: isAll ? null : pageNumber,
+  //     totalPages: isAll ? 1 : Math.ceil(totalCount / limit),
+  //     data: patents,
+  //   });
+  // } catch (error) {
+  //   console.error("Get Patents Error:", error);
+
+  //   res.status(500).json({
+  //     success: false,
+  //     message: error.message,
+  //   });
+  // }
+   try {
+    const patentsList = await Patents.find()
+      .populate("createby", "name email")
+      .populate("updateby", "name email");
+      // .sort({ createdate: -1 });
+
+    const data = patentsList.map((patent) => ({
+      id: patent._id,
+      type: patent.type || { en: "", hi: "" },
+      title: patent.title || { en: "", hi: "" },
+      isActive: patent.isActive,
+      createdBy: patent.createby || null,
+      updatedBy: patent.updateby || null,
+      createdAt: patent.createdate,
+      updatedAt: patent.updatedate || null,
+    }));
 
     res.status(200).json({
       success: true,
-      count: patents.length,
-      total: totalCount,
-      page: isAll ? null : pageNumber,
-      totalPages: isAll ? 1 : Math.ceil(totalCount / limit),
-      data: patents,
+      count: data.length,
+      data,
     });
   } catch (error) {
-    console.error("Get Patents Error:", error);
+    console.error(error);
 
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Error fetching patents",
     });
   }
 };
