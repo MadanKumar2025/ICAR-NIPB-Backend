@@ -11,6 +11,8 @@ export const createBanner = async (req, res) => {
       subTitle_en,
       subTitle_hi,
       displayOrderNo,
+      publishDate,
+      expiryDate,
     } = req.body;
 
     // validations
@@ -32,6 +34,25 @@ export const createBanner = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Display Order No is required",
+      });
+    }
+    if (!publishDate) {
+      return res.status(400).json({
+        success: false,
+        message: "Publish Date is required",
+      });
+    }
+
+    if (!expiryDate) {
+      return res.status(400).json({
+        success: false,
+        message: "Expiry Date is required",
+      });
+    }
+    if (new Date(expiryDate) <= new Date(publishDate)) {
+      return res.status(400).json({
+        success: false,
+        message: "Expiry Date must be greater than Publish Date",
       });
     }
 
@@ -60,6 +81,8 @@ export const createBanner = async (req, res) => {
         hi: subTitle_hi || "",
       },
       displayOrderNo: Number(displayOrderNo),
+      publishDate: new Date(publishDate),
+      expiryDate: new Date(expiryDate),
       createby,
       createdate: new Date(),
     });
@@ -199,6 +222,8 @@ export const updateBanner = async (req, res) => {
       subTitle_en,
       subTitle_hi,
       displayOrderNo,
+      publishDate,
+      expiryDate,
       isActive,
     } = req.body;
 
@@ -247,6 +272,29 @@ export const updateBanner = async (req, res) => {
       banner.displayOrderNo = Number(displayOrderNo);
     }
 
+    const finalPublishDate = publishDate
+      ? new Date(publishDate)
+      : banner.publishDate;
+
+    const finalExpiryDate = expiryDate
+      ? new Date(expiryDate)
+      : banner.expiryDate;
+
+    if (finalExpiryDate <= finalPublishDate) {
+      return res.status(400).json({
+        success: false,
+        message: "Expiry Date must be greater than Publish Date",
+      });
+    }
+    // Publish Date update
+    if (publishDate) {
+      banner.publishDate = new Date(publishDate);
+    }
+
+    // Expiry Date update
+    if (expiryDate) {
+      banner.expiryDate = new Date(expiryDate);
+    }
     if (isActive !== undefined) {
       banner.isActive = isActive === "true" || isActive === true;
     }
@@ -305,6 +353,8 @@ export const getAllBannerWeb = async (req, res) => {
       title: banner.title || { en: "", hi: "" },
       subTitle: banner.subTitle || { en: "", hi: "" },
       displayOrderNo: banner.displayOrderNo,
+        publishDate: banner.publishDate,
+  expiryDate: banner.expiryDate,
       isActive: banner.isActive,
       createdBy: banner.createby || null,
       updatedBy: banner.updateby || null,
