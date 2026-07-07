@@ -294,8 +294,6 @@ export const updateBanner = async (req, res) => {
       });
     }
 
-
- 
     finalPublishDate.setHours(0,0,0,0);
     finalExpiryDate.setHours(0,0,0,0);
 
