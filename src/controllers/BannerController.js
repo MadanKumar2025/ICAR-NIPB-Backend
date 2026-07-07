@@ -211,6 +211,152 @@ export const updateBannerStatus = async (req, res) => {
   }
 };
 
+// export const updateBanner = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+
+//     const {
+//       bannerTitle,
+//       title_en,
+//       title_hi,
+//       subTitle_en,
+//       subTitle_hi,
+//       displayOrderNo,
+//       publishDate,
+//       expiryDate,
+//       isActive,
+//     } = req.body;
+
+//     const banner = await Banner.findById(id);
+
+//     if (!banner) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Banner not found",
+//       });
+//     }
+
+//     if (bannerTitle) {
+//       banner.bannerTitle = bannerTitle;
+//     }
+
+//     if (title_en) {
+//       banner.title.en = title_en;
+//     }
+
+//     if (title_hi) {
+//       banner.title.hi = title_hi;
+//     }
+
+//     if (subTitle_en) {
+//       banner.subTitle.en = subTitle_en;
+//     }
+
+//     if (subTitle_hi) {
+//       banner.subTitle.hi = subTitle_hi;
+//     }
+
+//     if (displayOrderNo !== undefined) {
+//       const existingOrder = await Banner.findOne({
+//         displayOrderNo,
+//         _id: { $ne: id },
+//       });
+
+//       if (existingOrder) {
+//         return res.status(400).json({
+//           success: false,
+//           message: "Display Order No already exists",
+//         });
+//       }
+
+//       banner.displayOrderNo = Number(displayOrderNo);
+//     }
+
+//  // Date Validation
+
+// const finalPublishDate = publishDate
+//   ? new Date(publishDate)
+//   : new Date(banner.publishDate);
+
+// const finalExpiryDate = expiryDate
+//   ? new Date(expiryDate)
+//   : new Date(banner.expiryDate);
+
+// // Invalid date check
+// if (
+//   isNaN(finalPublishDate.getTime()) ||
+//   isNaN(finalExpiryDate.getTime())
+// ) {
+//   return res.status(400).json({
+//     success: false,
+//     message: "Please provide valid Publish Date and Expiry Date",
+//   });
+// }
+
+// finalPublishDate.setHours(0, 0, 0, 0);
+// finalExpiryDate.setHours(0, 0, 0, 0);
+
+// // Sirf ye check rakho
+// if (finalExpiryDate < finalPublishDate) {
+//   return res.status(400).json({
+//     success: false,
+//     message: "Expiry Date cannot be before Publish Date",
+//   });
+// }
+
+//     if (publishDate) {
+//       banner.publishDate = finalPublishDate;
+//     }
+
+//     if (expiryDate) {
+//       banner.expiryDate = finalExpiryDate;
+//     }
+
+//     if (isActive !== undefined) {
+//       banner.isActive = isActive === "true" || isActive === true;
+//     }
+
+//     banner.updateby = req.user?.id;
+
+//     if (req.file) {
+//       if (banner.bannerImage) {
+//         const oldPath = path.join("uploads", banner.bannerImage);
+//         if (fs.existsSync(oldPath)) {
+//           fs.unlinkSync(oldPath);
+//         }
+//       }
+//       banner.bannerImage = req.file.filename;
+//     }
+
+//     banner.updatedate = new Date();
+
+//     const updatedBanner = await banner.save();
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "Banner updated successfully",
+//       data: updatedBanner,
+//     });
+//   } catch (error) {
+//     console.error("Update Banner Error:", error);
+
+//     if (error.code === 11000) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Duplicate field value detected",
+//         error: error.keyValue,
+//       });
+//     }
+
+//     return res.status(500).json({
+//       success: false,
+//       message: error.message,
+//     });
+//   }
+// };
+
+// this is use for web
+
 export const updateBanner = async (req, res) => {
   try {
     const { id } = req.params;
@@ -236,29 +382,33 @@ export const updateBanner = async (req, res) => {
       });
     }
 
-    if (bannerTitle) {
+    // Banner Title
+    if (bannerTitle !== undefined) {
       banner.bannerTitle = bannerTitle;
     }
 
-    if (title_en) {
+    // Title
+    if (title_en !== undefined) {
       banner.title.en = title_en;
     }
 
-    if (title_hi) {
+    if (title_hi !== undefined) {
       banner.title.hi = title_hi;
     }
 
-    if (subTitle_en) {
+    // Subtitle
+    if (subTitle_en !== undefined) {
       banner.subTitle.en = subTitle_en;
     }
 
-    if (subTitle_hi) {
+    if (subTitle_hi !== undefined) {
       banner.subTitle.hi = subTitle_hi;
     }
 
+    // Display Order
     if (displayOrderNo !== undefined) {
       const existingOrder = await Banner.findOne({
-        displayOrderNo,
+        displayOrderNo: Number(displayOrderNo),
         _id: { $ne: id },
       });
 
@@ -272,76 +422,72 @@ export const updateBanner = async (req, res) => {
       banner.displayOrderNo = Number(displayOrderNo);
     }
 
-
-
-    const finalPublishDate = publishDate
-      ? new Date(publishDate)
-      : new Date(banner.publishDate);
-
-
-    const finalExpiryDate = expiryDate
-      ? new Date(expiryDate)
-      : new Date(banner.expiryDate);
-
  
-    if (
-      isNaN(finalPublishDate.getTime()) ||
-      isNaN(finalExpiryDate.getTime())
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid Publish Date or Expiry Date",
-      });
-    }
 
-    finalPublishDate.setHours(0,0,0,0);
-    finalExpiryDate.setHours(0,0,0,0);
+    let finalPublishDate = banner.publishDate;
+    let finalExpiryDate = banner.expiryDate;
 
- 
-    if (
-      finalPublishDate.getTime() === finalExpiryDate.getTime()
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Publish Date and Expiry Date cannot be same",
-      });
-    }
-
-
- 
-    if (finalExpiryDate < finalPublishDate) {
-      return res.status(400).json({
-        success: false,
-        message: "Expiry Date must be greater than Publish Date",
-      });
-    }
-
-
- 
     if (publishDate) {
-      banner.publishDate = finalPublishDate;
+      finalPublishDate = new Date(publishDate);
     }
-
 
     if (expiryDate) {
-      banner.expiryDate = finalExpiryDate;
+      finalExpiryDate = new Date(expiryDate);
     }
 
+    // Date validation only when date exists
+    if (publishDate || expiryDate) {
+      if (
+        isNaN(new Date(finalPublishDate).getTime()) ||
+        isNaN(new Date(finalExpiryDate).getTime())
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid Publish Date or Expiry Date",
+        });
+      }
 
+      const publish = new Date(finalPublishDate);
+      const expiry = new Date(finalExpiryDate);
 
+      publish.setHours(0, 0, 0, 0);
+      expiry.setHours(0, 0, 0, 0);
+
+      // Expiry date cannot be before publish date
+      if (expiry < publish) {
+        return res.status(400).json({
+          success: false,
+          message: "Expiry Date cannot be before Publish Date",
+        });
+      }
+
+      if (publishDate) {
+        banner.publishDate = publish;
+      }
+
+      if (expiryDate) {
+        banner.expiryDate = expiry;
+      }
+    }
+
+    // Active Status
     if (isActive !== undefined) {
       banner.isActive = isActive === "true" || isActive === true;
     }
 
+    // Updated By
     banner.updateby = req.user?.id;
 
+    // Image Update
     if (req.file) {
       if (banner.bannerImage) {
         const oldPath = path.join("uploads", banner.bannerImage);
+
         if (fs.existsSync(oldPath)) {
           fs.unlinkSync(oldPath);
         }
       }
+
       banner.bannerImage = req.file.filename;
     }
 
@@ -356,7 +502,6 @@ export const updateBanner = async (req, res) => {
     });
   } catch (error) {
     console.error("Update Banner Error:", error);
-
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,
@@ -364,15 +509,20 @@ export const updateBanner = async (req, res) => {
         error: error.keyValue,
       });
     }
-
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        success: false,
+        message: Object.values(error.errors)
+          .map((err) => err.message)
+          .join(", "),
+      });
+    }
     return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
-
-// this is use for web
 export const getAllBannerWeb = async (req, res) => {
   try {
     const bannerList = await Banner.find()
