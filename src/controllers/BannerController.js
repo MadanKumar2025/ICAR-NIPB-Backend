@@ -272,29 +272,65 @@ export const updateBanner = async (req, res) => {
       banner.displayOrderNo = Number(displayOrderNo);
     }
 
+
+
     const finalPublishDate = publishDate
       ? new Date(publishDate)
-      : banner.publishDate;
+      : new Date(banner.publishDate);
+
 
     const finalExpiryDate = expiryDate
       ? new Date(expiryDate)
-      : banner.expiryDate;
+      : new Date(banner.expiryDate);
 
-    if (finalExpiryDate <= finalPublishDate) {
+ 
+    if (
+      isNaN(finalPublishDate.getTime()) ||
+      isNaN(finalExpiryDate.getTime())
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Publish Date or Expiry Date",
+      });
+    }
+
+
+ 
+    finalPublishDate.setHours(0,0,0,0);
+    finalExpiryDate.setHours(0,0,0,0);
+
+ 
+    if (
+      finalPublishDate.getTime() === finalExpiryDate.getTime()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Publish Date and Expiry Date cannot be same",
+      });
+    }
+
+
+ 
+    if (finalExpiryDate < finalPublishDate) {
       return res.status(400).json({
         success: false,
         message: "Expiry Date must be greater than Publish Date",
       });
     }
-    // Publish Date update
+
+
+ 
     if (publishDate) {
-      banner.publishDate = new Date(publishDate);
+      banner.publishDate = finalPublishDate;
     }
 
-    // Expiry Date update
+
     if (expiryDate) {
-      banner.expiryDate = new Date(expiryDate);
+      banner.expiryDate = finalExpiryDate;
     }
+
+
+
     if (isActive !== undefined) {
       banner.isActive = isActive === "true" || isActive === true;
     }
@@ -353,8 +389,8 @@ export const getAllBannerWeb = async (req, res) => {
       title: banner.title || { en: "", hi: "" },
       subTitle: banner.subTitle || { en: "", hi: "" },
       displayOrderNo: banner.displayOrderNo,
-        publishDate: banner.publishDate,
-  expiryDate: banner.expiryDate,
+      publishDate: banner.publishDate,
+      expiryDate: banner.expiryDate,
       isActive: banner.isActive,
       createdBy: banner.createby || null,
       updatedBy: banner.updateby || null,
