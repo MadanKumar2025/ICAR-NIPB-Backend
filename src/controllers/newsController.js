@@ -16,8 +16,7 @@ export const createNews = async (req, res) => {
       isActive,
     } = req.body;
 
-    // --- Validations ---
-    if (!type || type.trim() === "") {
+     if (!type || type.trim() === "") {
       return res
         .status(400)
         .json({ success: false, message: "Type is required" });
@@ -161,7 +160,7 @@ export const updateNews = async (req, res) => {
       });
     }
 
-    // ✅ Validation
+    //   Validation
     if (type && type.trim() === "") {
       return res.status(400).json({
         success: false,
@@ -211,22 +210,22 @@ export const updateNews = async (req, res) => {
       });
     }
 
-    // ✅ Duplicate check (English title pe)
-    if (title_en && title_en.trim() !== news.title?.en) {
-      const existingNews = await News.findOne({
-        "title.en": title_en.trim(),
-        _id: { $ne: id },
-      });
+    //   Duplicate check (English title pe)
+    // if (title_en && title_en.trim() !== news.title?.en) {
+    //   const existingNews = await News.findOne({
+    //     "title.en": title_en.trim(),
+    //     _id: { $ne: id },
+    //   });
 
-      if (existingNews) {
-        return res.status(400).json({
-          success: false,
-          message: `News with this English title already exists`,
-        });
-      }
-    }
+    //   if (existingNews) {
+    //     return res.status(400).json({
+    //       success: false,
+    //       message: `News with this English title already exists`,
+    //     });
+    //   }
+    // }
 
-    // ✅ File update
+    // File update
     if (req.file) {
       if (news.documentFile) {
         const oldFilePath = path.join(
@@ -243,7 +242,7 @@ export const updateNews = async (req, res) => {
       news.documentFile = req.file.filename;
     }
 
-    // ✅ Update fields
+    //   Update fields
     if (type) news.type = type.trim();
 
     if (title_en || title_hi) {
