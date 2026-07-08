@@ -155,7 +155,7 @@ export const getAllEvents = async (req, res) => {
     });
   }
 };
- 
+
 export const updateEvent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -380,27 +380,21 @@ export const deleteEvent = async (req, res) => {
       });
     }
 
-
     // Delete Event Photo
     if (event.eventPhoto) {
-      const photoPath = path.join(
-        process.cwd(),
-        "uploads",
-        event.eventPhoto
-      );
+      const photoPath = path.join(process.cwd(), "uploads", event.eventPhoto);
 
       if (fs.existsSync(photoPath)) {
         fs.unlinkSync(photoPath);
       }
     }
 
-
     // Delete Event Banner Photo
     if (event.eventBannerPhoto) {
       const bannerPath = path.join(
         process.cwd(),
         "uploads",
-        event.eventBannerPhoto
+        event.eventBannerPhoto,
       );
 
       if (fs.existsSync(bannerPath)) {
@@ -408,17 +402,13 @@ export const deleteEvent = async (req, res) => {
       }
     }
 
-
     // Delete Event Record
     await Event.findByIdAndDelete(id);
-
 
     return res.status(200).json({
       success: true,
       message: "Event deleted successfully",
     });
-
-
   } catch (error) {
     console.error("Delete Event Error:", error);
 
