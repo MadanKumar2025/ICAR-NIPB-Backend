@@ -1,5 +1,8 @@
 import Scientist from "../models/ScientistSchema.js";
 import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
+
 
 export const createScientist = async (req, res) => {
   try {
