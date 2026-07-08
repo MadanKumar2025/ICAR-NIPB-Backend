@@ -1,6 +1,7 @@
 import Banner from "../models/BannerSchema.js";
 import path from "path";
 import fs from "fs";
+import mongoose from "mongoose";
 
 export const createBanner = async (req, res) => {
   try {
