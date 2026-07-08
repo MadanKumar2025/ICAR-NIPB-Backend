@@ -180,42 +180,6 @@ export const createGallery = async (req, res) => {
   }
 };
 
-// export const getGallery = async (req, res) => {
-//   try {
-//     const isAll = req.query.all === "true";
-
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = 10;
-//     const skip = (page - 1) * limit;
-
-//     let query = Gallery.find().sort({ createdDate: -1 });
-
-//     let galleryItems;
-//     const totalGallery = await Gallery.countDocuments();
-
-//     if (isAll) {
-//       galleryItems = await query;
-//     } else {
-//       galleryItems = await query.skip(skip).limit(limit);
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       count: galleryItems.length,
-//       total: totalGallery,
-//       page: isAll ? null : page,
-//       totalPages: isAll ? 1 : Math.ceil(totalGallery / limit),
-//       data: galleryItems,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       success: false,
-//       message: error.message || "Internal server error",
-//     });
-//   }
-// };
-
 export const getGallery = async (req, res) => {
   try {
     const isAll = req.query.all === "true";
@@ -266,7 +230,6 @@ export const getGallery = async (req, res) => {
       totalPages: isAll ? 1 : Math.ceil(totalGallery / limit),
       data,
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -275,165 +238,6 @@ export const getGallery = async (req, res) => {
     });
   }
 };
-
-// export const updateGallery = async (req, res) => {
-//   try {
-//     let { id } = req.params;
-//     let { title_en, title_hi, type, videoUrl, isActive } = req.body;
-
-//     // Trim values
-//     // title_en = title_en?.trim();
-//     // title_hi = title_hi?.trim();
-//     type = type?.trim();
-//     videoUrl = videoUrl?.trim();
-
-//     // Validate ID
-//     if (!mongoose.Types.ObjectId.isValid(id)) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Valid Gallery ID is required",
-//       });
-//     }
-
-//     const gallery = await Gallery.findById(id);
-//     if (!gallery) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Gallery item not found",
-//       });
-//     }
-
-//     // Validate title (at least one required if updating)
-//     // if (title_en === "" && title_hi === "") {
-//     //   return res.status(400).json({
-//     //     success: false,
-//     //     message: "At least one title (English or Hindi) is required",
-//     //   });
-//     // }
-
-//     // URL validation
-//     const isValidUrl = (url) => {
-//       try {
-//         new URL(url);
-//         return true;
-//       } catch {
-//         return false;
-//       }
-//     };
-
-//     // Update title object
-//     if (title_en || title_hi) {
-//       gallery.title = {
-//         en: title_en || gallery.title.en,
-//         hi: title_hi || gallery.title.hi,
-//       };
-//     }
-
-//     // Validate & update type
-//     if (type) {
-//       if (!["photo", "video"].includes(type.toLowerCase())) {
-//         return res.status(400).json({
-//           success: false,
-//           message: "Gallery type must be either 'photo' or 'video'",
-//         });
-//       }
-//       gallery.type = type.toLowerCase();
-//     }
-
-//     // Handle PHOTO type
-//     if (gallery.type === "photo") {
-//       if (req.file) {
-//         const allowedTypes = [
-//           "image/jpeg",
-//           "image/png",
-//           "image/jpg",
-//           "image/webp",
-//         ];
-
-//         if (!allowedTypes.includes(req.file.mimetype)) {
-//           return res.status(400).json({
-//             success: false,
-//             message: "Only image files are allowed",
-//           });
-//         }
-
-//         // Delete old photo
-//         if (gallery.photo) {
-//           const oldPath = path.join("uploads", gallery.photo);
-//           if (fs.existsSync(oldPath)) {
-//             fs.unlinkSync(oldPath);
-//           }
-//         }
-
-//         gallery.photo = req.file.filename;
-//       }
-
-//       // Remove video if switching to photo
-//       if (gallery.videoUrl) {
-//         gallery.videoUrl = null;
-//       }
-//     }
-
-//     // Handle VIDEO type
-//     if (gallery.type === "video") {
-//       if (videoUrl) {
-//         if (!isValidUrl(videoUrl)) {
-//           return res.status(400).json({
-//             success: false,
-//             message: "Invalid video URL",
-//           });
-//         }
-
-//         // Delete old photo if exists
-//         if (gallery.photo) {
-//           const oldPath = path.join("uploads", gallery.photo);
-//           if (fs.existsSync(oldPath)) {
-//             fs.unlinkSync(oldPath);
-//           }
-//           gallery.photo = null;
-//         }
-
-//         gallery.videoUrl = videoUrl;
-//       } else if (!gallery.videoUrl) {
-//         return res.status(400).json({
-//           success: false,
-//           message: "Video URL is required for video type",
-//         });
-//       }
-//     }
-
-//     // isActive handling
-//     if (isActive !== undefined) {
-//       gallery.isActive = isActive === "true" || isActive === true;
-//     }
-
-//     gallery.updatedBy = req.user?.id || null;
-//     gallery.updatedDate = Date.now();
-
-//     const updatedGallery = await gallery.save();
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Gallery updated successfully",
-//       data: updatedGallery,
-//     });
-//   } catch (error) {
-//     console.error(error);
-
-//     if (error.name === "ValidationError") {
-//       const messages = Object.values(error.errors).map((val) => val.message);
-//       return res.status(400).json({
-//         success: false,
-//         message: messages.join(", "),
-//       });
-//     }
-
-//     res.status(500).json({
-//       success: false,
-//       message: "Internal server error",
-//     });
-//   }
-// };
 
 export const updateGallery = async (req, res) => {
   try {
@@ -563,7 +367,6 @@ export const updateGallery = async (req, res) => {
       message: "Gallery updated successfully",
       data: updated,
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -573,49 +376,10 @@ export const updateGallery = async (req, res) => {
   }
 };
 
-// export const getGalleryByAlbumId = async (req, res) => {
-//   try {
-//     const { albumId } = req.params;
-
-//     const galleryItems = await Gallery.find({ albumId })
-//       .populate("albumId", "title")
-//       .populate("createdBy", "name email")
-//       .populate("updatedBy", "name email")
-//       .sort({ createdDate: -1 });
-
-//     const formattedData = galleryItems.map((gallery) => ({
-//       id: gallery._id,
-//       albumId: gallery.albumId?._id || null,
-//       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
-//       title: gallery.title || { en: "", hi: "" },
-//       type: gallery.type || "",
-//       photo: gallery.photo || null,
-//       videoUrl: gallery.videoUrl || null,
-//       isActive: gallery.isActive,
-//       createdBy: gallery.createdBy || null,
-//       updatedBy: gallery.updatedBy || null,
-//       createdAt: gallery.createdDate,
-//       updatedAt: gallery.updatedDate || null,
-//     }));
-
-//     res.status(200).json({
-//       success: true,
-//       count: formattedData.length,
-//       data: formattedData,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
-
 export const getGalleryByAlbumId = async (req, res) => {
   try {
     const { albumId } = req.params;
 
-  
     if (!mongoose.Types.ObjectId.isValid(albumId)) {
       return res.status(400).json({
         success: false,
@@ -628,7 +392,7 @@ export const getGalleryByAlbumId = async (req, res) => {
       .populate("albumId", "title")
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email")
-      .lean();  
+      .lean();
 
     const formattedData = galleryItems.map((g) => ({
       id: g._id,
@@ -640,7 +404,7 @@ export const getGalleryByAlbumId = async (req, res) => {
       type: g.type || "",
 
       photo: g.photo || null,
-      document: g.document || null, 
+      document: g.document || null,
       videoUrl: g.videoUrl || null,
 
       isActive: g.isActive ?? true,
@@ -657,7 +421,6 @@ export const getGalleryByAlbumId = async (req, res) => {
       count: formattedData.length,
       data: formattedData,
     });
-
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -709,45 +472,73 @@ export const updateGalleryStatus = async (req, res) => {
   }
 };
 
+export const deleteGallery = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Gallery ID",
+      });
+    }
+
+    // Find Gallery
+    const gallery = await Gallery.findById(id);
+
+    if (!gallery) {
+      return res.status(404).json({
+        success: false,
+        message: "Gallery not found",
+      });
+    }
+
+    // Delete Photo if exists
+    if (gallery.photo) {
+      const photoPath = path.join(
+        process.cwd(),
+        "uploads",
+        gallery.photo
+      );
+
+      if (fs.existsSync(photoPath)) {
+        fs.unlinkSync(photoPath);
+      }
+    }
+
+    // Delete Document if exists
+    if (gallery.document) {
+      const documentPath = path.join(
+        process.cwd(),
+        "uploads",
+        gallery.document
+      );
+
+      if (fs.existsSync(documentPath)) {
+        fs.unlinkSync(documentPath);
+      }
+    }
+
+    // Delete Gallery Record
+    await Gallery.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Gallery deleted successfully",
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+};
+
 // this is use for web
-// export const getAllGalleryWeb = async (req, res) => {
-//   try {
-//     const galleryList = await Gallery.find()
-//       .populate("albumId", "title")
-//       .populate("createdBy", "name email")
-//       .populate("updatedBy", "name email")
-//       .sort({ createdDate: -1 });
-
-//     const data = galleryList.map((gallery) => ({
-//       id: gallery._id,
-//       albumId: gallery.albumId?._id || null,
-//       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
-
-//       title: gallery.title || { en: "", hi: "" },
-//       type: gallery.type || "",
-//       photo: gallery.photo || null,
-//       videoUrl: gallery.videoUrl || null,
-//       isActive: gallery.isActive,
-
-//       createdBy: gallery.createdBy || null,
-//       updatedBy: gallery.updatedBy || null,
-//       createdAt: gallery.createdDate,
-//       updatedAt: gallery.updatedDate || null,
-//     }));
-
-//     res.status(200).json({
-//       success: true,
-//       count: data.length,
-//       data,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Error fetching gallery data",
-//     });
-//   }
-// };
 
 export const getAllGalleryWeb = async (req, res) => {
   try {
@@ -805,7 +596,6 @@ export const getAllGalleryWeb = async (req, res) => {
       totalPages: isAll ? 1 : Math.ceil(total / limit),
       data,
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -814,67 +604,6 @@ export const getAllGalleryWeb = async (req, res) => {
     });
   }
 };
-// this is use for web
- 
-// export const getGalleryByAlbumIdWeb = async (req, res) => {
-//   try {
-//     const { albumId } = req.params;
-
-//     const isAll = req.query.all === "true";
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = 1000;
-//     const skip = (page - 1) * limit;
-
-//     let query = Gallery.find({ albumId })
-//       .populate("albumId", "title")
-//       .populate("createdBy", "name email")
-//       .populate("updatedBy", "name email")
-//       .sort({ createdDate: -1 });
-
-//     let galleryItems;
-//     const totalGallery = await Gallery.countDocuments({ albumId });
-
-//     if (isAll) {
-//       galleryItems = await query;
-//     } else {
-//       galleryItems = await query.skip(skip).limit(limit);
-//     }
-
-//     const formattedData = galleryItems.map((gallery) => ({
-//       id: gallery._id,
-
-//       albumId: gallery.albumId?._id || null,
-//       albumTitle: gallery.albumId?.title || { en: "", hi: "" },
-
-//       title: gallery.title || { en: "", hi: "" },
-//       type: gallery.type || "",
-//       photo: gallery.photo || null,
-//       videoUrl: gallery.videoUrl || null,
-//       isActive: gallery.isActive,
-
-//       createdBy: gallery.createdBy || null,
-//       updatedBy: gallery.updatedBy || null,
-
-//       createdAt: gallery.createdDate,
-//       updatedAt: gallery.updatedDate || null,
-//     }));
-
-//     res.status(200).json({
-//       success: true,
-//       count: formattedData.length,
-//       total: totalGallery,
-//       page: isAll ? null : page,
-//       totalPages: isAll ? 1 : Math.ceil(totalGallery / limit),
-//       data: formattedData,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       success: false,
-//       message: error.message || "Internal server error",
-//     });
-//   }
-// };
 
 export const getGalleryByAlbumIdWeb = async (req, res) => {
   try {
@@ -939,7 +668,6 @@ export const getGalleryByAlbumIdWeb = async (req, res) => {
       totalPages: isAll ? 1 : Math.ceil(totalGallery / limit),
       data: formattedData,
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({

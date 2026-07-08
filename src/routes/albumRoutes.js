@@ -6,7 +6,8 @@ import {
   updateAlbumStatus,
   getAllAlbumWeb,
   getAlbumByIdWeb,
-  getAllAlbumByTypeWeb
+  getAllAlbumByTypeWeb,
+  deleteAlbum
 } from "../controllers/AlbumController.js";
 
 import upload from "../middleware/upload.js";
@@ -23,7 +24,11 @@ router.put(
   updateAlbum,
 );
 router.put("/updateStatus/:id", authMiddleware, updateAlbumStatus);
-
+router.delete(
+  "/delete/:id",
+  authMiddleware,
+  deleteAlbum
+);
 // this is use for web
 router.get("/get/web", getAllAlbumWeb);
 router.get("/get/web/:type", getAllAlbumByTypeWeb);

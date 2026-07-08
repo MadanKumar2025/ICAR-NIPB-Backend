@@ -1,4 +1,6 @@
 import Album from "../models/AlbumSchema.js";
+import Gallery from "../models/GallerySchema.js";
+import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
 
@@ -377,6 +379,54 @@ export const updateAlbumStatus = async (req, res) => {
   }
 };
 
+export const deleteAlbum = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Album ID",
+      });
+    }
+
+    // Find Album
+    const album = await Album.findById(id);
+
+    if (!album) {
+      return res.status(404).json({
+        success: false,
+        message: "Album not found",
+      });
+    }
+
+    // Delete Cover Image
+    if (album.coverPic) {
+      const coverPath = path.join(process.cwd(), "uploads", album.coverPic);
+
+      if (fs.existsSync(coverPath)) {
+        fs.unlinkSync(coverPath);
+      }
+    }
+
+    // Delete Album
+    await Album.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Album deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+};
+
 // this is use for web
 
 export const getAllAlbumWeb = async (req, res) => {
@@ -432,7 +482,7 @@ export const getAllAlbumByTypeWeb = async (req, res) => {
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email")
       .sort({ displayOrderNo: 1 });
-      // .sort({ createdDate: -1 });
+    // .sort({ createdDate: -1 });
 
     const data = albumList.map((album) => ({
       id: album._id,
@@ -447,7 +497,7 @@ export const getAllAlbumByTypeWeb = async (req, res) => {
       updatedBy: album.updatedBy || null,
       createdAt: album.createdDate || null,
       updatedAt: album.updatedDate || null,
-        displayOrderNo: album.displayOrderNo || 0,
+      displayOrderNo: album.displayOrderNo || 0,
     }));
 
     res.status(200).json({

@@ -41,7 +41,7 @@ export const createAlumni = async (req, res) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const urlRegex =
       /^https?:\/\/([\w\d-]+\.)+[\w-]+(\/[\w\d\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
-const mobileRegex = /^[6-9]\d{9}$/;
+    const mobileRegex = /^[6-9]\d{9}$/;
     const validateUrl = (url) => {
       return !url || urlRegex.test(url);
     };
@@ -438,11 +438,7 @@ export const deleteAlumni = async (req, res) => {
 
     // Delete Photo if exists
     if (alumni.photo) {
-      const photoPath = path.join(
-        process.cwd(),
-        "uploads",
-        alumni.photo
-      );
+      const photoPath = path.join(process.cwd(), "uploads", alumni.photo);
 
       if (fs.existsSync(photoPath)) {
         fs.unlinkSync(photoPath);
@@ -456,7 +452,6 @@ export const deleteAlumni = async (req, res) => {
       success: true,
       message: "Alumni deleted successfully",
     });
-
   } catch (error) {
     console.error("Delete Alumni Error =>", error);
 

@@ -6,7 +6,7 @@ import {
   getGalleryByAlbumId,
   updateGalleryStatus,
   getAllGalleryWeb,
-  getGalleryByAlbumIdWeb,
+  getGalleryByAlbumIdWeb,deleteGallery
 } from "../controllers/GalleryController.js";
 
 import upload from "../middleware/upload.js";
@@ -40,6 +40,12 @@ router.get(
   authMiddleware,
   getGalleryByAlbumId,
 );
+router.delete(
+  "/delete-gallery/:id",
+  authMiddleware,
+  deleteGallery
+);
+
 router.put("/updateGalleryStatus/:id", authMiddleware, updateGalleryStatus);
 
 // this is use for web
