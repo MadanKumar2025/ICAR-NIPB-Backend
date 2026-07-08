@@ -41,7 +41,7 @@ export const createAlumni = async (req, res) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const urlRegex =
       /^https?:\/\/([\w\d-]+\.)+[\w-]+(\/[\w\d\-._~:/?#[\]@!$&'()*+,;=]*)?$/;
-
+const mobileRegex = /^[6-9]\d{9}$/;
     const validateUrl = (url) => {
       return !url || urlRegex.test(url);
     };
