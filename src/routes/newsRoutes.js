@@ -4,7 +4,8 @@ import {
   getAllNews,
   updateNews,
   updateNewsStatus,
-  getAllNewsWeb,getNewsByType
+  getAllNewsWeb,getNewsByType,
+  deleteNews
 } from "../controllers/newsController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import uploadAll from "../middleware/uploadAll.js";
@@ -23,6 +24,12 @@ router.put(
   authMiddleware,
   uploadAll.single("documentFile"),
   updateNews,
+);
+
+router.delete(
+  "/delete/:id",
+  authMiddleware,
+  deleteNews
 );
 
 router.put("/status/:id", authMiddleware, updateNewsStatus);

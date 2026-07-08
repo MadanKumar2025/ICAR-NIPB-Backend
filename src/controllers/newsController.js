@@ -322,6 +322,58 @@ export const updateNewsStatus = async (req, res) => {
   }
 };
 
+export const deleteNews = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid News ID",
+      });
+    }
+
+    // Find News
+    const news = await News.findById(id);
+
+    if (!news) {
+      return res.status(404).json({
+        success: false,
+        message: "News not found",
+      });
+    }
+
+    // Delete Document File if exists
+    if (news.documentFile) {
+      const filePath = path.join(
+        process.cwd(),
+        "uploads",
+        news.documentFile
+      );
+
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    // Delete News Record
+    await News.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "News deleted successfully",
+    });
+
+  } catch (error) {
+    console.error("Delete News Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+};
 
 // This is use for web
 export const getAllNewsWeb = async (req, res) => {

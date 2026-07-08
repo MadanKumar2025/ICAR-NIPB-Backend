@@ -236,11 +236,7 @@ export const deleteBanner = async (req, res) => {
 
     // Delete Image
     if (banner.bannerImage) {
-      const imagePath = path.join(
-        process.cwd(),
-        "uploads",
-        banner.bannerImage
-      );
+      const imagePath = path.join(process.cwd(), "uploads", banner.bannerImage);
 
       if (fs.existsSync(imagePath)) {
         fs.unlinkSync(imagePath);
@@ -254,7 +250,6 @@ export const deleteBanner = async (req, res) => {
       success: true,
       message: "Banner deleted successfully",
     });
-
   } catch (error) {
     console.error(error);
 
