@@ -5,7 +5,7 @@ import {
   updateAlumniApproval,
   getAllAlumni,
   updateAlumni,
-  getAlumniByIdWeb,createAlumniWeb
+  getAlumniByIdWeb,createAlumniWeb,deleteAlumni
 } from "../controllers/AlumniController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -18,6 +18,11 @@ router.post("/create", authMiddleware, uploadSingleImage, createAlumni);
 router.get("/getAll", authMiddleware, getAlumni);
 router.put("/approve/:id", authMiddleware, updateAlumniApproval);
 router.put("/update/:id", authMiddleware, uploadSingleImage, updateAlumni);
+router.delete(
+  "/delete-alumni/:id",
+  authMiddleware,
+  deleteAlumni
+);
 
 router.get("/get/web", getAllAlumni);
 router.get("/get/web/:id", getAlumniByIdWeb);

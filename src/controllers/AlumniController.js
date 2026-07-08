@@ -160,42 +160,6 @@ export const createAlumni = async (req, res) => {
   }
 };
 
-// export const getAlumni = async (req, res) => {
-//   try {
-//     const isAll = req.query.all === "true";
-
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = 10;
-//     const skip = (page - 1) * limit;
-
-//     let query = Alumni.find().sort({ createdAt: -1 });
-
-//     let alumni;
-//     const total = await Alumni.countDocuments();
-
-//     if (isAll) {
-//       alumni = await query;
-//     } else {
-//       alumni = await query.skip(skip).limit(limit);
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       count: alumni.length,
-//       total: total,
-//       page: isAll ? null : page,
-//       totalPages: isAll ? 1 : Math.ceil(total / limit),
-//       data: alumni,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       success: false,
-//       message: error.message || "Internal server error",
-//     });
-//   }
-// };
-
 export const getAlumni = async (req, res) => {
   try {
     const alumniList = await Alumni.find()
@@ -446,6 +410,59 @@ export const updateAlumni = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: error.message || "Server Error",
+    });
+  }
+};
+
+export const deleteAlumni = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Alumni ID",
+      });
+    }
+
+    // Find Alumni
+    const alumni = await Alumni.findById(id);
+
+    if (!alumni) {
+      return res.status(404).json({
+        success: false,
+        message: "Alumni not found",
+      });
+    }
+
+    // Delete Photo if exists
+    if (alumni.photo) {
+      const photoPath = path.join(
+        process.cwd(),
+        "uploads",
+        alumni.photo
+      );
+
+      if (fs.existsSync(photoPath)) {
+        fs.unlinkSync(photoPath);
+      }
+    }
+
+    // Delete Alumni Record
+    await Alumni.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Alumni deleted successfully",
+    });
+
+  } catch (error) {
+    console.error("Delete Alumni Error =>", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
     });
   }
 };

@@ -11,6 +11,7 @@ import {
 
 const router = express.Router();
 // this is use for web
+router.delete("/delete-student/:id", authMiddleware, deleteStudent);
 router.get("/get/web", getAllStudents);
 
 router.post("/create", authMiddleware, createStudent);
@@ -18,6 +19,5 @@ router.get("/get/:courseId", authMiddleware, getStudentsByCourseId);
 router.put("/update/:id", authMiddleware, updateStudent);
 router.put("/updateStatus/:id", authMiddleware, updateStudentStatus);
 
-router.delete("/delete-student/:id", authMiddleware, deleteStudent);
 
 export default router;
