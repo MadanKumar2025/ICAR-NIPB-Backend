@@ -1,4 +1,5 @@
 import StudentCourse from "../models/StudentCourseSchema.js";
+import mongoose from "mongoose";
 
 export const createStudentCourse = async (req, res) => {
   try {
@@ -223,6 +224,46 @@ export const updateStudentCourseStatus = async (req, res) => {
     console.error("Update Student Course Status Error =>", error);
 
     res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
+
+export const deleteStudentCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Student Course ID",
+      });
+    }
+
+    // Find Student Course
+    const studentCourse = await StudentCourse.findById(id);
+
+    if (!studentCourse) {
+      return res.status(404).json({
+        success: false,
+        message: "Student Course not found",
+      });
+    }
+
+    // Delete Student Course
+    await StudentCourse.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Student Course deleted successfully",
+    });
+
+  } catch (error) {
+    console.error("ERROR =>", error);
+
+    return res.status(500).json({
       success: false,
       message: error.message || "Something went wrong",
     });

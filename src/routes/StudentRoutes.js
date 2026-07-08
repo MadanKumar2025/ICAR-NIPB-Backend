@@ -6,6 +6,7 @@ import {
   updateStudent,
   updateStudentStatus,
   getAllStudents,
+  deleteStudent,
 } from "../controllers/StudentController.js";
 
 const router = express.Router();
@@ -16,5 +17,7 @@ router.post("/create", authMiddleware, createStudent);
 router.get("/get/:courseId", authMiddleware, getStudentsByCourseId);
 router.put("/update/:id", authMiddleware, updateStudent);
 router.put("/updateStatus/:id", authMiddleware, updateStudentStatus);
+
+router.delete("/delete-student/:id", authMiddleware, deleteStudent);
 
 export default router;

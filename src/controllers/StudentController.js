@@ -1,4 +1,5 @@
 import Student from "../models/StudentSchema.js";
+import mongoose from "mongoose";
 
 export const createStudent = async (req, res) => {
   try {
@@ -265,6 +266,45 @@ export const updateStudentStatus = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || "Something went wrong",
+    });
+  }
+};
+
+export const deleteStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Student ID",
+      });
+    }
+
+    // Find Student
+    const student = await Student.findById(id);
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    // Delete Student
+    await Student.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Student deleted successfully",
+    });
+  } catch (error) {
+    console.error("ERROR =>", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
     });
   }
 };
