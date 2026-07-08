@@ -5,6 +5,7 @@ import {
   updatePreviousDirectorStatus,
   updatePreviousDirector,
   getAllPreviousDirectorWeb,
+  deletePreviousDirector,
 } from "../controllers/PreviousDirectorController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import uploadSingleImage from "../middleware/uploadHandler.js";
@@ -24,11 +25,18 @@ router.put(
   authMiddleware,
   updatePreviousDirectorStatus,
 );
+
 router.put(
   "/update/:id",
   authMiddleware,
   uploadSingleImage,
   updatePreviousDirector,
+);
+
+router.delete(
+  "/delete-previous-director/:id",
+  authMiddleware,
+  deletePreviousDirector
 );
 
 // this is use for web

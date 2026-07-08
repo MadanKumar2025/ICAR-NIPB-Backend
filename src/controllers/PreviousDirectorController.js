@@ -289,6 +289,58 @@ export const updatePreviousDirector = async (req, res) => {
   }
 };
 
+export const deletePreviousDirector = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Previous Director ID",
+      });
+    }
+
+    // Find Director
+    const previousDirector = await PreviousDirector.findById(id);
+
+    if (!previousDirector) {
+      return res.status(404).json({
+        success: false,
+        message: "Previous Director not found",
+      });
+    }
+
+    // Delete Photo if exists
+    if (previousDirector.photo) {
+      const photoPath = path.join(
+        process.cwd(),
+        "uploads",
+        previousDirector.photo
+      );
+
+      if (fs.existsSync(photoPath)) {
+        fs.unlinkSync(photoPath);
+      }
+    }
+
+    // Delete Record
+    await PreviousDirector.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Previous Director deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+};
+
 // this is use for web
 export const getAllPreviousDirectorWeb = async (req, res) => {
   try {
