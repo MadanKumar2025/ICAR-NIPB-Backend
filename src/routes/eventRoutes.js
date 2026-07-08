@@ -6,7 +6,7 @@ import {
   getAllEvents,
   updateEvent,
   updateEventStatus,
-  getAllEventsWeb,getEventById,
+  getAllEventsWeb,getEventById,deleteEvent
 } from "../controllers/eventController.js";
 
 const router = express.Router();
@@ -30,6 +30,11 @@ router.put(
     { name: "eventPhoto", maxCount: 1 },
   ]),
   updateEvent,
+);
+router.delete(
+  "/delete/:id",
+  authMiddleware,
+  deleteEvent
 );
 
 router.patch("/updateEventStatus/:id", authMiddleware, updateEventStatus);

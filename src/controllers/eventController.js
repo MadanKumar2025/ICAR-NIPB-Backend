@@ -155,131 +155,7 @@ export const getAllEvents = async (req, res) => {
     });
   }
 };
-
-// export const updateEvent = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-
-//     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Invalid ya missing event ID",
-//       });
-//     }
-
-//     const event = await Event.findById(id);
-
-//     if (!event) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Event nahi mila",
-//       });
-//     }
-
-//     const {
-//       name_en,
-//       name_hi,
-//       startTime,
-//       endTime,
-//       location_en,
-//       location_hi,
-//       description_en,
-//       description_hi,
-//       registrationLink,
-//       registrationStartTime,
-//       registrationEndTime,
-//       isActive,
-//     } = req.body;
-
-//     if ((name_en && !name_hi) || (!name_en && name_hi)) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Name update karte waqt dono English & Hindi chahiye",
-//       });
-//     }
-
-//     if ((location_en && !location_hi) || (!location_en && location_hi)) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Location update karte waqt dono English & Hindi chahiye",
-//       });
-//     }
-
-//     if (startTime && endTime && new Date(endTime) <= new Date(startTime)) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "End time start time se pehle nahi ho sakta",
-//       });
-//     }
-
-//     if (registrationLink && !/^https?:\/\/.+/.test(registrationLink)) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Invalid registration link",
-//       });
-//     }
-
-//     if (req.files?.eventBannerPhoto) {
-//       if (event.eventBannerPhoto) {
-//         const oldPath = path.join(
-//           process.cwd(),
-//           "uploads",
-//           event.eventBannerPhoto,
-//         );
-//         if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-//       }
-//       event.eventBannerPhoto = req.files.eventBannerPhoto[0].filename;
-//     }
-
-//     if (req.files?.eventPhoto) {
-//       if (event.eventPhoto) {
-//         const oldPath = path.join(process.cwd(), "uploads", event.eventPhoto);
-//         if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-//       }
-//       event.eventPhoto = req.files.eventPhoto[0].filename;
-//     }
-
-//     if (name_en && name_hi)
-//       event.name = { en: name_en.trim(), hi: name_hi.trim() };
-//     if (location_en && location_hi)
-//       event.location = { en: location_en.trim(), hi: location_hi.trim() };
-//     if (description_en !== undefined && description_hi !== undefined)
-//       event.description = {
-//         en: description_en || null,
-//         hi: description_hi || null,
-//       };
-
-//     if (startTime) event.startTime = new Date(startTime);
-//     if (endTime) event.endTime = new Date(endTime);
-//     if (registrationLink !== undefined)
-//       event.registrationLink = registrationLink || null;
-//     if (registrationStartTime)
-//       event.registrationStartTime = new Date(registrationStartTime);
-//     if (registrationEndTime !== undefined)
-//       event.registrationendTime = registrationEndTime
-//         ? new Date(registrationEndTime)
-//         : null;
-//     if (isActive !== undefined) event.isActive = isActive;
-
-//     event.updateby = req.user?.id;
-//     event.updatedate = new Date();
-
-//     const updatedEvent = await event.save();
-
-//     return res.status(200).json({
-//       success: true,
-//       message: "Event successfully update ho gaya",
-//       data: updatedEvent,
-//     });
-//   } catch (error) {
-//     console.error("Error updating event:", error);
-//     return res.status(500).json({
-//       success: false,
-//       message: error.message || "Kuch galat ho gaya",
-//     });
-//   }
-// };
-
+ 
 export const updateEvent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -478,6 +354,77 @@ export const updateEventStatus = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message,
+    });
+  }
+};
+
+export const deleteEvent = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Event ID",
+      });
+    }
+
+    // Find Event
+    const event = await Event.findById(id);
+
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found",
+      });
+    }
+
+
+    // Delete Event Photo
+    if (event.eventPhoto) {
+      const photoPath = path.join(
+        process.cwd(),
+        "uploads",
+        event.eventPhoto
+      );
+
+      if (fs.existsSync(photoPath)) {
+        fs.unlinkSync(photoPath);
+      }
+    }
+
+
+    // Delete Event Banner Photo
+    if (event.eventBannerPhoto) {
+      const bannerPath = path.join(
+        process.cwd(),
+        "uploads",
+        event.eventBannerPhoto
+      );
+
+      if (fs.existsSync(bannerPath)) {
+        fs.unlinkSync(bannerPath);
+      }
+    }
+
+
+    // Delete Event Record
+    await Event.findByIdAndDelete(id);
+
+
+    return res.status(200).json({
+      success: true,
+      message: "Event deleted successfully",
+    });
+
+
+  } catch (error) {
+    console.error("Delete Event Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
     });
   }
 };
