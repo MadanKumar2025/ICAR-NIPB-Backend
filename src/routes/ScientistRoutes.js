@@ -7,6 +7,7 @@ import {
   getAllScientistsWeb,
   getScientistByIdWeb,
   getScientistById,
+  deleteScientist,
 } from "../controllers/ScientistController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -21,6 +22,7 @@ router.get("/get/web/:id", getScientistByIdWeb);
 router.post("/create", authMiddleware, upload.any(), createScientist);
 router.get("/getAll", authMiddleware, getScientist);
 router.get("/get/:id", authMiddleware, getScientistById);
+router.delete("/delete-scientist/:id", authMiddleware, deleteScientist);
 
 router.put("/update/:id", authMiddleware, upload.any(), updateScientist);
 router.put("/updateStatus/:id", authMiddleware, updateScientistStatus);

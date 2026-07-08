@@ -586,6 +586,78 @@ export const getScientistById = async (req, res) => {
   }
 };
 
+export const deleteScientist = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Scientist ID",
+      });
+    }
+
+    // Find Scientist
+    const scientist = await Scientist.findById(id);
+
+    if (!scientist) {
+      return res.status(404).json({
+        success: false,
+        message: "Scientist not found",
+      });
+    }
+
+    // Helper Function
+    const deleteImage = (fileName) => {
+      if (!fileName) return;
+
+      const filePath = path.join(
+        process.cwd(),
+        "uploads",
+        "scientist",
+        fileName
+      );
+
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    };
+
+    // Delete Main Photo
+    deleteImage(scientist.photo);
+
+    // Delete Gallery Photos
+    if (Array.isArray(scientist.galleryPhotos)) {
+      scientist.galleryPhotos.forEach((item) => {
+        deleteImage(item.galleryPhotos);
+      });
+    }
+
+    // Delete Lab Profile Photos
+    if (Array.isArray(scientist.labProfile)) {
+      scientist.labProfile.forEach((item) => {
+        deleteImage(item.photo1);
+      });
+    }
+
+    // Delete Database Record
+    await Scientist.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Scientist deleted successfully",
+    });
+
+  } catch (error) {
+    console.error("Delete Scientist Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
 // this is use for web
 export const getAllScientistsWeb = async (req, res) => {
   try {

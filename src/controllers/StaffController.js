@@ -472,6 +472,58 @@ export const updateStaffStatus = async (req, res) => {
   }
 };
 
+export const deleteStaff = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Staff ID",
+      });
+    }
+
+    // Find Staff
+    const staff = await Staff.findById(id);
+
+    if (!staff) {
+      return res.status(404).json({
+        success: false,
+        message: "Staff record not found",
+      });
+    }
+
+    // Delete Photo
+    if (staff.photo) {
+      const photoPath = path.join(
+        process.cwd(),
+        "uploads", 
+        staff.photo
+      );
+
+      if (fs.existsSync(photoPath)) {
+        fs.unlinkSync(photoPath);
+      }
+    }
+
+    // Delete Record
+    await Staff.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Staff deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Staff Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
 // this is use for web
 export const getAllStaffWeb = async (req, res) => {
   try {

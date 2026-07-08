@@ -7,6 +7,7 @@ import {
   getAllStaffWeb,
   getStaffByDepartment,
   getStaffByIdWeb,
+  deleteStaff,
 } from "../controllers/StaffController.js";
 
 import upload from "../middleware/upload.js";
@@ -20,6 +21,8 @@ router.post("/create", authMiddleware, uploadSingleImage, createStaff);
 router.get("/allStaff", authMiddleware, getStaff);
 router.put("/updateStaff/:id", authMiddleware, uploadSingleImage, updateStaff);
 router.put("/staffStatus/:id", authMiddleware, updateStaffStatus);
+
+router.delete("/delete-staff/:id", authMiddleware, deleteStaff);
 
 // this is use for web
 router.get("/get/web", getAllStaffWeb);

@@ -223,6 +223,45 @@ export const updateCadreStrength = async (req, res) => {
   }
 };
 
+export const deleteCadreStrength = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Cadre Strength ID",
+      });
+    }
+
+    // Check if record exists
+    const cadre = await CadreStrength.findById(id);
+
+    if (!cadre) {
+      return res.status(404).json({
+        success: false,
+        message: "Cadre Strength not found",
+      });
+    }
+
+    // Delete record
+    await CadreStrength.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Cadre Strength deleted successfully",
+    });
+
+  } catch (error) {
+    console.error("Delete CadreStrength Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
 
 // this is use for web
 export const getAllCadreStrengthWeb = async (req, res) => {
