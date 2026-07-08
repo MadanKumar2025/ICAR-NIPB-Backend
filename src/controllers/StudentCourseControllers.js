@@ -1,5 +1,7 @@
 import StudentCourse from "../models/StudentCourseSchema.js";
 import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
 
 export const createStudentCourse = async (req, res) => {
   try {
