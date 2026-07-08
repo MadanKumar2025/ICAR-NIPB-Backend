@@ -5,6 +5,7 @@ import {
   updateBannerStatus,
   updateBanner,
   getAllBannerWeb,
+  deleteBanner,
 } from "../controllers/BannerController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -21,6 +22,11 @@ router.put(
   authMiddleware,
   uploadSingleImage,
   updateBanner,
+);
+router.delete(
+  "/delete/:id",
+  authMiddleware,
+  deleteBanner
 );
 
 // this is use for web
