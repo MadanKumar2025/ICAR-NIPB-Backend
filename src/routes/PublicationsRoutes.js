@@ -6,7 +6,7 @@ import {
   updatePublicationStatus,
   getAllPublicationsWeb,
   getPublicationsByCategory,
-  getPublicationByIdWeb,
+  getPublicationByIdWeb,deletePublication
 } from "../controllers/PublicationsControllers.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -19,9 +19,9 @@ router.post(
   authMiddleware,
   // uploadAll.single("file"),
   uploadAll.fields([
-  { name: "file", maxCount: 1 },
-  { name: "image", maxCount: 1 },
-]),
+    { name: "file", maxCount: 1 },
+    { name: "image", maxCount: 1 },
+  ]),
   createPublication,
 );
 router.get("/getAll", authMiddleware, getAllPublications);
@@ -29,13 +29,14 @@ router.put(
   "/update/:id",
   authMiddleware,
   // uploadAll.single("file"),
-   uploadAll.fields([
-  { name: "file", maxCount: 1 },
-  { name: "image", maxCount: 1 },
-]),
+  uploadAll.fields([
+    { name: "file", maxCount: 1 },
+    { name: "image", maxCount: 1 },
+  ]),
   updatePublication,
 );
 router.put("/updateStatus/:id", authMiddleware, updatePublicationStatus);
+router.delete("/delete-publication/:id", authMiddleware, deletePublication);
 
 // this is use for web
 router.get("/get/web", getAllPublicationsWeb);

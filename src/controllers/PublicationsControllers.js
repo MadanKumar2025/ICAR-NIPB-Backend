@@ -1,6 +1,8 @@
 import PublicationsSchema from "../models/PublicationsSchema.js";
 import Publications from "../models/PublicationsSchema.js";
 import mongoose from "mongoose";
+import fs from "node:fs";
+import path from "node:path";
 
 export const createPublication = async (req, res) => {
   try {
@@ -332,6 +334,67 @@ export const updatePublicationStatus = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || "Something went wrong",
+    });
+  }
+};
+
+export const deletePublication = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Publication ID",
+      });
+    }
+
+    // Find Publication
+    const publication = await PublicationsSchema.findById(id);
+
+    if (!publication) {
+      return res.status(404).json({
+        success: false,
+        message: "Publication not found",
+      });
+    }
+
+    // Delete uploaded files
+    const deleteFile = (fileName) => {
+      if (!fileName) return;
+
+      const filePath = path.join(
+        process.cwd(),
+        "uploads",
+        fileName
+      );
+
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    };
+
+    // Delete Image
+    deleteFile(publication.image);
+
+    // Delete PDF/File
+    deleteFile(publication.file);
+
+    // Delete Database Record
+    await PublicationsSchema.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Publication deleted successfully",
+    });
+
+  } catch (error) {
+    console.error("Delete Publication Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
     });
   }
 };
