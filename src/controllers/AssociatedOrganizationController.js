@@ -230,7 +230,57 @@ export const updateAssociatedOrganizationStatus = async (req, res) => {
   }
 };
 
+export const deleteAssociatedOrganization = async (req, res) => {
+  try {
+    const { id } = req.params;
 
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Associated Organization ID",
+      });
+    }
+
+    // Find Record
+    const organization = await AssociatedOrganization.findById(id);
+
+    if (!organization) {
+      return res.status(404).json({
+        success: false,
+        message: "Associated Organization not found",
+      });
+    }
+
+    // Delete Photo if exists
+    if (organization.photo) {
+      const photoPath = path.join(
+        process.cwd(),
+        "uploads",
+        organization.photo
+      );
+
+      if (fs.existsSync(photoPath)) {
+        fs.unlinkSync(photoPath);
+      }
+    }
+
+    // Delete Record
+    await AssociatedOrganization.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Associated Organization deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Associated Organization Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
 
 // this is use for web
 export const getAllAssociatedOrganizationsWeb = async (req, res) => {

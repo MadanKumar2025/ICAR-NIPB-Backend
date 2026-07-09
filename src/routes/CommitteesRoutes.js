@@ -5,7 +5,7 @@ import {
   updateCommittee,
   updateCommitteeStatus,
   getAllCommitteesWeb,
-  getCommitteeByIdWeb,
+  getCommitteeByIdWeb,deleteCommittee
 } from "../controllers/CommitteesController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -16,7 +16,7 @@ router.post("/create", authMiddleware, createCommittee);
 router.get("/getAll", authMiddleware, getAllCommittees);
 router.put("/update/:id", authMiddleware, updateCommittee);
 router.put("/updateStatus/:id", authMiddleware, updateCommitteeStatus);
-
+router.delete("/delete-committee/:id", authMiddleware, deleteCommittee);
 // this is use for web
 router.get("/get/web", getAllCommitteesWeb);
 router.get("/get/web/:id", getCommitteeByIdWeb);

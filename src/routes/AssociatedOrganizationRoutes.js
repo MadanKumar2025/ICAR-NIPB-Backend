@@ -6,6 +6,7 @@ import {
   updateAssociatedOrganization,
   updateAssociatedOrganizationStatus,
   getAllAssociatedOrganizationsWeb,
+  deleteAssociatedOrganization,
 } from "../controllers/AssociatedOrganizationController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -27,6 +28,12 @@ router.put(
   authMiddleware,
   uploadSingleImage,
   updateAssociatedOrganization,
+);
+
+router.delete(
+  "/delete-associated-organization/:id",
+  authMiddleware,
+  deleteAssociatedOrganization,
 );
 
 router.put("/status/:id", authMiddleware, updateAssociatedOrganizationStatus);

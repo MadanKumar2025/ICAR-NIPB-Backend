@@ -1,4 +1,7 @@
 import Committees from "../models/CommitteesSchema.js";
+import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
 
 export const createCommittee = async (req, res) => {
   try {
@@ -249,6 +252,45 @@ export const updateCommitteeStatus = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Something went wrong",
+    });
+  }
+};
+
+export const deleteCommittee = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Committee ID",
+      });
+    }
+
+    // Find Committee
+    const committee = await Committees.findById(id);
+
+    if (!committee) {
+      return res.status(404).json({
+        success: false,
+        message: "Committee not found",
+      });
+    }
+
+    // Delete Committee
+    await Committees.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Committee deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Committee Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
     });
   }
 };

@@ -3,15 +3,16 @@ import {
   createVigilanceOfficer,
   getAllVigilanceOfficers,
   updateVigilanceOfficer,
-  updateVigilanceOfficerStatus,getVigilanceOfficersByType
+  updateVigilanceOfficerStatus,
+  getVigilanceOfficersByType,
+  deleteVigilanceOfficer,
 } from "../controllers/VigilanceOfficerController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
-import uploadSingleImage from "../middleware/uploadHandler.js"; // multer setup for single image
+import uploadSingleImage from "../middleware/uploadHandler.js";
 
 const router = express.Router();
 
-// --- Create Vigilance Officer ---
 router.post(
   "/create",
   authMiddleware,
@@ -19,10 +20,8 @@ router.post(
   createVigilanceOfficer,
 );
 
-// // --- Get all Vigilance Officers (Admin) ---
 router.get("/get", authMiddleware, getAllVigilanceOfficers);
 
-// --- Update Vigilance Officer ---
 router.put(
   "/update/:id",
   authMiddleware,
@@ -32,7 +31,12 @@ router.put(
 
 router.put("/status/:id", authMiddleware, updateVigilanceOfficerStatus);
 
-// // --- Get all Vigilance Officers for Web (Public) ---
+router.delete(
+  "/delete-vigilance-officer/:id",
+  authMiddleware,
+  deleteVigilanceOfficer,
+);
+
 router.get("/get/web/:type", getVigilanceOfficersByType);
 
 export default router;

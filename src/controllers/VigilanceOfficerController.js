@@ -306,9 +306,57 @@ export const updateVigilanceOfficerStatus = async (req, res) => {
   }
 };
 
+export const deleteVigilanceOfficer = async (req, res) => {
+  try {
+    const { id } = req.params;
 
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Vigilance Officer ID",
+      });
+    }
 
+    // Find Officer
+    const officer = await VigilanceOfficer.findById(id);
 
+    if (!officer) {
+      return res.status(404).json({
+        success: false,
+        message: "Vigilance Officer not found",
+      });
+    }
+
+    // Delete Photo if exists
+    if (officer.photo) {
+      const photoPath = path.join(
+        process.cwd(),
+        "uploads",
+        officer.photo
+      );
+
+      if (fs.existsSync(photoPath)) {
+        fs.unlinkSync(photoPath);
+      }
+    }
+
+    // Delete Record
+    await VigilanceOfficer.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Vigilance Officer deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Vigilance Officer Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
 
 // this is use for web
 export const getVigilanceOfficersByType = async (req, res) => {
