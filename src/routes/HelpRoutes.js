@@ -4,7 +4,8 @@ import {
   getAllHelp,
   updateHelpStatus,
   updateHelp,
-  getAllHelpWeb,deleteHelp
+  getAllHelpWeb,
+  deleteHelp,
 } from "../controllers/HelpController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -19,12 +20,7 @@ router.put("/updateStatus/:id", authMiddleware, updateHelpStatus);
 
 router.put("/update/:id", authMiddleware, updateHelp);
 
-
-router.delete(
-  "/delete-help/:id",
-  authMiddleware,
-  deleteHelp
-);
+router.delete("/delete-help/:id", authMiddleware, deleteHelp);
 
 // // Get all Help entries for the web (public)
 router.get("/get/web", getAllHelpWeb);
