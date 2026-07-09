@@ -258,7 +258,6 @@ export const updatePopup = async (req, res) => {
   }
 };
 
-
 export const updatePopupStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -314,6 +313,57 @@ export const updatePopupStatus = async (req, res) => {
   }
 };
 
+export const deletePopup = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Popup ID",
+      });
+    }
+
+    // Find Popup
+    const popup = await Popup.findById(id);
+
+    if (!popup) {
+      return res.status(404).json({
+        success: false,
+        message: "Popup not found",
+      });
+    }
+
+    // Delete Photo if exists
+    if (popup.photo) {
+      const photoPath = path.join(
+        process.cwd(),
+        "uploads",
+        popup.photo
+      );
+
+      if (fs.existsSync(photoPath)) {
+        fs.unlinkSync(photoPath);
+      }
+    }
+
+    // Delete Record
+    await Popup.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Popup deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Popup Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
 // this is use for web
 export const getPopupsWeb = async (req, res) => {
   try {

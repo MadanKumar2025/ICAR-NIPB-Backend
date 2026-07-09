@@ -6,6 +6,7 @@ import {
   updatePopup,
   getPopupsWeb,
   updatePopupStatus,
+  deletePopup
 } from "../controllers/PopupController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -21,6 +22,11 @@ router.get("/allPopup", authMiddleware, getPopups);
 router.put("/updatePopup/:id", authMiddleware, uploadSingleImage, updatePopup);
 router.put("/updatePopupStatus/:id", authMiddleware, updatePopupStatus);
 
+router.delete(
+  "/delete-popup/:id",
+  authMiddleware,
+  deletePopup
+);
 // Web Routes
 router.get("/get/web", getPopupsWeb);
 
