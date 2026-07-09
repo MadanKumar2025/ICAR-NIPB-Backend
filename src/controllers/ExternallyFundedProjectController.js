@@ -1,4 +1,7 @@
 import ExternallyFundedProject from "../models/ExternallyFundedProjectSchema.js";
+import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
 
 export const createExternallyFundedProject = async (req, res) => {
   try {
@@ -89,41 +92,6 @@ export const createExternallyFundedProject = async (req, res) => {
     });
   }
 };
-
-// export const getExternallyFundedProjects = async (req, res) => {
-//   try {
-//     const isAll = req.query.all === "true";
-
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = 10;
-//     const skip = (page - 1) * limit;
-
-//     let query = ExternallyFundedProject.find();
-
-//     const totalProjects = await ExternallyFundedProject.countDocuments();
-
-//     let projects;
-//     if (isAll) {
-//       projects = await query;
-//     } else {
-//       projects = await query.skip(skip).limit(limit);
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       count: projects.length,
-//       total: totalProjects,
-//       page: isAll ? null : page,
-//       totalPages: isAll ? 1 : Math.ceil(totalProjects / limit),
-//       data: projects,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message || "Something went wrong",
-//     });
-//   }
-// };
 
 export const getExternallyFundedProjects = async (req, res) => {
   try {
@@ -309,6 +277,45 @@ export const updateExternallyFundedProjectStatus = async (req, res) => {
     console.error("Update Project Status Error =>", error);
 
     res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
+
+export const deleteExternallyFundedProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Externally Funded Project ID",
+      });
+    }
+
+    // Find Project
+    const project = await ExternallyFundedProject.findById(id);
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Externally Funded Project not found",
+      });
+    }
+
+    // Delete Project
+    await ExternallyFundedProject.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Externally Funded Project deleted successfully",
+    });
+  } catch (error) {
+    console.error("ERROR =>", error);
+
+    return res.status(500).json({
       success: false,
       message: error.message || "Something went wrong",
     });

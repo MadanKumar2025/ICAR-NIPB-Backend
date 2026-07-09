@@ -5,6 +5,7 @@ import {
   updateInstitutionalProject,
   updateInstitutionalProjectStatus,
   getAllInstitutionalProjectsWeb,
+  deleteInstitutionalProject
 } from "../controllers/InstitutionalProjectsController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -19,6 +20,11 @@ router.put(
   updateInstitutionalProjectStatus,
 );
 router.put("/update/:id", authMiddleware, updateInstitutionalProject);
+router.delete(
+  "/delete-institutional-project/:id",
+  authMiddleware,
+  deleteInstitutionalProject
+);
 
 // this is use for web
 router.get("/get/web", getAllInstitutionalProjectsWeb);

@@ -1,4 +1,7 @@
 import Patents from "../models/PatentsSchema.js";
+import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
 
 export const createPatents = async (req, res) => {
   try {
@@ -118,11 +121,11 @@ export const getAllPatents = async (req, res) => {
   //     message: error.message,
   //   });
   // }
-   try {
+  try {
     const patentsList = await Patents.find()
       .populate("createby", "name email")
       .populate("updateby", "name email");
-      // .sort({ createdate: -1 });
+    // .sort({ createdate: -1 });
 
     const data = patentsList.map((patent) => ({
       id: patent._id,
@@ -172,7 +175,7 @@ export const updatePatentStatus = async (req, res) => {
       {
         new: true,
         runValidators: true,
-      }
+      },
     );
 
     if (!patent) {
@@ -201,13 +204,7 @@ export const updatePatent = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const {
-      type_en,
-      type_hi,
-      title_en,
-      title_hi,
-      isActive,
-    } = req.body;
+    const { type_en, type_hi, title_en, title_hi, isActive } = req.body;
 
     const patent = await Patents.findById(id);
 
@@ -217,7 +214,7 @@ export const updatePatent = async (req, res) => {
         message: "Patent not found",
       });
     }
- 
+
     if (type_en) {
       patent.type.en = type_en;
     }
@@ -235,8 +232,7 @@ export const updatePatent = async (req, res) => {
     }
 
     if (isActive !== undefined) {
-      patent.isActive =
-        isActive === "true" || isActive === true;
+      patent.isActive = isActive === "true" || isActive === true;
     }
 
     patent.updateby = req.user?.id;
@@ -253,9 +249,7 @@ export const updatePatent = async (req, res) => {
     console.error("Update Patent Error:", error);
 
     if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map(
-        (val) => val.message
-      );
+      const messages = Object.values(error.errors).map((val) => val.message);
       return res.status(400).json({
         success: false,
         message: messages.join(", "),
@@ -269,13 +263,51 @@ export const updatePatent = async (req, res) => {
   }
 };
 
+export const deletePatent = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Patent ID",
+      });
+    }
+
+    // Find Patent
+    const patent = await Patents.findById(id);
+
+    if (!patent) {
+      return res.status(404).json({
+        success: false,
+        message: "Patent not found",
+      });
+    }
+
+    // Delete Patent
+    await Patents.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Patent deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Patent Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
 
 export const getAllPatentsWeb = async (req, res) => {
   try {
     const patentsList = await Patents.find()
       .populate("createby", "name email")
       .populate("updateby", "name email");
-      // .sort({ createdate: -1 });
+    // .sort({ createdate: -1 });
 
     const data = patentsList.map((patent) => ({
       id: patent._id,

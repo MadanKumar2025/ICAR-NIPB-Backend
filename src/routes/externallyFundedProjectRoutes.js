@@ -5,6 +5,7 @@ import {
   updateExternallyFundedProject,
   updateExternallyFundedProjectStatus,
   getAllExternallyFundedProjectsWeb,
+  deleteExternallyFundedProject,
 } from "../controllers/ExternallyFundedProjectController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -22,6 +23,12 @@ router.put(
   "/StatusExternallyFundedProjectStatus/:id",
   authMiddleware,
   updateExternallyFundedProjectStatus,
+);
+
+router.delete(
+  "/delete-externally-funded-project/:id",
+  authMiddleware,
+  deleteExternallyFundedProject,
 );
 
 // this is use for web

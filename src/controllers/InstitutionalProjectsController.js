@@ -1,4 +1,7 @@
 import InstitutionalProject from "../models/InstitutionalProjectsSchema.js";
+import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
 
 export const createInstitutionalProject = async (req, res) => {
   try {
@@ -216,6 +219,44 @@ export const updateInstitutionalProjectStatus = async (req, res) => {
   }
 };
 
+export const deleteInstitutionalProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Institutional Project ID",
+      });
+    }
+
+    // Check if project exists
+    const project = await InstitutionalProject.findById(id);
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Institutional Project not found",
+      });
+    }
+
+    // Delete Project
+    await InstitutionalProject.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Institutional Project deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
 
 // this is use for web
 export const getAllInstitutionalProjectsWeb = async (req, res) => {
