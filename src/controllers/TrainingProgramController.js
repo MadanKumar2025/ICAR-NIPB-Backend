@@ -5,24 +5,13 @@ import path from "path";
 
 export const createTrainingProgram = async (req, res) => {
   try {
-    const {
-      title_en,
-      title_hi,
-      description_en,
-      description_hi,
-    } = req.body;
+    const { title_en, title_hi, description_en, description_hi } = req.body;
 
     // Validate required fields
-    if (
-      !title_en ||
-      !title_hi ||
-      !description_en ||
-      !description_hi
-    ) {
+    if (!title_en || !title_hi || !description_en || !description_hi) {
       return res.status(400).json({
         success: false,
-        message:
-          "Title and Description are required in both English and Hindi",
+        message: "Title and Description are required in both English and Hindi",
       });
     }
 
@@ -68,9 +57,7 @@ export const createTrainingProgram = async (req, res) => {
 
     // Handle validation errors
     if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map(
-        (val) => val.message
-      );
+      const messages = Object.values(error.errors).map((val) => val.message);
 
       return res.status(400).json({
         success: false,
@@ -130,13 +117,8 @@ export const updateTrainingProgram = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const {
-      title_en,
-      title_hi,
-      description_en,
-      description_hi,
-      isActive,
-    } = req.body;
+    const { title_en, title_hi, description_en, description_hi, isActive } =
+      req.body;
 
     const record = await TrainingProgram.findById(id);
 
@@ -156,10 +138,7 @@ export const updateTrainingProgram = async (req, res) => {
     }
 
     // Update description
-    if (
-      description_en !== undefined ||
-      description_hi !== undefined
-    ) {
+    if (description_en !== undefined || description_hi !== undefined) {
       record.description = {
         en: description_en ?? record.description.en,
         hi: description_hi ?? record.description.hi,
@@ -186,9 +165,7 @@ export const updateTrainingProgram = async (req, res) => {
     console.error("Update Training Program Error =>", error);
 
     if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map(
-        (val) => val.message
-      );
+      const messages = Object.values(error.errors).map((val) => val.message);
 
       return res.status(400).json({
         success: false,
@@ -203,7 +180,6 @@ export const updateTrainingProgram = async (req, res) => {
   }
 };
 
-
 export const updateTrainingProgramStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -216,7 +192,7 @@ export const updateTrainingProgramStatus = async (req, res) => {
         updatedBy: req.user?.id,
         updatedDate: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     if (!record) {
@@ -286,7 +262,7 @@ export const getTrainingProgramsWeb = async (req, res) => {
     const trainingProgramList = await TrainingProgram.find()
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email");
-      // .sort({ createdDate: -1 });
+    // .sort({ createdDate: -1 });
 
     const data = trainingProgramList.map((program) => ({
       id: program._id,
