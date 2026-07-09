@@ -238,7 +238,44 @@ export const updateTrainingProgramStatus = async (req, res) => {
   }
 };
 
+export const deleteTrainingProgram = async (req, res) => {
+  try {
+    const { id } = req.params;
 
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Training Program ID",
+      });
+    }
+
+    // Find Training Program
+    const trainingProgram = await TrainingProgram.findById(id);
+
+    if (!trainingProgram) {
+      return res.status(404).json({
+        success: false,
+        message: "Training Program not found",
+      });
+    }
+
+    // Delete Record
+    await TrainingProgram.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Training Program deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Training Program Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
 
 // this is use for web
 export const getTrainingProgramsWeb = async (req, res) => {

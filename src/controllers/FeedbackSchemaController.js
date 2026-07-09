@@ -47,46 +47,6 @@ export const createFeedback = async (req, res) => {
   }
 };
 
-// export const getFeedback = async (req, res) => {
-//   try {
-//     const isAll = req.query.all === "true";
-
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = 10;
-//     const skip = (page - 1) * limit;
-
-//     const query = Feedback.find()
-//       .sort({ createdAt: -1 })
-//       .populate("createdBy", "name email");
-
-//     const totalFeedback = await Feedback.countDocuments();
-
-//     let feedback;
-
-//     if (isAll) {
-//       feedback = await query;
-//     } else {
-//       feedback = await query.skip(skip).limit(limit);
-//     }
-
-//     return res.status(200).json({
-//       success: true,
-//       count: feedback.length,
-//       total: totalFeedback,
-//       page: isAll ? null : page,
-//       totalPages: isAll ? 1 : Math.ceil(totalFeedback / limit),
-//       data: feedback,
-//     });
-//   } catch (error) {
-//     console.error("Get Feedback Error =>", error);
-
-//     return res.status(500).json({
-//       success: false,
-//       message: error.message || "Something went wrong",
-//     });
-//   }
-// };
-
 export const getFeedback = async (req, res) => {
   try {
     const isAll = req.query.all === "true";
@@ -138,44 +98,6 @@ export const getFeedback = async (req, res) => {
   }
 };
 
-// export const updateFeedbackStatus = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { isActive } = req.body;
-
-//     const record = await Feedback.findByIdAndUpdate(
-//       id,
-//       {
-//         $set: {
-//           isActive: isActive === "true" || isActive === true,
-//           updatedBy: req.user?.id || null,
-//         },
-//       },
-//       { new: true },
-//     );
-
-//     if (!record) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Feedback not found",
-//       });
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Status updated successfully",
-//       data: record,
-//     });
-//   } catch (error) {
-//     console.error("Update Contractual Staff Status Error =>", error);
-
-//     res.status(500).json({
-//       success: false,
-//       message: error.message || "Something went wrong",
-//     });
-//   }
-// };
-
 export const updateFeedbackStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -190,7 +112,7 @@ export const updateFeedbackStatus = async (req, res) => {
           updatedAt: new Date(),
         },
       },
-      { new: true }
+      { new: true },
     )
       .populate("createdBy", "name email")
       .populate("updatedBy", "name email");
@@ -226,43 +148,44 @@ export const updateFeedbackStatus = async (req, res) => {
   }
 };
 
-// export const getFeedbackID = async (req, res) => {
-//   try {
-//     const feedbackId = req.query.id;
+export const deleteFeedback = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-//     if (!feedbackId) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Feedback ID is required",
-//       });
-//     }
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Feedback ID",
+      });
+    }
 
-//     const feedback = await Feedback.findById(feedbackId).populate(
-//       "createdBy",
-//       "name email",
-//     );
+    // Find Feedback
+    const feedback = await Feedback.findById(id);
 
-//     if (!feedback) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Feedback not found",
-//       });
-//     }
+    if (!feedback) {
+      return res.status(404).json({
+        success: false,
+        message: "Feedback not found",
+      });
+    }
 
-//     return res.status(200).json({
-//       success: true,
-//       data: feedback,
-//     });
-//   } catch (error) {
-//     console.error("Get Feedback Error =>", error);
+    // Delete Feedback
+    await Feedback.findByIdAndDelete(id);
 
-//     return res.status(500).json({
-//       success: false,
-//       message: error.message || "Something went wrong",
-//     });
-//   }
-// };
- 
+    return res.status(200).json({
+      success: true,
+      message: "Feedback deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Feedback Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
 
 export const getFeedbackId = async (req, res) => {
   try {

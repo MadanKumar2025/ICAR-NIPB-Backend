@@ -229,6 +229,45 @@ export const updateHelpStatus = async (req, res) => {
   }
 };
 
+export const deleteHelp = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Help ID",
+      });
+    }
+
+    // Find Help
+    const help = await Help.findById(id);
+
+    if (!help) {
+      return res.status(404).json({
+        success: false,
+        message: "Help not found",
+      });
+    }
+
+    // Delete Record
+    await Help.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Help deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete Help Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
+  }
+};
+
 // this is use for web
 export const getAllHelpWeb = async (req, res) => {
   try {
