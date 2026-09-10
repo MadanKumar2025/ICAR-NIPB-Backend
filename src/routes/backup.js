@@ -207,8 +207,8 @@ const createMongoBackup = () => {
 
 // Every day at 12:00 AM
 cron.schedule(
-  // "0 0 * * *",
-  "45 12 * * *",
+  "0 0 * * *",
+  // "45 12 * * *",
   () => {
     console.log("Automatic MongoDB backup triggered...");
     createMongoBackup();
