@@ -103,18 +103,31 @@ const router = express.Router();
 const MONGO_URI = process.env.MONGO_URI;
 
 // MongoDB mongodump.exe path
+// const MONGODUMP_PATH = path.join(
+//   "C:",
+//   "mongodb-tools",
+//   "bin",
+//   "mongodump.exe"
+// );
+
 const MONGODUMP_PATH = path.join(
-  "C:",
-  "mongodb-tools",
+  "/home/server/Downloads/mongodb-database-tools-amazon2-x86_64-100.18.0",
   "bin",
-  "mongodump.exe"
+  "mongodump",
 );
 
 // Windows Downloads folder
+// const BACKUP_DIR = path.join(
+//   process.env.USERPROFILE,
+//   "Downloads",
+//   "MongoDB-Backups"
+// );
+
+// Linux server Downloads folder
 const BACKUP_DIR = path.join(
-  process.env.USERPROFILE,
+  process.env.HOME || "/home/server",
   "Downloads",
-  "MongoDB-Backups"
+  "MongoDB-Backups",
 );
 
 // Create backup directory if it doesn't exist
@@ -148,10 +161,7 @@ const createMongoBackup = () => {
   // Monday.archive.gz
   // Tuesday.archive.gz
   // Wednesday.archive.gz
-  const backupFile = path.join(
-    BACKUP_DIR,
-    `${dayName}.archive.gz`
-  );
+  const backupFile = path.join(BACKUP_DIR, `${dayName}.archive.gz`);
 
   // console.log("=================================");
   // console.log("MongoDB backup started...");
@@ -172,29 +182,21 @@ const createMongoBackup = () => {
     }
   }
 
-  const args = [
-    `--uri=${MONGO_URI}`,
-    `--archive=${backupFile}`,
-    "--gzip",
-  ];
+  const args = [`--uri=${MONGO_URI}`, `--archive=${backupFile}`, "--gzip"];
 
-  execFile(
-    MONGODUMP_PATH,
-    args,
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error("MongoDB backup failed");
-        console.error(error);
-        console.error(stderr);
+  execFile(MONGODUMP_PATH, args, (error, stdout, stderr) => {
+    if (error) {
+      console.error("MongoDB backup failed");
+      console.error(error);
+      console.error(stderr);
 
-        return;
-      }
-
-      console.log("MongoDB backup completed successfully");
-      console.log(`Backup saved as: ${dayName}.archive.gz`);
-      console.log(`Location: ${backupFile}`);
+      return;
     }
-  );
+
+    console.log("MongoDB backup completed successfully");
+    console.log(`Backup saved as: ${dayName}.archive.gz`);
+    console.log(`Location: ${backupFile}`);
+  });
 };
 
 // --------------------------------------------------
@@ -204,14 +206,14 @@ const createMongoBackup = () => {
 // Every day at 12:00 AM
 cron.schedule(
   // "0 0 * * *",
-   "00 11 * * *",
+  "45 11 * * *",
   () => {
     console.log("Automatic MongoDB backup triggered...");
     createMongoBackup();
   },
   {
     timezone: "Asia/Kolkata",
-  }
+  },
 );
 
 // --------------------------------------------------
@@ -238,10 +240,7 @@ router.post("/backup", (req, res) => {
     weekday: "long",
   }).format(new Date());
 
-  const backupFile = path.join(
-    BACKUP_DIR,
-    `${dayName}.archive.gz`
-  );
+  const backupFile = path.join(BACKUP_DIR, `${dayName}.archive.gz`);
 
   // Delete old backup for this day
   if (fs.existsSync(backupFile)) {
@@ -256,38 +255,30 @@ router.post("/backup", (req, res) => {
     }
   }
 
-  const args = [
-    `--uri=${MONGO_URI}`,
-    `--archive=${backupFile}`,
-    "--gzip",
-  ];
+  const args = [`--uri=${MONGO_URI}`, `--archive=${backupFile}`, "--gzip"];
 
-  execFile(
-    MONGODUMP_PATH,
-    args,
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error("MongoDB backup failed");
-        console.error(error);
-        console.error(stderr);
+  execFile(MONGODUMP_PATH, args, (error, stdout, stderr) => {
+    if (error) {
+      console.error("MongoDB backup failed");
+      console.error(error);
+      console.error(stderr);
 
-        return res.status(500).json({
-          success: false,
-          message: "MongoDB backup failed",
-          error: error.message,
-          stderr,
-        });
-      }
-
-      return res.status(200).json({
-        success: true,
-        message: "MongoDB backup created successfully",
-        day: dayName,
-        file: `${dayName}.archive.gz`,
-        location: BACKUP_DIR,
+      return res.status(500).json({
+        success: false,
+        message: "MongoDB backup failed",
+        error: error.message,
+        stderr,
       });
     }
-  );
+
+    return res.status(200).json({
+      success: true,
+      message: "MongoDB backup created successfully",
+      day: dayName,
+      file: `${dayName}.archive.gz`,
+      location: BACKUP_DIR,
+    });
+  });
 });
 
 export default router;
