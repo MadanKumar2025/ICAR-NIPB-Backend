@@ -124,11 +124,13 @@ const MONGODUMP_PATH = path.join(
 // );
 
 // Linux server Downloads folder
-const BACKUP_DIR = path.join(
-  process.env.HOME || "/home/server",
-  "Downloads",
-  "MongoDB-Backups",
-);
+// const BACKUP_DIR = path.join(
+//   process.env.HOME || "/home/server",
+//   "Downloads",
+//   "MongoDB-Backups",
+// );
+
+const BACKUP_DIR = path.join("/home/server/project", "MongoDB-Backups");
 
 // Create backup directory if it doesn't exist
 if (!fs.existsSync(BACKUP_DIR)) {
@@ -206,7 +208,7 @@ const createMongoBackup = () => {
 // Every day at 12:00 AM
 cron.schedule(
   // "0 0 * * *",
-  "45 11 * * *",
+  "45 12 * * *",
   () => {
     console.log("Automatic MongoDB backup triggered...");
     createMongoBackup();
